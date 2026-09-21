@@ -1,5 +1,7 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { Authentication } from './Authentication.js';
+import { Enterprise } from './Enterprise.js';
 
 export const Tokens = $root.Tokens = (() => {
 
@@ -2554,9 +2556,9 @@ export const Tokens = $root.Tokens = (() => {
             if (message.messageSessionUid != null && Object.hasOwnProperty.call(message, "messageSessionUid"))
                 object.messageSessionUid = options.bytes === String ? $util.base64.encode(message.messageSessionUid, 0, message.messageSessionUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.messageSessionUid) : message.messageSessionUid;
             if (message.loginState != null && Object.hasOwnProperty.call(message, "loginState"))
-                object.loginState = options.enums === String ? $root.Authentication.LoginState[message.loginState] === undefined ? message.loginState : $root.Authentication.LoginState[message.loginState] : message.loginState;
+                object.loginState = options.enums === String ? Authentication.LoginState[message.loginState] === undefined ? message.loginState : Authentication.LoginState[message.loginState] : message.loginState;
             if (message.loginMethod != null && Object.hasOwnProperty.call(message, "loginMethod"))
-                object.loginMethod = options.enums === String ? $root.Authentication.LoginMethod[message.loginMethod] === undefined ? message.loginMethod : $root.Authentication.LoginMethod[message.loginMethod] : message.loginMethod;
+                object.loginMethod = options.enums === String ? Authentication.LoginMethod[message.loginMethod] === undefined ? message.loginMethod : Authentication.LoginMethod[message.loginMethod] : message.loginMethod;
             if (message.creation != null && Object.hasOwnProperty.call(message, "creation"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
                     object.creation = typeof message.creation === "number" ? BigInt(message.creation) : $util.Long.fromBits(message.creation.low >>> 0, message.creation.high >>> 0, false).toBigInt();
@@ -2576,7 +2578,7 @@ export const Tokens = $root.Tokens = (() => {
             if (message.clientVersionId != null && Object.hasOwnProperty.call(message, "clientVersionId"))
                 object.clientVersionId = message.clientVersionId;
             if (message.supportedLanguage != null && Object.hasOwnProperty.call(message, "supportedLanguage"))
-                object.supportedLanguage = options.enums === String ? $root.Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : $root.Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
+                object.supportedLanguage = options.enums === String ? Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
             if (message.ssoLoginToken != null && Object.hasOwnProperty.call(message, "ssoLoginToken"))
                 object.ssoLoginToken = $root.Tokens.SSOLoginToken.toObject(message.ssoLoginToken, options, q + 1);
             if (message.username != null && Object.hasOwnProperty.call(message, "username"))
@@ -2584,7 +2586,7 @@ export const Tokens = $root.Tokens = (() => {
             if (message.relogin != null && Object.hasOwnProperty.call(message, "relogin"))
                 object.relogin = message.relogin;
             if (message.loginType != null && Object.hasOwnProperty.call(message, "loginType"))
-                object.loginType = options.enums === String ? $root.Authentication.LoginType[message.loginType] === undefined ? message.loginType : $root.Authentication.LoginType[message.loginType] : message.loginType;
+                object.loginType = options.enums === String ? Authentication.LoginType[message.loginType] === undefined ? message.loginType : Authentication.LoginType[message.loginType] : message.loginType;
             if (message.fromUserId != null && Object.hasOwnProperty.call(message, "fromUserId"))
                 object.fromUserId = message.fromUserId;
             if (message.passkeyLoginToken != null && Object.hasOwnProperty.call(message, "passkeyLoginToken"))
@@ -2959,7 +2961,7 @@ export const Tokens = $root.Tokens = (() => {
             if (message.deviceToken != null && Object.hasOwnProperty.call(message, "deviceToken"))
                 object.deviceToken = $root.Tokens.DeviceToken.toObject(message.deviceToken, options, q + 1);
             if (message.supportedLanguage != null && Object.hasOwnProperty.call(message, "supportedLanguage"))
-                object.supportedLanguage = options.enums === String ? $root.Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : $root.Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
+                object.supportedLanguage = options.enums === String ? Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
             return object;
         };
 
@@ -4046,7 +4048,7 @@ export const Tokens = $root.Tokens = (() => {
                 else
                     object.expiration = options.longs === String ? $util.Long.prototype.toString.call(message.expiration) : options.longs === Number ? new $util.LongBits(message.expiration.low >>> 0, message.expiration.high >>> 0).toNumber() : message.expiration;
             if (message.licenseStatus != null && Object.hasOwnProperty.call(message, "licenseStatus"))
-                object.licenseStatus = options.enums === String ? $root.Authentication.LicenseStatus[message.licenseStatus] === undefined ? message.licenseStatus : $root.Authentication.LicenseStatus[message.licenseStatus] : message.licenseStatus;
+                object.licenseStatus = options.enums === String ? Authentication.LicenseStatus[message.licenseStatus] === undefined ? message.licenseStatus : Authentication.LicenseStatus[message.licenseStatus] : message.licenseStatus;
             return object;
         };
 
@@ -4835,11 +4837,11 @@ export const Tokens = $root.Tokens = (() => {
             if (message.du4 != null && Object.hasOwnProperty.call(message, "du4"))
                 object.du4 = $root.Tokens.LicenseToken.toObject(message.du4, options, q + 1);
             if (message.du6 != null && Object.hasOwnProperty.call(message, "du6"))
-                object.du6 = options.enums === String ? $root.Authentication.AccountType[message.du6] === undefined ? message.du6 : $root.Authentication.AccountType[message.du6] : message.du6;
+                object.du6 = options.enums === String ? Authentication.AccountType[message.du6] === undefined ? message.du6 : Authentication.AccountType[message.du6] : message.du6;
             if (message.clientVersionId != null && Object.hasOwnProperty.call(message, "clientVersionId"))
                 object.clientVersionId = message.clientVersionId;
             if (message.sessionTokenType != null && Object.hasOwnProperty.call(message, "sessionTokenType"))
-                object.sessionTokenType = options.enums === String ? $root.Authentication.SessionTokenType[message.sessionTokenType] === undefined ? message.sessionTokenType : $root.Authentication.SessionTokenType[message.sessionTokenType] : message.sessionTokenType;
+                object.sessionTokenType = options.enums === String ? Authentication.SessionTokenType[message.sessionTokenType] === undefined ? message.sessionTokenType : Authentication.SessionTokenType[message.sessionTokenType] : message.sessionTokenType;
             if (message.du5 != null && Object.hasOwnProperty.call(message, "du5"))
                 object.du5 = $root.Tokens.LicenseToken.toObject(message.du5, options, q + 1);
             if (message.mcEnterpriseId != null && Object.hasOwnProperty.call(message, "mcEnterpriseId"))
@@ -5101,7 +5103,7 @@ export const Tokens = $root.Tokens = (() => {
                     object.expiration = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
             }
             if (message.licenseType != null && Object.hasOwnProperty.call(message, "licenseType"))
-                object.licenseType = options.enums === String ? $root.Authentication.LicenseType[message.licenseType] === undefined ? message.licenseType : $root.Authentication.LicenseType[message.licenseType] : message.licenseType;
+                object.licenseType = options.enums === String ? Authentication.LicenseType[message.licenseType] === undefined ? message.licenseType : Authentication.LicenseType[message.licenseType] : message.licenseType;
             if (message.expiration != null && Object.hasOwnProperty.call(message, "expiration"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
                     object.expiration = typeof message.expiration === "number" ? BigInt(message.expiration) : $util.Long.fromBits(message.expiration.low >>> 0, message.expiration.high >>> 0, false).toBigInt();
@@ -5644,7 +5646,7 @@ export const Tokens = $root.Tokens = (() => {
             if (message.decryptedTransmissionKey != null && Object.hasOwnProperty.call(message, "decryptedTransmissionKey"))
                 writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.decryptedTransmissionKey);
             if (message.apiRequestPayload != null && Object.hasOwnProperty.call(message, "apiRequestPayload"))
-                $root.Authentication.ApiRequestPayload.encode(message.apiRequestPayload, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+                Authentication.ApiRequestPayload.encode(message.apiRequestPayload, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
             if (message.supportedLanguage != null && Object.hasOwnProperty.call(message, "supportedLanguage"))
                 writer.uint32(/* id 4, wireType 0 =*/32).int32(message.supportedLanguage);
             if (message.recaptcha != null && Object.hasOwnProperty.call(message, "recaptcha"))
@@ -5685,7 +5687,7 @@ export const Tokens = $root.Tokens = (() => {
                         break;
                     }
                 case 3: {
-                        message.apiRequestPayload = $root.Authentication.ApiRequestPayload.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.apiRequestPayload = Authentication.ApiRequestPayload.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 case 4: {
@@ -5738,7 +5740,7 @@ export const Tokens = $root.Tokens = (() => {
             if (object.apiRequestPayload != null) {
                 if (!$util.isObject(object.apiRequestPayload))
                     throw TypeError(".Tokens.ApiDecryptedRequest.apiRequestPayload: object expected");
-                message.apiRequestPayload = $root.Authentication.ApiRequestPayload.fromObject(object.apiRequestPayload, long + 1);
+                message.apiRequestPayload = Authentication.ApiRequestPayload.fromObject(object.apiRequestPayload, long + 1);
             }
             switch (object.supportedLanguage) {
             default:
@@ -5883,9 +5885,9 @@ export const Tokens = $root.Tokens = (() => {
             if (message.decryptedTransmissionKey != null && Object.hasOwnProperty.call(message, "decryptedTransmissionKey"))
                 object.decryptedTransmissionKey = options.bytes === String ? $util.base64.encode(message.decryptedTransmissionKey, 0, message.decryptedTransmissionKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.decryptedTransmissionKey) : message.decryptedTransmissionKey;
             if (message.apiRequestPayload != null && Object.hasOwnProperty.call(message, "apiRequestPayload"))
-                object.apiRequestPayload = $root.Authentication.ApiRequestPayload.toObject(message.apiRequestPayload, options, q + 1);
+                object.apiRequestPayload = Authentication.ApiRequestPayload.toObject(message.apiRequestPayload, options, q + 1);
             if (message.supportedLanguage != null && Object.hasOwnProperty.call(message, "supportedLanguage"))
-                object.supportedLanguage = options.enums === String ? $root.Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : $root.Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
+                object.supportedLanguage = options.enums === String ? Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
             if (message.recaptcha != null && Object.hasOwnProperty.call(message, "recaptcha"))
                 object.recaptcha = message.recaptcha;
             if (message.userAgent != null && Object.hasOwnProperty.call(message, "userAgent"))
@@ -6283,7 +6285,7 @@ export const Tokens = $root.Tokens = (() => {
             if (message.newEmail != null && Object.hasOwnProperty.call(message, "newEmail"))
                 object.newEmail = message.newEmail;
             if (message.supportedLanguage != null && Object.hasOwnProperty.call(message, "supportedLanguage"))
-                object.supportedLanguage = options.enums === String ? $root.Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : $root.Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
+                object.supportedLanguage = options.enums === String ? Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
             if (message.enterpriseUserId != null && Object.hasOwnProperty.call(message, "enterpriseUserId"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
                     object.enterpriseUserId = typeof message.enterpriseUserId === "number" ? BigInt(message.enterpriseUserId) : $util.Long.fromBits(message.enterpriseUserId.low >>> 0, message.enterpriseUserId.high >>> 0, false).toBigInt();
@@ -7363,7 +7365,7 @@ export const Tokens = $root.Tokens = (() => {
             if (message.email != null && Object.hasOwnProperty.call(message, "email"))
                 object.email = message.email;
             if (message.supportedLanguage != null && Object.hasOwnProperty.call(message, "supportedLanguage"))
-                object.supportedLanguage = options.enums === String ? $root.Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : $root.Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
+                object.supportedLanguage = options.enums === String ? Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
             if (message.duration != null && Object.hasOwnProperty.call(message, "duration"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
                     object.duration = typeof message.duration === "number" ? BigInt(message.duration) : $util.Long.fromBits(message.duration.low >>> 0, message.duration.high >>> 0, false).toBigInt();
@@ -7787,7 +7789,7 @@ export const Tokens = $root.Tokens = (() => {
             if (message.accountUid != null && Object.hasOwnProperty.call(message, "accountUid"))
                 object.accountUid = options.bytes === String ? $util.base64.encode(message.accountUid, 0, message.accountUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.accountUid) : message.accountUid;
             if (message.supportedLanguage != null && Object.hasOwnProperty.call(message, "supportedLanguage"))
-                object.supportedLanguage = options.enums === String ? $root.Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : $root.Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
+                object.supportedLanguage = options.enums === String ? Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
             if (message.creation != null && Object.hasOwnProperty.call(message, "creation"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
                     object.creation = typeof message.creation === "number" ? BigInt(message.creation) : $util.Long.fromBits(message.creation.low >>> 0, message.creation.high >>> 0, false).toBigInt();
@@ -8255,7 +8257,7 @@ export const Tokens = $root.Tokens = (() => {
             if (message.clientVersion != null && Object.hasOwnProperty.call(message, "clientVersion"))
                 object.clientVersion = message.clientVersion;
             if (message.supportedLanguage != null && Object.hasOwnProperty.call(message, "supportedLanguage"))
-                object.supportedLanguage = options.enums === String ? $root.Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : $root.Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
+                object.supportedLanguage = options.enums === String ? Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
             if (message.creation != null && Object.hasOwnProperty.call(message, "creation"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
                     object.creation = typeof message.creation === "number" ? BigInt(message.creation) : $util.Long.fromBits(message.creation.low >>> 0, message.creation.high >>> 0, false).toBigInt();
@@ -8683,7 +8685,7 @@ export const Tokens = $root.Tokens = (() => {
                 else
                     object.requestTimeStamp = options.longs === String ? $util.Long.prototype.toString.call(message.requestTimeStamp) : options.longs === Number ? new $util.LongBits(message.requestTimeStamp.low >>> 0, message.requestTimeStamp.high >>> 0).toNumber() : message.requestTimeStamp;
             if (message.supportedLanguage != null && Object.hasOwnProperty.call(message, "supportedLanguage"))
-                object.supportedLanguage = options.enums === String ? $root.Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : $root.Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
+                object.supportedLanguage = options.enums === String ? Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
             return object;
         };
 
@@ -9109,7 +9111,7 @@ export const Tokens = $root.Tokens = (() => {
                 else
                     object.requestTimeStamp = options.longs === String ? $util.Long.prototype.toString.call(message.requestTimeStamp) : options.longs === Number ? new $util.LongBits(message.requestTimeStamp.low >>> 0, message.requestTimeStamp.high >>> 0).toNumber() : message.requestTimeStamp;
             if (message.supportedLanguage != null && Object.hasOwnProperty.call(message, "supportedLanguage"))
-                object.supportedLanguage = options.enums === String ? $root.Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : $root.Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
+                object.supportedLanguage = options.enums === String ? Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
             if (message.remoteAddress != null && Object.hasOwnProperty.call(message, "remoteAddress"))
                 object.remoteAddress = message.remoteAddress;
             if (message.messageSessionUid != null && Object.hasOwnProperty.call(message, "messageSessionUid"))
@@ -9492,7 +9494,7 @@ export const Tokens = $root.Tokens = (() => {
                 else
                     object.requestTimeStamp = options.longs === String ? $util.Long.prototype.toString.call(message.requestTimeStamp) : options.longs === Number ? new $util.LongBits(message.requestTimeStamp.low >>> 0, message.requestTimeStamp.high >>> 0).toNumber() : message.requestTimeStamp;
             if (message.supportedLanguage != null && Object.hasOwnProperty.call(message, "supportedLanguage"))
-                object.supportedLanguage = options.enums === String ? $root.Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : $root.Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
+                object.supportedLanguage = options.enums === String ? Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
             return object;
         };
 
@@ -9941,7 +9943,7 @@ export const Tokens = $root.Tokens = (() => {
                 else
                     object.creation = options.longs === String ? $util.Long.prototype.toString.call(message.creation) : options.longs === Number ? new $util.LongBits(message.creation.low >>> 0, message.creation.high >>> 0).toNumber() : message.creation;
             if (message.supportedLanguage != null && Object.hasOwnProperty.call(message, "supportedLanguage"))
-                object.supportedLanguage = options.enums === String ? $root.Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : $root.Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
+                object.supportedLanguage = options.enums === String ? Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
             if (message.subEnvironment != null && Object.hasOwnProperty.call(message, "subEnvironment"))
                 object.subEnvironment = message.subEnvironment;
             return object;
@@ -10686,7 +10688,7 @@ export const Tokens = $root.Tokens = (() => {
                 }
             }
             if (message.entity != null && Object.hasOwnProperty.call(message, "entity"))
-                object.entity = options.enums === String ? $root.Enterprise.EnterpriseDataEntity[message.entity] === undefined ? message.entity : $root.Enterprise.EnterpriseDataEntity[message.entity] : message.entity;
+                object.entity = options.enums === String ? Enterprise.EnterpriseDataEntity[message.entity] === undefined ? message.entity : Enterprise.EnterpriseDataEntity[message.entity] : message.entity;
             if (message.nodeId != null && Object.hasOwnProperty.call(message, "nodeId"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
                     object.nodeId = typeof message.nodeId === "number" ? BigInt(message.nodeId) : $util.Long.fromBits(message.nodeId.low >>> 0, message.nodeId.high >>> 0, false).toBigInt();

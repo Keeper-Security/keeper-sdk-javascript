@@ -1,5 +1,9 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { Authentication } from './Authentication.js';
+import { Folder } from './Folder.js';
+import { record } from './record.js';
+import { PAM } from './PAM.js';
 
 export const Router = $root.Router = (() => {
 
@@ -617,7 +621,7 @@ export const Router = $root.Router = (() => {
                 object.timeout = 0;
             }
             if (message.messageType != null && Object.hasOwnProperty.call(message, "messageType"))
-                object.messageType = options.enums === String ? $root.PAM.ControllerMessageType[message.messageType] === undefined ? message.messageType : $root.PAM.ControllerMessageType[message.messageType] : message.messageType;
+                object.messageType = options.enums === String ? PAM.ControllerMessageType[message.messageType] === undefined ? message.messageType : PAM.ControllerMessageType[message.messageType] : message.messageType;
             if (message.messageUid != null && Object.hasOwnProperty.call(message, "messageUid"))
                 object.messageUid = options.bytes === String ? $util.base64.encode(message.messageUid, 0, message.messageUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.messageUid) : message.messageUid;
             if (message.controllerUid != null && Object.hasOwnProperty.call(message, "controllerUid"))
@@ -2802,6 +2806,7 @@ export const Router = $root.Router = (() => {
          * @property {Uint8Array|null} [saasConfiguration] RouterRecordRotationRequest saasConfiguration
          * @property {boolean|null} [updateServices] RouterRecordRotationRequest updateServices
          * @property {PAM.IUidList|null} [serviceResources] RouterRecordRotationRequest serviceResources
+         * @property {Array.<PAM.IPAMServiceNames>|null} [serviceNames] RouterRecordRotationRequest serviceNames
          */
 
         /**
@@ -2813,6 +2818,7 @@ export const Router = $root.Router = (() => {
          * @param {Router.IRouterRecordRotationRequest=} [properties] Properties to set
          */
         function RouterRecordRotationRequest(properties) {
+            this.serviceNames = [];
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null && keys[i] !== "__proto__")
@@ -2931,6 +2937,14 @@ export const Router = $root.Router = (() => {
          */
         RouterRecordRotationRequest.prototype.serviceResources = null;
 
+        /**
+         * RouterRecordRotationRequest serviceNames.
+         * @member {Array.<PAM.IPAMServiceNames>} serviceNames
+         * @memberof Router.RouterRecordRotationRequest
+         * @instance
+         */
+        RouterRecordRotationRequest.prototype.serviceNames = $util.emptyArray;
+
         // OneOf field names bound to virtual getters and setters
         let $oneOfFields;
 
@@ -3007,7 +3021,10 @@ export const Router = $root.Router = (() => {
             if (message.updateServices != null && Object.hasOwnProperty.call(message, "updateServices"))
                 writer.uint32(/* id 13, wireType 0 =*/104).bool(message.updateServices);
             if (message.serviceResources != null && Object.hasOwnProperty.call(message, "serviceResources"))
-                $root.PAM.UidList.encode(message.serviceResources, writer.uint32(/* id 14, wireType 2 =*/114).fork(), q + 1).ldelim();
+                PAM.UidList.encode(message.serviceResources, writer.uint32(/* id 14, wireType 2 =*/114).fork(), q + 1).ldelim();
+            if (message.serviceNames != null && message.serviceNames.length)
+                for (let i = 0; i < message.serviceNames.length; ++i)
+                    PAM.PAMServiceNames.encode(message.serviceNames[i], writer.uint32(/* id 15, wireType 2 =*/122).fork(), q + 1).ldelim();
             return writer;
         };
 
@@ -3088,7 +3105,13 @@ export const Router = $root.Router = (() => {
                         break;
                     }
                 case 14: {
-                        message.serviceResources = $root.PAM.UidList.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.serviceResources = PAM.UidList.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                case 15: {
+                        if (!(message.serviceNames && message.serviceNames.length))
+                            message.serviceNames = [];
+                        message.serviceNames.push(PAM.PAMServiceNames.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 default:
@@ -3175,7 +3198,17 @@ export const Router = $root.Router = (() => {
             if (object.serviceResources != null) {
                 if (!$util.isObject(object.serviceResources))
                     throw TypeError(".Router.RouterRecordRotationRequest.serviceResources: object expected");
-                message.serviceResources = $root.PAM.UidList.fromObject(object.serviceResources, long + 1);
+                message.serviceResources = PAM.UidList.fromObject(object.serviceResources, long + 1);
+            }
+            if (object.serviceNames) {
+                if (!Array.isArray(object.serviceNames))
+                    throw TypeError(".Router.RouterRecordRotationRequest.serviceNames: array expected");
+                message.serviceNames = [];
+                for (let i = 0; i < object.serviceNames.length; ++i) {
+                    if (!$util.isObject(object.serviceNames[i]))
+                        throw TypeError(".Router.RouterRecordRotationRequest.serviceNames: object expected");
+                    message.serviceNames[i] = PAM.PAMServiceNames.fromObject(object.serviceNames[i], long + 1);
+                }
             }
             return message;
         };
@@ -3197,6 +3230,8 @@ export const Router = $root.Router = (() => {
             if (q > $util.recursionLimit)
                 throw Error("max depth exceeded");
             let object = {};
+            if (options.arrays || options.defaults)
+                object.serviceNames = [];
             if (options.defaults) {
                 if (options.bytes === String)
                     object.recordUid = "";
@@ -3285,9 +3320,14 @@ export const Router = $root.Router = (() => {
                     object._updateServices = "updateServices";
             }
             if (message.serviceResources != null && Object.hasOwnProperty.call(message, "serviceResources")) {
-                object.serviceResources = $root.PAM.UidList.toObject(message.serviceResources, options, q + 1);
+                object.serviceResources = PAM.UidList.toObject(message.serviceResources, options, q + 1);
                 if (options.oneofs)
                     object._serviceResources = "serviceResources";
+            }
+            if (message.serviceNames && message.serviceNames.length) {
+                object.serviceNames = [];
+                for (let j = 0; j < message.serviceNames.length; ++j)
+                    object.serviceNames[j] = PAM.PAMServiceNames.toObject(message.serviceNames[j], options, q + 1);
             }
             return object;
         };
@@ -3319,6 +3359,223 @@ export const Router = $root.Router = (() => {
         };
 
         return RouterRecordRotationRequest;
+    })();
+
+    Router.RouterRecordAddRequest = (function() {
+
+        /**
+         * Properties of a RouterRecordAddRequest.
+         * @memberof Router
+         * @interface IRouterRecordAddRequest
+         * @property {number|null} [enterpriseUserId] RouterRecordAddRequest enterpriseUserId
+         * @property {record.v3.IRecordsAddRequest|null} [request] RouterRecordAddRequest request
+         */
+
+        /**
+         * Constructs a new RouterRecordAddRequest.
+         * @memberof Router
+         * @classdesc Represents a RouterRecordAddRequest.
+         * @implements IRouterRecordAddRequest
+         * @constructor
+         * @param {Router.IRouterRecordAddRequest=} [properties] Properties to set
+         */
+        function RouterRecordAddRequest(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RouterRecordAddRequest enterpriseUserId.
+         * @member {number} enterpriseUserId
+         * @memberof Router.RouterRecordAddRequest
+         * @instance
+         */
+        RouterRecordAddRequest.prototype.enterpriseUserId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * RouterRecordAddRequest request.
+         * @member {record.v3.IRecordsAddRequest|null|undefined} request
+         * @memberof Router.RouterRecordAddRequest
+         * @instance
+         */
+        RouterRecordAddRequest.prototype.request = null;
+
+        /**
+         * Creates a new RouterRecordAddRequest instance using the specified properties.
+         * @function create
+         * @memberof Router.RouterRecordAddRequest
+         * @static
+         * @param {Router.IRouterRecordAddRequest=} [properties] Properties to set
+         * @returns {Router.RouterRecordAddRequest} RouterRecordAddRequest instance
+         */
+        RouterRecordAddRequest.create = function create(properties) {
+            return new RouterRecordAddRequest(properties);
+        };
+
+        /**
+         * Encodes the specified RouterRecordAddRequest message. Does not implicitly {@link Router.RouterRecordAddRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Router.RouterRecordAddRequest
+         * @static
+         * @param {Router.IRouterRecordAddRequest} message RouterRecordAddRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RouterRecordAddRequest.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.enterpriseUserId != null && Object.hasOwnProperty.call(message, "enterpriseUserId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.enterpriseUserId);
+            if (message.request != null && Object.hasOwnProperty.call(message, "request"))
+                record.v3.RecordsAddRequest.encode(message.request, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a RouterRecordAddRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Router.RouterRecordAddRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Router.RouterRecordAddRequest} RouterRecordAddRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RouterRecordAddRequest.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Router.RouterRecordAddRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.enterpriseUserId = reader.int64();
+                        break;
+                    }
+                case 2: {
+                        message.request = record.v3.RecordsAddRequest.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a RouterRecordAddRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Router.RouterRecordAddRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Router.RouterRecordAddRequest} RouterRecordAddRequest
+         */
+        RouterRecordAddRequest.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Router.RouterRecordAddRequest)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Router.RouterRecordAddRequest: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Router.RouterRecordAddRequest();
+            if (object.enterpriseUserId != null)
+                if ($util.Long)
+                    message.enterpriseUserId = $util.Long.fromValue(object.enterpriseUserId, false);
+                else if (typeof object.enterpriseUserId === "string")
+                    message.enterpriseUserId = parseInt(object.enterpriseUserId, 10);
+                else if (typeof object.enterpriseUserId === "number")
+                    message.enterpriseUserId = object.enterpriseUserId;
+                else if (typeof object.enterpriseUserId === "object")
+                    message.enterpriseUserId = new $util.LongBits(object.enterpriseUserId.low >>> 0, object.enterpriseUserId.high >>> 0).toNumber();
+            if (object.request != null) {
+                if (!$util.isObject(object.request))
+                    throw TypeError(".Router.RouterRecordAddRequest.request: object expected");
+                message.request = record.v3.RecordsAddRequest.fromObject(object.request, long + 1);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RouterRecordAddRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Router.RouterRecordAddRequest
+         * @static
+         * @param {Router.RouterRecordAddRequest} message RouterRecordAddRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RouterRecordAddRequest.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.enterpriseUserId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.enterpriseUserId = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                object.request = null;
+            }
+            if (message.enterpriseUserId != null && Object.hasOwnProperty.call(message, "enterpriseUserId"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.enterpriseUserId = typeof message.enterpriseUserId === "number" ? BigInt(message.enterpriseUserId) : $util.Long.fromBits(message.enterpriseUserId.low >>> 0, message.enterpriseUserId.high >>> 0, false).toBigInt();
+                else if (typeof message.enterpriseUserId === "number")
+                    object.enterpriseUserId = options.longs === String ? String(message.enterpriseUserId) : message.enterpriseUserId;
+                else
+                    object.enterpriseUserId = options.longs === String ? $util.Long.prototype.toString.call(message.enterpriseUserId) : options.longs === Number ? new $util.LongBits(message.enterpriseUserId.low >>> 0, message.enterpriseUserId.high >>> 0).toNumber() : message.enterpriseUserId;
+            if (message.request != null && Object.hasOwnProperty.call(message, "request"))
+                object.request = record.v3.RecordsAddRequest.toObject(message.request, options, q + 1);
+            return object;
+        };
+
+        /**
+         * Converts this RouterRecordAddRequest to JSON.
+         * @function toJSON
+         * @memberof Router.RouterRecordAddRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RouterRecordAddRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for RouterRecordAddRequest
+         * @function getTypeUrl
+         * @memberof Router.RouterRecordAddRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        RouterRecordAddRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Router.RouterRecordAddRequest";
+        };
+
+        return RouterRecordAddRequest;
     })();
 
     Router.UserRecordAccessRequest = (function() {
@@ -4616,7 +4873,7 @@ export const Router = $root.Router = (() => {
             if (message.sharedFolderUid != null && Object.hasOwnProperty.call(message, "sharedFolderUid"))
                 object.sharedFolderUid = options.bytes === String ? $util.base64.encode(message.sharedFolderUid, 0, message.sharedFolderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderUid) : message.sharedFolderUid;
             if (message.accessRoleType != null && Object.hasOwnProperty.call(message, "accessRoleType"))
-                object.accessRoleType = options.enums === String ? $root.Folder.AccessRoleType[message.accessRoleType] === undefined ? message.accessRoleType : $root.Folder.AccessRoleType[message.accessRoleType] : message.accessRoleType;
+                object.accessRoleType = options.enums === String ? Folder.AccessRoleType[message.accessRoleType] === undefined ? message.accessRoleType : Folder.AccessRoleType[message.accessRoleType] : message.accessRoleType;
             return object;
         };
 
@@ -5126,7 +5383,7 @@ export const Router = $root.Router = (() => {
             if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
                 writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
             if (message.permissions != null && Object.hasOwnProperty.call(message, "permissions"))
-                $root.Folder.FolderPermissions.encode(message.permissions, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                Folder.FolderPermissions.encode(message.permissions, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
             return writer;
         };
 
@@ -5159,7 +5416,7 @@ export const Router = $root.Router = (() => {
                         break;
                     }
                 case 2: {
-                        message.permissions = $root.Folder.FolderPermissions.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.permissions = Folder.FolderPermissions.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 default:
@@ -5196,7 +5453,7 @@ export const Router = $root.Router = (() => {
             if (object.permissions != null) {
                 if (!$util.isObject(object.permissions))
                     throw TypeError(".Router.UserFolderPermissionsResponse.permissions: object expected");
-                message.permissions = $root.Folder.FolderPermissions.fromObject(object.permissions, long + 1);
+                message.permissions = Folder.FolderPermissions.fromObject(object.permissions, long + 1);
             }
             return message;
         };
@@ -5231,7 +5488,7 @@ export const Router = $root.Router = (() => {
             if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
                 object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
             if (message.permissions != null && Object.hasOwnProperty.call(message, "permissions"))
-                object.permissions = $root.Folder.FolderPermissions.toObject(message.permissions, options, q + 1);
+                object.permissions = Folder.FolderPermissions.toObject(message.permissions, options, q + 1);
             return object;
         };
 
@@ -8873,7 +9130,7 @@ export const Router = $root.Router = (() => {
                 $root.Router.PAMNetworkSettings.encode(message.networkSettings, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
             if (message.resources != null && message.resources.length)
                 for (let i = 0; i < message.resources.length; ++i)
-                    $root.PAM.PAMResourceConfig.encode(message.resources[i], writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+                    PAM.PAMResourceConfig.encode(message.resources[i], writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
             if (message.rotations != null && message.rotations.length)
                 for (let i = 0; i < message.rotations.length; ++i)
                     $root.Router.RouterRecordRotationRequest.encode(message.rotations[i], writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
@@ -8915,7 +9172,7 @@ export const Router = $root.Router = (() => {
                 case 3: {
                         if (!(message.resources && message.resources.length))
                             message.resources = [];
-                        message.resources.push($root.PAM.PAMResourceConfig.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.resources.push(PAM.PAMResourceConfig.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 4: {
@@ -8967,7 +9224,7 @@ export const Router = $root.Router = (() => {
                 for (let i = 0; i < object.resources.length; ++i) {
                     if (!$util.isObject(object.resources[i]))
                         throw TypeError(".Router.PAMNetworkConfigurationRequest.resources: object expected");
-                    message.resources[i] = $root.PAM.PAMResourceConfig.fromObject(object.resources[i], long + 1);
+                    message.resources[i] = PAM.PAMResourceConfig.fromObject(object.resources[i], long + 1);
                 }
             }
             if (object.rotations) {
@@ -9022,7 +9279,7 @@ export const Router = $root.Router = (() => {
             if (message.resources && message.resources.length) {
                 object.resources = [];
                 for (let j = 0; j < message.resources.length; ++j)
-                    object.resources[j] = $root.PAM.PAMResourceConfig.toObject(message.resources[j], options, q + 1);
+                    object.resources[j] = PAM.PAMResourceConfig.toObject(message.resources[j], options, q + 1);
             }
             if (message.rotations && message.rotations.length) {
                 object.rotations = [];
@@ -9808,7 +10065,7 @@ export const Router = $root.Router = (() => {
             if (message.sessionToken != null && Object.hasOwnProperty.call(message, "sessionToken"))
                 object.sessionToken = options.bytes === String ? $util.base64.encode(message.sessionToken, 0, message.sessionToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.sessionToken) : message.sessionToken;
             if (message.pushType != null && Object.hasOwnProperty.call(message, "pushType"))
-                object.pushType = options.enums === String ? $root.Authentication.TwoFactorPushType[message.pushType] === undefined ? message.pushType : $root.Authentication.TwoFactorPushType[message.pushType] : message.pushType;
+                object.pushType = options.enums === String ? Authentication.TwoFactorPushType[message.pushType] === undefined ? message.pushType : Authentication.TwoFactorPushType[message.pushType] : message.pushType;
             return object;
         };
 
@@ -11122,6 +11379,198 @@ export const Router = $root.Router = (() => {
         };
 
         return UserAccessLoweredEventsRequest;
+    })();
+
+    Router.RecordsChangedRequest = (function() {
+
+        /**
+         * Properties of a RecordsChangedRequest.
+         * @memberof Router
+         * @interface IRecordsChangedRequest
+         * @property {Array.<Uint8Array>|null} [sharedFolderUids] RecordsChangedRequest sharedFolderUids
+         */
+
+        /**
+         * Constructs a new RecordsChangedRequest.
+         * @memberof Router
+         * @classdesc Represents a RecordsChangedRequest.
+         * @implements IRecordsChangedRequest
+         * @constructor
+         * @param {Router.IRecordsChangedRequest=} [properties] Properties to set
+         */
+        function RecordsChangedRequest(properties) {
+            this.sharedFolderUids = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RecordsChangedRequest sharedFolderUids.
+         * @member {Array.<Uint8Array>} sharedFolderUids
+         * @memberof Router.RecordsChangedRequest
+         * @instance
+         */
+        RecordsChangedRequest.prototype.sharedFolderUids = $util.emptyArray;
+
+        /**
+         * Creates a new RecordsChangedRequest instance using the specified properties.
+         * @function create
+         * @memberof Router.RecordsChangedRequest
+         * @static
+         * @param {Router.IRecordsChangedRequest=} [properties] Properties to set
+         * @returns {Router.RecordsChangedRequest} RecordsChangedRequest instance
+         */
+        RecordsChangedRequest.create = function create(properties) {
+            return new RecordsChangedRequest(properties);
+        };
+
+        /**
+         * Encodes the specified RecordsChangedRequest message. Does not implicitly {@link Router.RecordsChangedRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Router.RecordsChangedRequest
+         * @static
+         * @param {Router.IRecordsChangedRequest} message RecordsChangedRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RecordsChangedRequest.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.sharedFolderUids != null && message.sharedFolderUids.length)
+                for (let i = 0; i < message.sharedFolderUids.length; ++i)
+                    writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.sharedFolderUids[i]);
+            return writer;
+        };
+
+        /**
+         * Decodes a RecordsChangedRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Router.RecordsChangedRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Router.RecordsChangedRequest} RecordsChangedRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RecordsChangedRequest.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Router.RecordsChangedRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.sharedFolderUids && message.sharedFolderUids.length))
+                            message.sharedFolderUids = [];
+                        message.sharedFolderUids.push(reader.bytes());
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a RecordsChangedRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Router.RecordsChangedRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Router.RecordsChangedRequest} RecordsChangedRequest
+         */
+        RecordsChangedRequest.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Router.RecordsChangedRequest)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Router.RecordsChangedRequest: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Router.RecordsChangedRequest();
+            if (object.sharedFolderUids) {
+                if (!Array.isArray(object.sharedFolderUids))
+                    throw TypeError(".Router.RecordsChangedRequest.sharedFolderUids: array expected");
+                message.sharedFolderUids = [];
+                for (let i = 0; i < object.sharedFolderUids.length; ++i)
+                    if (typeof object.sharedFolderUids[i] === "string")
+                        $util.base64.decode(object.sharedFolderUids[i], message.sharedFolderUids[i] = $util.newBuffer($util.base64.length(object.sharedFolderUids[i])), 0);
+                    else if (object.sharedFolderUids[i].length >= 0)
+                        message.sharedFolderUids[i] = object.sharedFolderUids[i];
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RecordsChangedRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Router.RecordsChangedRequest
+         * @static
+         * @param {Router.RecordsChangedRequest} message RecordsChangedRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RecordsChangedRequest.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.sharedFolderUids = [];
+            if (message.sharedFolderUids && message.sharedFolderUids.length) {
+                object.sharedFolderUids = [];
+                for (let j = 0; j < message.sharedFolderUids.length; ++j)
+                    object.sharedFolderUids[j] = options.bytes === String ? $util.base64.encode(message.sharedFolderUids[j], 0, message.sharedFolderUids[j].length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderUids[j]) : message.sharedFolderUids[j];
+            }
+            return object;
+        };
+
+        /**
+         * Converts this RecordsChangedRequest to JSON.
+         * @function toJSON
+         * @memberof Router.RecordsChangedRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RecordsChangedRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for RecordsChangedRequest
+         * @function getTypeUrl
+         * @memberof Router.RecordsChangedRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        RecordsChangedRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Router.RecordsChangedRequest";
+        };
+
+        return RecordsChangedRequest;
     })();
 
     return Router;

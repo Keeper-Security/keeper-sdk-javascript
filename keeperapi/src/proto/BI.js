@@ -1,5 +1,6 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { google } from './google.js';
 
 export const BI = $root.BI = (() => {
 
@@ -13271,7 +13272,7 @@ export const BI = $root.BI = (() => {
             if (message.eventTime != null && Object.hasOwnProperty.call(message, "eventTime"))
                 writer.uint32(/* id 3, wireType 0 =*/24).int64(message.eventTime);
             if (message.attributes != null && Object.hasOwnProperty.call(message, "attributes"))
-                $root.google.protobuf.Struct.encode(message.attributes, writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
+                google.protobuf.Struct.encode(message.attributes, writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
             return writer;
         };
 
@@ -13312,7 +13313,7 @@ export const BI = $root.BI = (() => {
                         break;
                     }
                 case 4: {
-                        message.attributes = $root.google.protobuf.Struct.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.attributes = google.protobuf.Struct.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 default:
@@ -13395,7 +13396,7 @@ export const BI = $root.BI = (() => {
             if (object.attributes != null) {
                 if (!$util.isObject(object.attributes))
                     throw TypeError(".BI.EventRequest.attributes: object expected");
-                message.attributes = $root.google.protobuf.Struct.fromObject(object.attributes, long + 1);
+                message.attributes = google.protobuf.Struct.fromObject(object.attributes, long + 1);
             }
             return message;
         };
@@ -13439,7 +13440,7 @@ export const BI = $root.BI = (() => {
                 else
                     object.eventTime = options.longs === String ? $util.Long.prototype.toString.call(message.eventTime) : options.longs === Number ? new $util.LongBits(message.eventTime.low >>> 0, message.eventTime.high >>> 0).toNumber() : message.eventTime;
             if (message.attributes != null && Object.hasOwnProperty.call(message, "attributes"))
-                object.attributes = $root.google.protobuf.Struct.toObject(message.attributes, options, q + 1);
+                object.attributes = google.protobuf.Struct.toObject(message.attributes, options, q + 1);
             return object;
         };
 

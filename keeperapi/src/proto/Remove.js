@@ -1,5 +1,6 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { Folder } from './Folder.js';
 
 export const folder = $root.folder = (() => {
 
@@ -171,6 +172,49 @@ export const folder = $root.folder = (() => {
                  * @variation 2
                  */
 
+                /**
+                 * Callback as used by {@link folder.v3.remove.RemoveService#trashcanEmpty}.
+                 * @memberof folder.v3.remove.RemoveService
+                 * @typedef TrashcanEmptyCallback
+                 * @type {function}
+                 * @param {Error|null} error Error, if any
+                 * @param {folder.v3.remove.EmptyTrashcanResponse} [response] EmptyTrashcanResponse
+                 */
+
+                /**
+                 * Permanently delete everything in the caller's trash (KA-9109).
+                 * PREVIEW: Enumerates the trash, returns the aggregate impact, the items it
+                 * will refuse, and a signed confirmation token.
+                 * CONFIRM: Validates the token, re-checks, and destroys the items.
+                 * Has no per-item UID input, hence its own rpc rather than an operation type
+                 * on remove_record / remove_folder.
+                 * @function trashcanEmpty
+                 * @memberof folder.v3.remove.RemoveService
+                 * @instance
+                 * @param {folder.v3.remove.IEmptyTrashcanRequest} request EmptyTrashcanRequest message or plain object
+                 * @param {folder.v3.remove.RemoveService.TrashcanEmptyCallback} callback Node-style callback called with the error, if any, and EmptyTrashcanResponse
+                 * @returns {undefined}
+                 * @variation 1
+                 */
+                Object.defineProperty(RemoveService.prototype.trashcanEmpty = function trashcanEmpty(request, callback) {
+                    return $protobuf.rpc.Service.prototype.rpcCall.call(this, trashcanEmpty, $root.folder.v3.remove.EmptyTrashcanRequest, $root.folder.v3.remove.EmptyTrashcanResponse, request, callback);
+                }, "name", { value: "TrashcanEmpty" });
+
+                /**
+                 * Permanently delete everything in the caller's trash (KA-9109).
+                 * PREVIEW: Enumerates the trash, returns the aggregate impact, the items it
+                 * will refuse, and a signed confirmation token.
+                 * CONFIRM: Validates the token, re-checks, and destroys the items.
+                 * Has no per-item UID input, hence its own rpc rather than an operation type
+                 * on remove_record / remove_folder.
+                 * @function trashcanEmpty
+                 * @memberof folder.v3.remove.RemoveService
+                 * @instance
+                 * @param {folder.v3.remove.IEmptyTrashcanRequest} request EmptyTrashcanRequest message or plain object
+                 * @returns {Promise<folder.v3.remove.EmptyTrashcanResponse>} Promise
+                 * @variation 2
+                 */
+
                 return RemoveService;
             })();
 
@@ -196,6 +240,7 @@ export const folder = $root.folder = (() => {
              * @property {number} UNLINK_FROM_FOLDER=1 UNLINK_FROM_FOLDER value
              * @property {number} MOVE_TO_FOLDER_TRASH=2 MOVE_TO_FOLDER_TRASH value
              * @property {number} MOVE_TO_OWNER_TRASH=3 MOVE_TO_OWNER_TRASH value
+             * @property {number} DELETE_PERMANENT=4 DELETE_PERMANENT value
              */
             remove.RecordOperationType = (function() {
                 const valuesById = {}, values = Object.create(valuesById);
@@ -203,6 +248,7 @@ export const folder = $root.folder = (() => {
                 values[valuesById[1] = "UNLINK_FROM_FOLDER"] = 1;
                 values[valuesById[2] = "MOVE_TO_FOLDER_TRASH"] = 2;
                 values[valuesById[3] = "MOVE_TO_OWNER_TRASH"] = 3;
+                values[valuesById[4] = "DELETE_PERMANENT"] = 4;
                 return values;
             })();
 
@@ -234,6 +280,9 @@ export const folder = $root.folder = (() => {
              * @property {number} REMOVE_ERROR_TRASHCAN_FOLDER=3 REMOVE_ERROR_TRASHCAN_FOLDER value
              * @property {number} REMOVE_ERROR_ROOT_FOLDER=4 REMOVE_ERROR_ROOT_FOLDER value
              * @property {number} REMOVE_ERROR_DESCENDANT_DENIED=5 REMOVE_ERROR_DESCENDANT_DENIED value
+             * @property {number} REMOVE_ERROR_NOT_IN_TRASH=6 REMOVE_ERROR_NOT_IN_TRASH value
+             * @property {number} REMOVE_ERROR_RETENTION_NOT_MET=7 REMOVE_ERROR_RETENTION_NOT_MET value
+             * @property {number} REMOVE_ERROR_STILL_REFERENCED=8 REMOVE_ERROR_STILL_REFERENCED value
              */
             remove.RemoveErrorCode = (function() {
                 const valuesById = {}, values = Object.create(valuesById);
@@ -243,6 +292,9 @@ export const folder = $root.folder = (() => {
                 values[valuesById[3] = "REMOVE_ERROR_TRASHCAN_FOLDER"] = 3;
                 values[valuesById[4] = "REMOVE_ERROR_ROOT_FOLDER"] = 4;
                 values[valuesById[5] = "REMOVE_ERROR_DESCENDANT_DENIED"] = 5;
+                values[valuesById[6] = "REMOVE_ERROR_NOT_IN_TRASH"] = 6;
+                values[valuesById[7] = "REMOVE_ERROR_RETENTION_NOT_MET"] = 7;
+                values[valuesById[8] = "REMOVE_ERROR_STILL_REFERENCED"] = 8;
                 return values;
             })();
 
@@ -451,6 +503,10 @@ export const folder = $root.folder = (() => {
                     case "MOVE_TO_OWNER_TRASH":
                     case 3:
                         message.operationType = 3;
+                        break;
+                    case "DELETE_PERMANENT":
+                    case 4:
+                        message.operationType = 4;
                         break;
                     }
                     return message;
@@ -2549,6 +2605,18 @@ export const folder = $root.folder = (() => {
                     case 5:
                         message.code = 5;
                         break;
+                    case "REMOVE_ERROR_NOT_IN_TRASH":
+                    case 6:
+                        message.code = 6;
+                        break;
+                    case "REMOVE_ERROR_RETENTION_NOT_MET":
+                    case 7:
+                        message.code = 7;
+                        break;
+                    case "REMOVE_ERROR_STILL_REFERENCED":
+                    case 8:
+                        message.code = 8;
+                        break;
                     }
                     if (object.message != null)
                         message.message = String(object.message);
@@ -3358,6 +3426,10 @@ export const folder = $root.folder = (() => {
                     case "MOVE_TO_OWNER_TRASH":
                     case 3:
                         message.operationType = 3;
+                        break;
+                    case "DELETE_PERMANENT":
+                    case 4:
+                        message.operationType = 4;
                         break;
                     }
                     return message;
@@ -4935,6 +5007,578 @@ export const folder = $root.folder = (() => {
                 return TrashcanRestoreRequest;
             })();
 
+            remove.EmptyTrashcanRequest = (function() {
+
+                /**
+                 * Properties of an EmptyTrashcanRequest.
+                 * @memberof folder.v3.remove
+                 * @interface IEmptyTrashcanRequest
+                 * @property {folder.v3.remove.RemoveAction|null} [action] EmptyTrashcanRequest action
+                 * @property {Uint8Array|null} [confirmationToken] EmptyTrashcanRequest confirmationToken
+                 * @property {Uint8Array|null} [trashcanUid] EmptyTrashcanRequest trashcanUid
+                 */
+
+                /**
+                 * Constructs a new EmptyTrashcanRequest.
+                 * @memberof folder.v3.remove
+                 * @classdesc Represents an EmptyTrashcanRequest.
+                 * @implements IEmptyTrashcanRequest
+                 * @constructor
+                 * @param {folder.v3.remove.IEmptyTrashcanRequest=} [properties] Properties to set
+                 */
+                function EmptyTrashcanRequest(properties) {
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * EmptyTrashcanRequest action.
+                 * @member {folder.v3.remove.RemoveAction} action
+                 * @memberof folder.v3.remove.EmptyTrashcanRequest
+                 * @instance
+                 */
+                EmptyTrashcanRequest.prototype.action = 0;
+
+                /**
+                 * EmptyTrashcanRequest confirmationToken.
+                 * @member {Uint8Array} confirmationToken
+                 * @memberof folder.v3.remove.EmptyTrashcanRequest
+                 * @instance
+                 */
+                EmptyTrashcanRequest.prototype.confirmationToken = $util.newBuffer([]);
+
+                /**
+                 * EmptyTrashcanRequest trashcanUid.
+                 * @member {Uint8Array} trashcanUid
+                 * @memberof folder.v3.remove.EmptyTrashcanRequest
+                 * @instance
+                 */
+                EmptyTrashcanRequest.prototype.trashcanUid = $util.newBuffer([]);
+
+                /**
+                 * Creates a new EmptyTrashcanRequest instance using the specified properties.
+                 * @function create
+                 * @memberof folder.v3.remove.EmptyTrashcanRequest
+                 * @static
+                 * @param {folder.v3.remove.IEmptyTrashcanRequest=} [properties] Properties to set
+                 * @returns {folder.v3.remove.EmptyTrashcanRequest} EmptyTrashcanRequest instance
+                 */
+                EmptyTrashcanRequest.create = function create(properties) {
+                    return new EmptyTrashcanRequest(properties);
+                };
+
+                /**
+                 * Encodes the specified EmptyTrashcanRequest message. Does not implicitly {@link folder.v3.remove.EmptyTrashcanRequest.verify|verify} messages.
+                 * @function encode
+                 * @memberof folder.v3.remove.EmptyTrashcanRequest
+                 * @static
+                 * @param {folder.v3.remove.IEmptyTrashcanRequest} message EmptyTrashcanRequest message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                EmptyTrashcanRequest.encode = function encode(message, writer, q) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                        writer.uint32(/* id 1, wireType 0 =*/8).int32(message.action);
+                    if (message.confirmationToken != null && Object.hasOwnProperty.call(message, "confirmationToken"))
+                        writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.confirmationToken);
+                    if (message.trashcanUid != null && Object.hasOwnProperty.call(message, "trashcanUid"))
+                        writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.trashcanUid);
+                    return writer;
+                };
+
+                /**
+                 * Decodes an EmptyTrashcanRequest message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof folder.v3.remove.EmptyTrashcanRequest
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {folder.v3.remove.EmptyTrashcanRequest} EmptyTrashcanRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                EmptyTrashcanRequest.decode = function decode(reader, length, error, long) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $Reader.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.folder.v3.remove.EmptyTrashcanRequest();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        if (tag === error)
+                            break;
+                        switch (tag >>> 3) {
+                        case 1: {
+                                message.action = reader.int32();
+                                break;
+                            }
+                        case 2: {
+                                message.confirmationToken = reader.bytes();
+                                break;
+                            }
+                        case 3: {
+                                message.trashcanUid = reader.bytes();
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7, long);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates an EmptyTrashcanRequest message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof folder.v3.remove.EmptyTrashcanRequest
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {folder.v3.remove.EmptyTrashcanRequest} EmptyTrashcanRequest
+                 */
+                EmptyTrashcanRequest.fromObject = function fromObject(object, long) {
+                    if (object instanceof $root.folder.v3.remove.EmptyTrashcanRequest)
+                        return object;
+                    if (!$util.isObject(object))
+                        throw TypeError(".folder.v3.remove.EmptyTrashcanRequest: object expected");
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $util.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let message = new $root.folder.v3.remove.EmptyTrashcanRequest();
+                    switch (object.action) {
+                    default:
+                        if (typeof object.action === "number") {
+                            message.action = object.action;
+                            break;
+                        }
+                        break;
+                    case "REMOVE_ACTION_PREVIEW":
+                    case 0:
+                        message.action = 0;
+                        break;
+                    case "REMOVE_ACTION_CONFIRM":
+                    case 1:
+                        message.action = 1;
+                        break;
+                    }
+                    if (object.confirmationToken != null)
+                        if (typeof object.confirmationToken === "string")
+                            $util.base64.decode(object.confirmationToken, message.confirmationToken = $util.newBuffer($util.base64.length(object.confirmationToken)), 0);
+                        else if (object.confirmationToken.length >= 0)
+                            message.confirmationToken = object.confirmationToken;
+                    if (object.trashcanUid != null)
+                        if (typeof object.trashcanUid === "string")
+                            $util.base64.decode(object.trashcanUid, message.trashcanUid = $util.newBuffer($util.base64.length(object.trashcanUid)), 0);
+                        else if (object.trashcanUid.length >= 0)
+                            message.trashcanUid = object.trashcanUid;
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from an EmptyTrashcanRequest message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof folder.v3.remove.EmptyTrashcanRequest
+                 * @static
+                 * @param {folder.v3.remove.EmptyTrashcanRequest} message EmptyTrashcanRequest
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                EmptyTrashcanRequest.toObject = function toObject(message, options, q) {
+                    if (!options)
+                        options = {};
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    let object = {};
+                    if (options.defaults) {
+                        object.action = options.enums === String ? "REMOVE_ACTION_PREVIEW" : 0;
+                        if (options.bytes === String)
+                            object.confirmationToken = "";
+                        else {
+                            object.confirmationToken = [];
+                            if (options.bytes !== Array)
+                                object.confirmationToken = $util.newBuffer(object.confirmationToken);
+                        }
+                        if (options.bytes === String)
+                            object.trashcanUid = "";
+                        else {
+                            object.trashcanUid = [];
+                            if (options.bytes !== Array)
+                                object.trashcanUid = $util.newBuffer(object.trashcanUid);
+                        }
+                    }
+                    if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                        object.action = options.enums === String ? $root.folder.v3.remove.RemoveAction[message.action] === undefined ? message.action : $root.folder.v3.remove.RemoveAction[message.action] : message.action;
+                    if (message.confirmationToken != null && Object.hasOwnProperty.call(message, "confirmationToken"))
+                        object.confirmationToken = options.bytes === String ? $util.base64.encode(message.confirmationToken, 0, message.confirmationToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.confirmationToken) : message.confirmationToken;
+                    if (message.trashcanUid != null && Object.hasOwnProperty.call(message, "trashcanUid"))
+                        object.trashcanUid = options.bytes === String ? $util.base64.encode(message.trashcanUid, 0, message.trashcanUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.trashcanUid) : message.trashcanUid;
+                    return object;
+                };
+
+                /**
+                 * Converts this EmptyTrashcanRequest to JSON.
+                 * @function toJSON
+                 * @memberof folder.v3.remove.EmptyTrashcanRequest
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                EmptyTrashcanRequest.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for EmptyTrashcanRequest
+                 * @function getTypeUrl
+                 * @memberof folder.v3.remove.EmptyTrashcanRequest
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                EmptyTrashcanRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/folder.v3.remove.EmptyTrashcanRequest";
+                };
+
+                return EmptyTrashcanRequest;
+            })();
+
+            remove.EmptyTrashcanResponse = (function() {
+
+                /**
+                 * Properties of an EmptyTrashcanResponse.
+                 * @memberof folder.v3.remove
+                 * @interface IEmptyTrashcanResponse
+                 * @property {Uint8Array|null} [confirmationToken] EmptyTrashcanResponse confirmationToken
+                 * @property {number|null} [tokenExpiresAt] EmptyTrashcanResponse tokenExpiresAt
+                 * @property {folder.v3.remove.IImpact|null} [impact] EmptyTrashcanResponse impact
+                 * @property {Array.<folder.v3.remove.IRemoveResult>|null} [results] EmptyTrashcanResponse results
+                 * @property {string|null} [errorMessage] EmptyTrashcanResponse errorMessage
+                 * @property {boolean|null} [moreRemaining] EmptyTrashcanResponse moreRemaining
+                 */
+
+                /**
+                 * Constructs a new EmptyTrashcanResponse.
+                 * @memberof folder.v3.remove
+                 * @classdesc Represents an EmptyTrashcanResponse.
+                 * @implements IEmptyTrashcanResponse
+                 * @constructor
+                 * @param {folder.v3.remove.IEmptyTrashcanResponse=} [properties] Properties to set
+                 */
+                function EmptyTrashcanResponse(properties) {
+                    this.results = [];
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * EmptyTrashcanResponse confirmationToken.
+                 * @member {Uint8Array} confirmationToken
+                 * @memberof folder.v3.remove.EmptyTrashcanResponse
+                 * @instance
+                 */
+                EmptyTrashcanResponse.prototype.confirmationToken = $util.newBuffer([]);
+
+                /**
+                 * EmptyTrashcanResponse tokenExpiresAt.
+                 * @member {number} tokenExpiresAt
+                 * @memberof folder.v3.remove.EmptyTrashcanResponse
+                 * @instance
+                 */
+                EmptyTrashcanResponse.prototype.tokenExpiresAt = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+                /**
+                 * EmptyTrashcanResponse impact.
+                 * @member {folder.v3.remove.IImpact|null|undefined} impact
+                 * @memberof folder.v3.remove.EmptyTrashcanResponse
+                 * @instance
+                 */
+                EmptyTrashcanResponse.prototype.impact = null;
+
+                /**
+                 * EmptyTrashcanResponse results.
+                 * @member {Array.<folder.v3.remove.IRemoveResult>} results
+                 * @memberof folder.v3.remove.EmptyTrashcanResponse
+                 * @instance
+                 */
+                EmptyTrashcanResponse.prototype.results = $util.emptyArray;
+
+                /**
+                 * EmptyTrashcanResponse errorMessage.
+                 * @member {string} errorMessage
+                 * @memberof folder.v3.remove.EmptyTrashcanResponse
+                 * @instance
+                 */
+                EmptyTrashcanResponse.prototype.errorMessage = "";
+
+                /**
+                 * EmptyTrashcanResponse moreRemaining.
+                 * @member {boolean} moreRemaining
+                 * @memberof folder.v3.remove.EmptyTrashcanResponse
+                 * @instance
+                 */
+                EmptyTrashcanResponse.prototype.moreRemaining = false;
+
+                /**
+                 * Creates a new EmptyTrashcanResponse instance using the specified properties.
+                 * @function create
+                 * @memberof folder.v3.remove.EmptyTrashcanResponse
+                 * @static
+                 * @param {folder.v3.remove.IEmptyTrashcanResponse=} [properties] Properties to set
+                 * @returns {folder.v3.remove.EmptyTrashcanResponse} EmptyTrashcanResponse instance
+                 */
+                EmptyTrashcanResponse.create = function create(properties) {
+                    return new EmptyTrashcanResponse(properties);
+                };
+
+                /**
+                 * Encodes the specified EmptyTrashcanResponse message. Does not implicitly {@link folder.v3.remove.EmptyTrashcanResponse.verify|verify} messages.
+                 * @function encode
+                 * @memberof folder.v3.remove.EmptyTrashcanResponse
+                 * @static
+                 * @param {folder.v3.remove.IEmptyTrashcanResponse} message EmptyTrashcanResponse message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                EmptyTrashcanResponse.encode = function encode(message, writer, q) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    if (message.confirmationToken != null && Object.hasOwnProperty.call(message, "confirmationToken"))
+                        writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.confirmationToken);
+                    if (message.tokenExpiresAt != null && Object.hasOwnProperty.call(message, "tokenExpiresAt"))
+                        writer.uint32(/* id 2, wireType 0 =*/16).int64(message.tokenExpiresAt);
+                    if (message.impact != null && Object.hasOwnProperty.call(message, "impact"))
+                        $root.folder.v3.remove.Impact.encode(message.impact, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+                    if (message.results != null && message.results.length)
+                        for (let i = 0; i < message.results.length; ++i)
+                            $root.folder.v3.remove.RemoveResult.encode(message.results[i], writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
+                    if (message.errorMessage != null && Object.hasOwnProperty.call(message, "errorMessage"))
+                        writer.uint32(/* id 5, wireType 2 =*/42).string(message.errorMessage);
+                    if (message.moreRemaining != null && Object.hasOwnProperty.call(message, "moreRemaining"))
+                        writer.uint32(/* id 6, wireType 0 =*/48).bool(message.moreRemaining);
+                    return writer;
+                };
+
+                /**
+                 * Decodes an EmptyTrashcanResponse message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof folder.v3.remove.EmptyTrashcanResponse
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {folder.v3.remove.EmptyTrashcanResponse} EmptyTrashcanResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                EmptyTrashcanResponse.decode = function decode(reader, length, error, long) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $Reader.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.folder.v3.remove.EmptyTrashcanResponse();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        if (tag === error)
+                            break;
+                        switch (tag >>> 3) {
+                        case 1: {
+                                message.confirmationToken = reader.bytes();
+                                break;
+                            }
+                        case 2: {
+                                message.tokenExpiresAt = reader.int64();
+                                break;
+                            }
+                        case 3: {
+                                message.impact = $root.folder.v3.remove.Impact.decode(reader, reader.uint32(), undefined, long + 1);
+                                break;
+                            }
+                        case 4: {
+                                if (!(message.results && message.results.length))
+                                    message.results = [];
+                                message.results.push($root.folder.v3.remove.RemoveResult.decode(reader, reader.uint32(), undefined, long + 1));
+                                break;
+                            }
+                        case 5: {
+                                message.errorMessage = reader.string();
+                                break;
+                            }
+                        case 6: {
+                                message.moreRemaining = reader.bool();
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7, long);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates an EmptyTrashcanResponse message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof folder.v3.remove.EmptyTrashcanResponse
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {folder.v3.remove.EmptyTrashcanResponse} EmptyTrashcanResponse
+                 */
+                EmptyTrashcanResponse.fromObject = function fromObject(object, long) {
+                    if (object instanceof $root.folder.v3.remove.EmptyTrashcanResponse)
+                        return object;
+                    if (!$util.isObject(object))
+                        throw TypeError(".folder.v3.remove.EmptyTrashcanResponse: object expected");
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $util.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let message = new $root.folder.v3.remove.EmptyTrashcanResponse();
+                    if (object.confirmationToken != null)
+                        if (typeof object.confirmationToken === "string")
+                            $util.base64.decode(object.confirmationToken, message.confirmationToken = $util.newBuffer($util.base64.length(object.confirmationToken)), 0);
+                        else if (object.confirmationToken.length >= 0)
+                            message.confirmationToken = object.confirmationToken;
+                    if (object.tokenExpiresAt != null)
+                        if ($util.Long)
+                            message.tokenExpiresAt = $util.Long.fromValue(object.tokenExpiresAt, false);
+                        else if (typeof object.tokenExpiresAt === "string")
+                            message.tokenExpiresAt = parseInt(object.tokenExpiresAt, 10);
+                        else if (typeof object.tokenExpiresAt === "number")
+                            message.tokenExpiresAt = object.tokenExpiresAt;
+                        else if (typeof object.tokenExpiresAt === "object")
+                            message.tokenExpiresAt = new $util.LongBits(object.tokenExpiresAt.low >>> 0, object.tokenExpiresAt.high >>> 0).toNumber();
+                    if (object.impact != null) {
+                        if (!$util.isObject(object.impact))
+                            throw TypeError(".folder.v3.remove.EmptyTrashcanResponse.impact: object expected");
+                        message.impact = $root.folder.v3.remove.Impact.fromObject(object.impact, long + 1);
+                    }
+                    if (object.results) {
+                        if (!Array.isArray(object.results))
+                            throw TypeError(".folder.v3.remove.EmptyTrashcanResponse.results: array expected");
+                        message.results = [];
+                        for (let i = 0; i < object.results.length; ++i) {
+                            if (!$util.isObject(object.results[i]))
+                                throw TypeError(".folder.v3.remove.EmptyTrashcanResponse.results: object expected");
+                            message.results[i] = $root.folder.v3.remove.RemoveResult.fromObject(object.results[i], long + 1);
+                        }
+                    }
+                    if (object.errorMessage != null)
+                        message.errorMessage = String(object.errorMessage);
+                    if (object.moreRemaining != null)
+                        message.moreRemaining = Boolean(object.moreRemaining);
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from an EmptyTrashcanResponse message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof folder.v3.remove.EmptyTrashcanResponse
+                 * @static
+                 * @param {folder.v3.remove.EmptyTrashcanResponse} message EmptyTrashcanResponse
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                EmptyTrashcanResponse.toObject = function toObject(message, options, q) {
+                    if (!options)
+                        options = {};
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    let object = {};
+                    if (options.arrays || options.defaults)
+                        object.results = [];
+                    if (options.defaults) {
+                        if (options.bytes === String)
+                            object.confirmationToken = "";
+                        else {
+                            object.confirmationToken = [];
+                            if (options.bytes !== Array)
+                                object.confirmationToken = $util.newBuffer(object.confirmationToken);
+                        }
+                        if ($util.Long) {
+                            let long = new $util.Long(0, 0, false);
+                            object.tokenExpiresAt = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                        } else
+                            object.tokenExpiresAt = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                        object.impact = null;
+                        object.errorMessage = "";
+                        object.moreRemaining = false;
+                    }
+                    if (message.confirmationToken != null && Object.hasOwnProperty.call(message, "confirmationToken"))
+                        object.confirmationToken = options.bytes === String ? $util.base64.encode(message.confirmationToken, 0, message.confirmationToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.confirmationToken) : message.confirmationToken;
+                    if (message.tokenExpiresAt != null && Object.hasOwnProperty.call(message, "tokenExpiresAt"))
+                        if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                            object.tokenExpiresAt = typeof message.tokenExpiresAt === "number" ? BigInt(message.tokenExpiresAt) : $util.Long.fromBits(message.tokenExpiresAt.low >>> 0, message.tokenExpiresAt.high >>> 0, false).toBigInt();
+                        else if (typeof message.tokenExpiresAt === "number")
+                            object.tokenExpiresAt = options.longs === String ? String(message.tokenExpiresAt) : message.tokenExpiresAt;
+                        else
+                            object.tokenExpiresAt = options.longs === String ? $util.Long.prototype.toString.call(message.tokenExpiresAt) : options.longs === Number ? new $util.LongBits(message.tokenExpiresAt.low >>> 0, message.tokenExpiresAt.high >>> 0).toNumber() : message.tokenExpiresAt;
+                    if (message.impact != null && Object.hasOwnProperty.call(message, "impact"))
+                        object.impact = $root.folder.v3.remove.Impact.toObject(message.impact, options, q + 1);
+                    if (message.results && message.results.length) {
+                        object.results = [];
+                        for (let j = 0; j < message.results.length; ++j)
+                            object.results[j] = $root.folder.v3.remove.RemoveResult.toObject(message.results[j], options, q + 1);
+                    }
+                    if (message.errorMessage != null && Object.hasOwnProperty.call(message, "errorMessage"))
+                        object.errorMessage = message.errorMessage;
+                    if (message.moreRemaining != null && Object.hasOwnProperty.call(message, "moreRemaining"))
+                        object.moreRemaining = message.moreRemaining;
+                    return object;
+                };
+
+                /**
+                 * Converts this EmptyTrashcanResponse to JSON.
+                 * @function toJSON
+                 * @memberof folder.v3.remove.EmptyTrashcanResponse
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                EmptyTrashcanResponse.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for EmptyTrashcanResponse
+                 * @function getTypeUrl
+                 * @memberof folder.v3.remove.EmptyTrashcanResponse
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                EmptyTrashcanResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/folder.v3.remove.EmptyTrashcanResponse";
+                };
+
+                return EmptyTrashcanResponse;
+            })();
+
             return remove;
         })();
 
@@ -5803,7 +6447,7 @@ export const folder = $root.folder = (() => {
                     writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
                 if (message.accessors != null && message.accessors.length)
                     for (let i = 0; i < message.accessors.length; ++i)
-                        $root.Folder.FolderAccessData.encode(message.accessors[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                        Folder.FolderAccessData.encode(message.accessors[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
                 if (message.error != null && Object.hasOwnProperty.call(message, "error"))
                     $root.folder.v3.FolderAccessError.encode(message.error, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
                 return writer;
@@ -5840,7 +6484,7 @@ export const folder = $root.folder = (() => {
                     case 2: {
                             if (!(message.accessors && message.accessors.length))
                                 message.accessors = [];
-                            message.accessors.push($root.Folder.FolderAccessData.decode(reader, reader.uint32(), undefined, long + 1));
+                            message.accessors.push(Folder.FolderAccessData.decode(reader, reader.uint32(), undefined, long + 1));
                             break;
                         }
                     case 3: {
@@ -5885,7 +6529,7 @@ export const folder = $root.folder = (() => {
                     for (let i = 0; i < object.accessors.length; ++i) {
                         if (!$util.isObject(object.accessors[i]))
                             throw TypeError(".folder.v3.GetFolderAccessResult.accessors: object expected");
-                        message.accessors[i] = $root.Folder.FolderAccessData.fromObject(object.accessors[i], long + 1);
+                        message.accessors[i] = Folder.FolderAccessData.fromObject(object.accessors[i], long + 1);
                     }
                 }
                 if (object.error != null) {
@@ -5928,7 +6572,7 @@ export const folder = $root.folder = (() => {
                 if (message.accessors && message.accessors.length) {
                     object.accessors = [];
                     for (let j = 0; j < message.accessors.length; ++j)
-                        object.accessors[j] = $root.Folder.FolderAccessData.toObject(message.accessors[j], options, q + 1);
+                        object.accessors[j] = Folder.FolderAccessData.toObject(message.accessors[j], options, q + 1);
                 }
                 if (message.error != null && Object.hasOwnProperty.call(message, "error")) {
                     object.error = $root.folder.v3.FolderAccessError.toObject(message.error, options, q + 1);
@@ -6152,7 +6796,7 @@ export const folder = $root.folder = (() => {
                     object.message = "";
                 }
                 if (message.status != null && Object.hasOwnProperty.call(message, "status"))
-                    object.status = options.enums === String ? $root.Folder.FolderModifyStatus[message.status] === undefined ? message.status : $root.Folder.FolderModifyStatus[message.status] : message.status;
+                    object.status = options.enums === String ? Folder.FolderModifyStatus[message.status] === undefined ? message.status : Folder.FolderModifyStatus[message.status] : message.status;
                 if (message.message != null && Object.hasOwnProperty.call(message, "message"))
                     object.message = message.message;
                 return object;

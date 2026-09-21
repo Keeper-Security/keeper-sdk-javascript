@@ -1,5 +1,6 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { Authentication } from './Authentication.js';
 
 export const SsoCloud = $root.SsoCloud = (() => {
 
@@ -6547,7 +6548,7 @@ export const SsoCloud = $root.SsoCloud = (() => {
             if (message.keyId != null && Object.hasOwnProperty.call(message, "keyId"))
                 object.keyId = message.keyId;
             if (message.supportedLanguage != null && Object.hasOwnProperty.call(message, "supportedLanguage"))
-                object.supportedLanguage = options.enums === String ? $root.Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : $root.Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
+                object.supportedLanguage = options.enums === String ? Authentication.SupportedLanguage[message.supportedLanguage] === undefined ? message.supportedLanguage : Authentication.SupportedLanguage[message.supportedLanguage] : message.supportedLanguage;
             if (message.checksum != null && Object.hasOwnProperty.call(message, "checksum"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
                     object.checksum = typeof message.checksum === "number" ? BigInt(message.checksum) : $util.Long.fromBits(message.checksum.low >>> 0, message.checksum.high >>> 0, true).toBigInt();

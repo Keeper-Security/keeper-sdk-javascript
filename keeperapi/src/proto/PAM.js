@@ -1,5 +1,7 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { Enterprise } from './Enterprise.js';
+import { Records } from './Records.js';
 
 export const PAM = $root.PAM = (() => {
 
@@ -5410,7 +5412,7 @@ export const PAM = $root.PAM = (() => {
             if (message.applicationUid != null && Object.hasOwnProperty.call(message, "applicationUid"))
                 object.applicationUid = options.bytes === String ? $util.base64.encode(message.applicationUid, 0, message.applicationUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.applicationUid) : message.applicationUid;
             if (message.appClientType != null && Object.hasOwnProperty.call(message, "appClientType"))
-                object.appClientType = options.enums === String ? $root.Enterprise.AppClientType[message.appClientType] === undefined ? message.appClientType : $root.Enterprise.AppClientType[message.appClientType] : message.appClientType;
+                object.appClientType = options.enums === String ? Enterprise.AppClientType[message.appClientType] === undefined ? message.appClientType : Enterprise.AppClientType[message.appClientType] : message.appClientType;
             if (message.isInitialized != null && Object.hasOwnProperty.call(message, "isInitialized"))
                 object.isInitialized = message.isInitialized;
             if (message.maxInstanceCount != null && Object.hasOwnProperty.call(message, "maxInstanceCount"))
@@ -6082,6 +6084,408 @@ export const PAM = $root.PAM = (() => {
         return PAMConfigurationController;
     })();
 
+    PAM.PAMConfigurationControllerInfo = (function() {
+
+        /**
+         * Properties of a PAMConfigurationControllerInfo.
+         * @memberof PAM
+         * @interface IPAMConfigurationControllerInfo
+         * @property {Uint8Array|null} [configurationUid] PAMConfigurationControllerInfo configurationUid
+         * @property {PAM.IPAMController|null} [controller] PAMConfigurationControllerInfo controller
+         */
+
+        /**
+         * Constructs a new PAMConfigurationControllerInfo.
+         * @memberof PAM
+         * @classdesc Represents a PAMConfigurationControllerInfo.
+         * @implements IPAMConfigurationControllerInfo
+         * @constructor
+         * @param {PAM.IPAMConfigurationControllerInfo=} [properties] Properties to set
+         */
+        function PAMConfigurationControllerInfo(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PAMConfigurationControllerInfo configurationUid.
+         * @member {Uint8Array} configurationUid
+         * @memberof PAM.PAMConfigurationControllerInfo
+         * @instance
+         */
+        PAMConfigurationControllerInfo.prototype.configurationUid = $util.newBuffer([]);
+
+        /**
+         * PAMConfigurationControllerInfo controller.
+         * @member {PAM.IPAMController|null|undefined} controller
+         * @memberof PAM.PAMConfigurationControllerInfo
+         * @instance
+         */
+        PAMConfigurationControllerInfo.prototype.controller = null;
+
+        /**
+         * Creates a new PAMConfigurationControllerInfo instance using the specified properties.
+         * @function create
+         * @memberof PAM.PAMConfigurationControllerInfo
+         * @static
+         * @param {PAM.IPAMConfigurationControllerInfo=} [properties] Properties to set
+         * @returns {PAM.PAMConfigurationControllerInfo} PAMConfigurationControllerInfo instance
+         */
+        PAMConfigurationControllerInfo.create = function create(properties) {
+            return new PAMConfigurationControllerInfo(properties);
+        };
+
+        /**
+         * Encodes the specified PAMConfigurationControllerInfo message. Does not implicitly {@link PAM.PAMConfigurationControllerInfo.verify|verify} messages.
+         * @function encode
+         * @memberof PAM.PAMConfigurationControllerInfo
+         * @static
+         * @param {PAM.IPAMConfigurationControllerInfo} message PAMConfigurationControllerInfo message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PAMConfigurationControllerInfo.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.configurationUid != null && Object.hasOwnProperty.call(message, "configurationUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.configurationUid);
+            if (message.controller != null && Object.hasOwnProperty.call(message, "controller"))
+                $root.PAM.PAMController.encode(message.controller, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a PAMConfigurationControllerInfo message from the specified reader or buffer.
+         * @function decode
+         * @memberof PAM.PAMConfigurationControllerInfo
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {PAM.PAMConfigurationControllerInfo} PAMConfigurationControllerInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PAMConfigurationControllerInfo.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.PAM.PAMConfigurationControllerInfo();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.configurationUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.controller = $root.PAM.PAMController.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a PAMConfigurationControllerInfo message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof PAM.PAMConfigurationControllerInfo
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {PAM.PAMConfigurationControllerInfo} PAMConfigurationControllerInfo
+         */
+        PAMConfigurationControllerInfo.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.PAM.PAMConfigurationControllerInfo)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".PAM.PAMConfigurationControllerInfo: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.PAM.PAMConfigurationControllerInfo();
+            if (object.configurationUid != null)
+                if (typeof object.configurationUid === "string")
+                    $util.base64.decode(object.configurationUid, message.configurationUid = $util.newBuffer($util.base64.length(object.configurationUid)), 0);
+                else if (object.configurationUid.length >= 0)
+                    message.configurationUid = object.configurationUid;
+            if (object.controller != null) {
+                if (!$util.isObject(object.controller))
+                    throw TypeError(".PAM.PAMConfigurationControllerInfo.controller: object expected");
+                message.controller = $root.PAM.PAMController.fromObject(object.controller, long + 1);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PAMConfigurationControllerInfo message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof PAM.PAMConfigurationControllerInfo
+         * @static
+         * @param {PAM.PAMConfigurationControllerInfo} message PAMConfigurationControllerInfo
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PAMConfigurationControllerInfo.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.configurationUid = "";
+                else {
+                    object.configurationUid = [];
+                    if (options.bytes !== Array)
+                        object.configurationUid = $util.newBuffer(object.configurationUid);
+                }
+                object.controller = null;
+            }
+            if (message.configurationUid != null && Object.hasOwnProperty.call(message, "configurationUid"))
+                object.configurationUid = options.bytes === String ? $util.base64.encode(message.configurationUid, 0, message.configurationUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.configurationUid) : message.configurationUid;
+            if (message.controller != null && Object.hasOwnProperty.call(message, "controller"))
+                object.controller = $root.PAM.PAMController.toObject(message.controller, options, q + 1);
+            return object;
+        };
+
+        /**
+         * Converts this PAMConfigurationControllerInfo to JSON.
+         * @function toJSON
+         * @memberof PAM.PAMConfigurationControllerInfo
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PAMConfigurationControllerInfo.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for PAMConfigurationControllerInfo
+         * @function getTypeUrl
+         * @memberof PAM.PAMConfigurationControllerInfo
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        PAMConfigurationControllerInfo.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/PAM.PAMConfigurationControllerInfo";
+        };
+
+        return PAMConfigurationControllerInfo;
+    })();
+
+    PAM.PAMConfigurationControllersResponse = (function() {
+
+        /**
+         * Properties of a PAMConfigurationControllersResponse.
+         * @memberof PAM
+         * @interface IPAMConfigurationControllersResponse
+         * @property {Array.<PAM.IPAMConfigurationControllerInfo>|null} [configurationControllers] PAMConfigurationControllersResponse configurationControllers
+         */
+
+        /**
+         * Constructs a new PAMConfigurationControllersResponse.
+         * @memberof PAM
+         * @classdesc Represents a PAMConfigurationControllersResponse.
+         * @implements IPAMConfigurationControllersResponse
+         * @constructor
+         * @param {PAM.IPAMConfigurationControllersResponse=} [properties] Properties to set
+         */
+        function PAMConfigurationControllersResponse(properties) {
+            this.configurationControllers = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PAMConfigurationControllersResponse configurationControllers.
+         * @member {Array.<PAM.IPAMConfigurationControllerInfo>} configurationControllers
+         * @memberof PAM.PAMConfigurationControllersResponse
+         * @instance
+         */
+        PAMConfigurationControllersResponse.prototype.configurationControllers = $util.emptyArray;
+
+        /**
+         * Creates a new PAMConfigurationControllersResponse instance using the specified properties.
+         * @function create
+         * @memberof PAM.PAMConfigurationControllersResponse
+         * @static
+         * @param {PAM.IPAMConfigurationControllersResponse=} [properties] Properties to set
+         * @returns {PAM.PAMConfigurationControllersResponse} PAMConfigurationControllersResponse instance
+         */
+        PAMConfigurationControllersResponse.create = function create(properties) {
+            return new PAMConfigurationControllersResponse(properties);
+        };
+
+        /**
+         * Encodes the specified PAMConfigurationControllersResponse message. Does not implicitly {@link PAM.PAMConfigurationControllersResponse.verify|verify} messages.
+         * @function encode
+         * @memberof PAM.PAMConfigurationControllersResponse
+         * @static
+         * @param {PAM.IPAMConfigurationControllersResponse} message PAMConfigurationControllersResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PAMConfigurationControllersResponse.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.configurationControllers != null && message.configurationControllers.length)
+                for (let i = 0; i < message.configurationControllers.length; ++i)
+                    $root.PAM.PAMConfigurationControllerInfo.encode(message.configurationControllers[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a PAMConfigurationControllersResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof PAM.PAMConfigurationControllersResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {PAM.PAMConfigurationControllersResponse} PAMConfigurationControllersResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PAMConfigurationControllersResponse.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.PAM.PAMConfigurationControllersResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.configurationControllers && message.configurationControllers.length))
+                            message.configurationControllers = [];
+                        message.configurationControllers.push($root.PAM.PAMConfigurationControllerInfo.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a PAMConfigurationControllersResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof PAM.PAMConfigurationControllersResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {PAM.PAMConfigurationControllersResponse} PAMConfigurationControllersResponse
+         */
+        PAMConfigurationControllersResponse.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.PAM.PAMConfigurationControllersResponse)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".PAM.PAMConfigurationControllersResponse: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.PAM.PAMConfigurationControllersResponse();
+            if (object.configurationControllers) {
+                if (!Array.isArray(object.configurationControllers))
+                    throw TypeError(".PAM.PAMConfigurationControllersResponse.configurationControllers: array expected");
+                message.configurationControllers = [];
+                for (let i = 0; i < object.configurationControllers.length; ++i) {
+                    if (!$util.isObject(object.configurationControllers[i]))
+                        throw TypeError(".PAM.PAMConfigurationControllersResponse.configurationControllers: object expected");
+                    message.configurationControllers[i] = $root.PAM.PAMConfigurationControllerInfo.fromObject(object.configurationControllers[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PAMConfigurationControllersResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof PAM.PAMConfigurationControllersResponse
+         * @static
+         * @param {PAM.PAMConfigurationControllersResponse} message PAMConfigurationControllersResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PAMConfigurationControllersResponse.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.configurationControllers = [];
+            if (message.configurationControllers && message.configurationControllers.length) {
+                object.configurationControllers = [];
+                for (let j = 0; j < message.configurationControllers.length; ++j)
+                    object.configurationControllers[j] = $root.PAM.PAMConfigurationControllerInfo.toObject(message.configurationControllers[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this PAMConfigurationControllersResponse to JSON.
+         * @function toJSON
+         * @memberof PAM.PAMConfigurationControllersResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PAMConfigurationControllersResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for PAMConfigurationControllersResponse
+         * @function getTypeUrl
+         * @memberof PAM.PAMConfigurationControllersResponse
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        PAMConfigurationControllersResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/PAM.PAMConfigurationControllersResponse";
+        };
+
+        return PAMConfigurationControllersResponse;
+    })();
+
     PAM.ConfigurationAddRequest = (function() {
 
         /**
@@ -6187,9 +6591,9 @@ export const PAM = $root.PAM = (() => {
                 writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.data);
             if (message.recordLinks != null && message.recordLinks.length)
                 for (let i = 0; i < message.recordLinks.length; ++i)
-                    $root.Records.RecordLink.encode(message.recordLinks[i], writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
+                    Records.RecordLink.encode(message.recordLinks[i], writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
             if (message.audit != null && Object.hasOwnProperty.call(message, "audit"))
-                $root.Records.RecordAudit.encode(message.audit, writer.uint32(/* id 5, wireType 2 =*/42).fork(), q + 1).ldelim();
+                Records.RecordAudit.encode(message.audit, writer.uint32(/* id 5, wireType 2 =*/42).fork(), q + 1).ldelim();
             return writer;
         };
 
@@ -6232,11 +6636,11 @@ export const PAM = $root.PAM = (() => {
                 case 4: {
                         if (!(message.recordLinks && message.recordLinks.length))
                             message.recordLinks = [];
-                        message.recordLinks.push($root.Records.RecordLink.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.recordLinks.push(Records.RecordLink.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 5: {
-                        message.audit = $root.Records.RecordAudit.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.audit = Records.RecordAudit.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 default:
@@ -6287,13 +6691,13 @@ export const PAM = $root.PAM = (() => {
                 for (let i = 0; i < object.recordLinks.length; ++i) {
                     if (!$util.isObject(object.recordLinks[i]))
                         throw TypeError(".PAM.ConfigurationAddRequest.recordLinks: object expected");
-                    message.recordLinks[i] = $root.Records.RecordLink.fromObject(object.recordLinks[i], long + 1);
+                    message.recordLinks[i] = Records.RecordLink.fromObject(object.recordLinks[i], long + 1);
                 }
             }
             if (object.audit != null) {
                 if (!$util.isObject(object.audit))
                     throw TypeError(".PAM.ConfigurationAddRequest.audit: object expected");
-                message.audit = $root.Records.RecordAudit.fromObject(object.audit, long + 1);
+                message.audit = Records.RecordAudit.fromObject(object.audit, long + 1);
             }
             return message;
         };
@@ -6350,10 +6754,10 @@ export const PAM = $root.PAM = (() => {
             if (message.recordLinks && message.recordLinks.length) {
                 object.recordLinks = [];
                 for (let j = 0; j < message.recordLinks.length; ++j)
-                    object.recordLinks[j] = $root.Records.RecordLink.toObject(message.recordLinks[j], options, q + 1);
+                    object.recordLinks[j] = Records.RecordLink.toObject(message.recordLinks[j], options, q + 1);
             }
             if (message.audit != null && Object.hasOwnProperty.call(message, "audit"))
-                object.audit = $root.Records.RecordAudit.toObject(message.audit, options, q + 1);
+                object.audit = Records.RecordAudit.toObject(message.audit, options, q + 1);
             return object;
         };
 
@@ -9069,6 +9473,222 @@ export const PAM = $root.PAM = (() => {
         return UidList;
     })();
 
+    PAM.PAMServiceNames = (function() {
+
+        /**
+         * Properties of a PAMServiceNames.
+         * @memberof PAM
+         * @interface IPAMServiceNames
+         * @property {Uint8Array|null} [resourceUid] PAMServiceNames resourceUid
+         * @property {Uint8Array|null} [names] PAMServiceNames names
+         */
+
+        /**
+         * Constructs a new PAMServiceNames.
+         * @memberof PAM
+         * @classdesc Represents a PAMServiceNames.
+         * @implements IPAMServiceNames
+         * @constructor
+         * @param {PAM.IPAMServiceNames=} [properties] Properties to set
+         */
+        function PAMServiceNames(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PAMServiceNames resourceUid.
+         * @member {Uint8Array} resourceUid
+         * @memberof PAM.PAMServiceNames
+         * @instance
+         */
+        PAMServiceNames.prototype.resourceUid = $util.newBuffer([]);
+
+        /**
+         * PAMServiceNames names.
+         * @member {Uint8Array} names
+         * @memberof PAM.PAMServiceNames
+         * @instance
+         */
+        PAMServiceNames.prototype.names = $util.newBuffer([]);
+
+        /**
+         * Creates a new PAMServiceNames instance using the specified properties.
+         * @function create
+         * @memberof PAM.PAMServiceNames
+         * @static
+         * @param {PAM.IPAMServiceNames=} [properties] Properties to set
+         * @returns {PAM.PAMServiceNames} PAMServiceNames instance
+         */
+        PAMServiceNames.create = function create(properties) {
+            return new PAMServiceNames(properties);
+        };
+
+        /**
+         * Encodes the specified PAMServiceNames message. Does not implicitly {@link PAM.PAMServiceNames.verify|verify} messages.
+         * @function encode
+         * @memberof PAM.PAMServiceNames
+         * @static
+         * @param {PAM.IPAMServiceNames} message PAMServiceNames message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PAMServiceNames.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.resourceUid != null && Object.hasOwnProperty.call(message, "resourceUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.resourceUid);
+            if (message.names != null && Object.hasOwnProperty.call(message, "names"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.names);
+            return writer;
+        };
+
+        /**
+         * Decodes a PAMServiceNames message from the specified reader or buffer.
+         * @function decode
+         * @memberof PAM.PAMServiceNames
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {PAM.PAMServiceNames} PAMServiceNames
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PAMServiceNames.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.PAM.PAMServiceNames();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.resourceUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.names = reader.bytes();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a PAMServiceNames message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof PAM.PAMServiceNames
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {PAM.PAMServiceNames} PAMServiceNames
+         */
+        PAMServiceNames.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.PAM.PAMServiceNames)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".PAM.PAMServiceNames: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.PAM.PAMServiceNames();
+            if (object.resourceUid != null)
+                if (typeof object.resourceUid === "string")
+                    $util.base64.decode(object.resourceUid, message.resourceUid = $util.newBuffer($util.base64.length(object.resourceUid)), 0);
+                else if (object.resourceUid.length >= 0)
+                    message.resourceUid = object.resourceUid;
+            if (object.names != null)
+                if (typeof object.names === "string")
+                    $util.base64.decode(object.names, message.names = $util.newBuffer($util.base64.length(object.names)), 0);
+                else if (object.names.length >= 0)
+                    message.names = object.names;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PAMServiceNames message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof PAM.PAMServiceNames
+         * @static
+         * @param {PAM.PAMServiceNames} message PAMServiceNames
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PAMServiceNames.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.resourceUid = "";
+                else {
+                    object.resourceUid = [];
+                    if (options.bytes !== Array)
+                        object.resourceUid = $util.newBuffer(object.resourceUid);
+                }
+                if (options.bytes === String)
+                    object.names = "";
+                else {
+                    object.names = [];
+                    if (options.bytes !== Array)
+                        object.names = $util.newBuffer(object.names);
+                }
+            }
+            if (message.resourceUid != null && Object.hasOwnProperty.call(message, "resourceUid"))
+                object.resourceUid = options.bytes === String ? $util.base64.encode(message.resourceUid, 0, message.resourceUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.resourceUid) : message.resourceUid;
+            if (message.names != null && Object.hasOwnProperty.call(message, "names"))
+                object.names = options.bytes === String ? $util.base64.encode(message.names, 0, message.names.length) : options.bytes === Array ? Array.prototype.slice.call(message.names) : message.names;
+            return object;
+        };
+
+        /**
+         * Converts this PAMServiceNames to JSON.
+         * @function toJSON
+         * @memberof PAM.PAMServiceNames
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PAMServiceNames.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for PAMServiceNames
+         * @function getTypeUrl
+         * @memberof PAM.PAMServiceNames
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        PAMServiceNames.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/PAM.PAMServiceNames";
+        };
+
+        return PAMServiceNames;
+    })();
+
     PAM.PAMResourceConfig = (function() {
 
         /**
@@ -9720,6 +10340,535 @@ export const PAM = $root.PAM = (() => {
         return PAMUniversalSyncFolder;
     })();
 
+    /**
+     * GitHubScope enum.
+     * @name PAM.GitHubScope
+     * @enum {number}
+     * @property {number} REPOSITORY=0 REPOSITORY value
+     * @property {number} ORGANIZATION=1 ORGANIZATION value
+     */
+    PAM.GitHubScope = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "REPOSITORY"] = 0;
+        values[valuesById[1] = "ORGANIZATION"] = 1;
+        return values;
+    })();
+
+    /**
+     * GitHubOrganizationVisibility enum.
+     * @name PAM.GitHubOrganizationVisibility
+     * @enum {number}
+     * @property {number} ALL=0 ALL value
+     * @property {number} PRIVATE=1 PRIVATE value
+     * @property {number} SELECTED=2 SELECTED value
+     */
+    PAM.GitHubOrganizationVisibility = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "ALL"] = 0;
+        values[valuesById[1] = "PRIVATE"] = 1;
+        values[valuesById[2] = "SELECTED"] = 2;
+        return values;
+    })();
+
+    PAM.GitHubRepository = (function() {
+
+        /**
+         * Properties of a GitHubRepository.
+         * @memberof PAM
+         * @interface IGitHubRepository
+         * @property {Uint8Array|null} [name] GitHubRepository name
+         */
+
+        /**
+         * Constructs a new GitHubRepository.
+         * @memberof PAM
+         * @classdesc Represents a GitHubRepository.
+         * @implements IGitHubRepository
+         * @constructor
+         * @param {PAM.IGitHubRepository=} [properties] Properties to set
+         */
+        function GitHubRepository(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GitHubRepository name.
+         * @member {Uint8Array} name
+         * @memberof PAM.GitHubRepository
+         * @instance
+         */
+        GitHubRepository.prototype.name = $util.newBuffer([]);
+
+        /**
+         * Creates a new GitHubRepository instance using the specified properties.
+         * @function create
+         * @memberof PAM.GitHubRepository
+         * @static
+         * @param {PAM.IGitHubRepository=} [properties] Properties to set
+         * @returns {PAM.GitHubRepository} GitHubRepository instance
+         */
+        GitHubRepository.create = function create(properties) {
+            return new GitHubRepository(properties);
+        };
+
+        /**
+         * Encodes the specified GitHubRepository message. Does not implicitly {@link PAM.GitHubRepository.verify|verify} messages.
+         * @function encode
+         * @memberof PAM.GitHubRepository
+         * @static
+         * @param {PAM.IGitHubRepository} message GitHubRepository message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GitHubRepository.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.name);
+            return writer;
+        };
+
+        /**
+         * Decodes a GitHubRepository message from the specified reader or buffer.
+         * @function decode
+         * @memberof PAM.GitHubRepository
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {PAM.GitHubRepository} GitHubRepository
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GitHubRepository.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.PAM.GitHubRepository();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.name = reader.bytes();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a GitHubRepository message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof PAM.GitHubRepository
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {PAM.GitHubRepository} GitHubRepository
+         */
+        GitHubRepository.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.PAM.GitHubRepository)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".PAM.GitHubRepository: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.PAM.GitHubRepository();
+            if (object.name != null)
+                if (typeof object.name === "string")
+                    $util.base64.decode(object.name, message.name = $util.newBuffer($util.base64.length(object.name)), 0);
+                else if (object.name.length >= 0)
+                    message.name = object.name;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GitHubRepository message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof PAM.GitHubRepository
+         * @static
+         * @param {PAM.GitHubRepository} message GitHubRepository
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GitHubRepository.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults)
+                if (options.bytes === String)
+                    object.name = "";
+                else {
+                    object.name = [];
+                    if (options.bytes !== Array)
+                        object.name = $util.newBuffer(object.name);
+                }
+            if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                object.name = options.bytes === String ? $util.base64.encode(message.name, 0, message.name.length) : options.bytes === Array ? Array.prototype.slice.call(message.name) : message.name;
+            return object;
+        };
+
+        /**
+         * Converts this GitHubRepository to JSON.
+         * @function toJSON
+         * @memberof PAM.GitHubRepository
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GitHubRepository.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for GitHubRepository
+         * @function getTypeUrl
+         * @memberof PAM.GitHubRepository
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        GitHubRepository.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/PAM.GitHubRepository";
+        };
+
+        return GitHubRepository;
+    })();
+
+    PAM.GitHubConfig = (function() {
+
+        /**
+         * Properties of a GitHubConfig.
+         * @memberof PAM
+         * @interface IGitHubConfig
+         * @property {PAM.GitHubScope|null} [scope] GitHubConfig scope
+         * @property {Uint8Array|null} [owner] GitHubConfig owner
+         * @property {PAM.GitHubOrganizationVisibility|null} [organizationVisibility] GitHubConfig organizationVisibility
+         * @property {Array.<PAM.IGitHubRepository>|null} [repos] GitHubConfig repos
+         */
+
+        /**
+         * Constructs a new GitHubConfig.
+         * @memberof PAM
+         * @classdesc Represents a GitHubConfig.
+         * @implements IGitHubConfig
+         * @constructor
+         * @param {PAM.IGitHubConfig=} [properties] Properties to set
+         */
+        function GitHubConfig(properties) {
+            this.repos = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GitHubConfig scope.
+         * @member {PAM.GitHubScope|null|undefined} scope
+         * @memberof PAM.GitHubConfig
+         * @instance
+         */
+        GitHubConfig.prototype.scope = null;
+
+        /**
+         * GitHubConfig owner.
+         * @member {Uint8Array} owner
+         * @memberof PAM.GitHubConfig
+         * @instance
+         */
+        GitHubConfig.prototype.owner = $util.newBuffer([]);
+
+        /**
+         * GitHubConfig organizationVisibility.
+         * @member {PAM.GitHubOrganizationVisibility|null|undefined} organizationVisibility
+         * @memberof PAM.GitHubConfig
+         * @instance
+         */
+        GitHubConfig.prototype.organizationVisibility = null;
+
+        /**
+         * GitHubConfig repos.
+         * @member {Array.<PAM.IGitHubRepository>} repos
+         * @memberof PAM.GitHubConfig
+         * @instance
+         */
+        GitHubConfig.prototype.repos = $util.emptyArray;
+
+        // OneOf field names bound to virtual getters and setters
+        let $oneOfFields;
+
+        // Virtual OneOf for proto3 optional field
+        Object.defineProperty(GitHubConfig.prototype, "_scope", {
+            get: $util.oneOfGetter($oneOfFields = ["scope"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        // Virtual OneOf for proto3 optional field
+        Object.defineProperty(GitHubConfig.prototype, "_organizationVisibility", {
+            get: $util.oneOfGetter($oneOfFields = ["organizationVisibility"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        /**
+         * Creates a new GitHubConfig instance using the specified properties.
+         * @function create
+         * @memberof PAM.GitHubConfig
+         * @static
+         * @param {PAM.IGitHubConfig=} [properties] Properties to set
+         * @returns {PAM.GitHubConfig} GitHubConfig instance
+         */
+        GitHubConfig.create = function create(properties) {
+            return new GitHubConfig(properties);
+        };
+
+        /**
+         * Encodes the specified GitHubConfig message. Does not implicitly {@link PAM.GitHubConfig.verify|verify} messages.
+         * @function encode
+         * @memberof PAM.GitHubConfig
+         * @static
+         * @param {PAM.IGitHubConfig} message GitHubConfig message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GitHubConfig.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.scope != null && Object.hasOwnProperty.call(message, "scope"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.scope);
+            if (message.owner != null && Object.hasOwnProperty.call(message, "owner"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.owner);
+            if (message.organizationVisibility != null && Object.hasOwnProperty.call(message, "organizationVisibility"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.organizationVisibility);
+            if (message.repos != null && message.repos.length)
+                for (let i = 0; i < message.repos.length; ++i)
+                    $root.PAM.GitHubRepository.encode(message.repos[i], writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a GitHubConfig message from the specified reader or buffer.
+         * @function decode
+         * @memberof PAM.GitHubConfig
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {PAM.GitHubConfig} GitHubConfig
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GitHubConfig.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.PAM.GitHubConfig();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.scope = reader.int32();
+                        break;
+                    }
+                case 2: {
+                        message.owner = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.organizationVisibility = reader.int32();
+                        break;
+                    }
+                case 4: {
+                        if (!(message.repos && message.repos.length))
+                            message.repos = [];
+                        message.repos.push($root.PAM.GitHubRepository.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a GitHubConfig message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof PAM.GitHubConfig
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {PAM.GitHubConfig} GitHubConfig
+         */
+        GitHubConfig.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.PAM.GitHubConfig)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".PAM.GitHubConfig: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.PAM.GitHubConfig();
+            switch (object.scope) {
+            default:
+                if (typeof object.scope === "number") {
+                    message.scope = object.scope;
+                    break;
+                }
+                break;
+            case "REPOSITORY":
+            case 0:
+                message.scope = 0;
+                break;
+            case "ORGANIZATION":
+            case 1:
+                message.scope = 1;
+                break;
+            }
+            if (object.owner != null)
+                if (typeof object.owner === "string")
+                    $util.base64.decode(object.owner, message.owner = $util.newBuffer($util.base64.length(object.owner)), 0);
+                else if (object.owner.length >= 0)
+                    message.owner = object.owner;
+            switch (object.organizationVisibility) {
+            default:
+                if (typeof object.organizationVisibility === "number") {
+                    message.organizationVisibility = object.organizationVisibility;
+                    break;
+                }
+                break;
+            case "ALL":
+            case 0:
+                message.organizationVisibility = 0;
+                break;
+            case "PRIVATE":
+            case 1:
+                message.organizationVisibility = 1;
+                break;
+            case "SELECTED":
+            case 2:
+                message.organizationVisibility = 2;
+                break;
+            }
+            if (object.repos) {
+                if (!Array.isArray(object.repos))
+                    throw TypeError(".PAM.GitHubConfig.repos: array expected");
+                message.repos = [];
+                for (let i = 0; i < object.repos.length; ++i) {
+                    if (!$util.isObject(object.repos[i]))
+                        throw TypeError(".PAM.GitHubConfig.repos: object expected");
+                    message.repos[i] = $root.PAM.GitHubRepository.fromObject(object.repos[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GitHubConfig message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof PAM.GitHubConfig
+         * @static
+         * @param {PAM.GitHubConfig} message GitHubConfig
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GitHubConfig.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.repos = [];
+            if (options.defaults)
+                if (options.bytes === String)
+                    object.owner = "";
+                else {
+                    object.owner = [];
+                    if (options.bytes !== Array)
+                        object.owner = $util.newBuffer(object.owner);
+                }
+            if (message.scope != null && Object.hasOwnProperty.call(message, "scope")) {
+                object.scope = options.enums === String ? $root.PAM.GitHubScope[message.scope] === undefined ? message.scope : $root.PAM.GitHubScope[message.scope] : message.scope;
+                if (options.oneofs)
+                    object._scope = "scope";
+            }
+            if (message.owner != null && Object.hasOwnProperty.call(message, "owner"))
+                object.owner = options.bytes === String ? $util.base64.encode(message.owner, 0, message.owner.length) : options.bytes === Array ? Array.prototype.slice.call(message.owner) : message.owner;
+            if (message.organizationVisibility != null && Object.hasOwnProperty.call(message, "organizationVisibility")) {
+                object.organizationVisibility = options.enums === String ? $root.PAM.GitHubOrganizationVisibility[message.organizationVisibility] === undefined ? message.organizationVisibility : $root.PAM.GitHubOrganizationVisibility[message.organizationVisibility] : message.organizationVisibility;
+                if (options.oneofs)
+                    object._organizationVisibility = "organizationVisibility";
+            }
+            if (message.repos && message.repos.length) {
+                object.repos = [];
+                for (let j = 0; j < message.repos.length; ++j)
+                    object.repos[j] = $root.PAM.GitHubRepository.toObject(message.repos[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this GitHubConfig to JSON.
+         * @function toJSON
+         * @memberof PAM.GitHubConfig
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GitHubConfig.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for GitHubConfig
+         * @function getTypeUrl
+         * @memberof PAM.GitHubConfig
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        GitHubConfig.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/PAM.GitHubConfig";
+        };
+
+        return GitHubConfig;
+    })();
+
     PAM.PAMUniversalSyncConfig = (function() {
 
         /**
@@ -9732,6 +10881,7 @@ export const PAM = $root.PAM = (() => {
          * @property {Array.<PAM.IPAMUniversalSyncFolder>|null} [folders] PAMUniversalSyncConfig folders
          * @property {Uint8Array|null} [syncIdentity] PAMUniversalSyncConfig syncIdentity
          * @property {Uint8Array|null} [vaultName] PAMUniversalSyncConfig vaultName
+         * @property {PAM.IGitHubConfig|null} [github] PAMUniversalSyncConfig github
          */
 
         /**
@@ -9798,6 +10948,14 @@ export const PAM = $root.PAM = (() => {
          */
         PAMUniversalSyncConfig.prototype.vaultName = null;
 
+        /**
+         * PAMUniversalSyncConfig github.
+         * @member {PAM.IGitHubConfig|null|undefined} github
+         * @memberof PAM.PAMUniversalSyncConfig
+         * @instance
+         */
+        PAMUniversalSyncConfig.prototype.github = null;
+
         // OneOf field names bound to virtual getters and setters
         let $oneOfFields;
 
@@ -9822,6 +10980,12 @@ export const PAM = $root.PAM = (() => {
         // Virtual OneOf for proto3 optional field
         Object.defineProperty(PAMUniversalSyncConfig.prototype, "_vaultName", {
             get: $util.oneOfGetter($oneOfFields = ["vaultName"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        // Virtual OneOf for proto3 optional field
+        Object.defineProperty(PAMUniversalSyncConfig.prototype, "_github", {
+            get: $util.oneOfGetter($oneOfFields = ["github"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -9866,6 +11030,8 @@ export const PAM = $root.PAM = (() => {
                 writer.uint32(/* id 5, wireType 2 =*/42).bytes(message.syncIdentity);
             if (message.vaultName != null && Object.hasOwnProperty.call(message, "vaultName"))
                 writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.vaultName);
+            if (message.github != null && Object.hasOwnProperty.call(message, "github"))
+                $root.PAM.GitHubConfig.encode(message.github, writer.uint32(/* id 7, wireType 2 =*/58).fork(), q + 1).ldelim();
             return writer;
         };
 
@@ -9917,6 +11083,10 @@ export const PAM = $root.PAM = (() => {
                     }
                 case 6: {
                         message.vaultName = reader.bytes();
+                        break;
+                    }
+                case 7: {
+                        message.github = $root.PAM.GitHubConfig.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 default:
@@ -9974,6 +11144,11 @@ export const PAM = $root.PAM = (() => {
                     $util.base64.decode(object.vaultName, message.vaultName = $util.newBuffer($util.base64.length(object.vaultName)), 0);
                 else if (object.vaultName.length >= 0)
                     message.vaultName = object.vaultName;
+            if (object.github != null) {
+                if (!$util.isObject(object.github))
+                    throw TypeError(".PAM.PAMUniversalSyncConfig.github: object expected");
+                message.github = $root.PAM.GitHubConfig.fromObject(object.github, long + 1);
+            }
             return message;
         };
 
@@ -10030,6 +11205,11 @@ export const PAM = $root.PAM = (() => {
                 object.vaultName = options.bytes === String ? $util.base64.encode(message.vaultName, 0, message.vaultName.length) : options.bytes === Array ? Array.prototype.slice.call(message.vaultName) : message.vaultName;
                 if (options.oneofs)
                     object._vaultName = "vaultName";
+            }
+            if (message.github != null && Object.hasOwnProperty.call(message, "github")) {
+                object.github = $root.PAM.GitHubConfig.toObject(message.github, options, q + 1);
+                if (options.oneofs)
+                    object._github = "github";
             }
             return object;
         };
