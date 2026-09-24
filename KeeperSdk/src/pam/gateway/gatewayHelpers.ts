@@ -265,6 +265,7 @@ export function isKeeperRouterConnectionError(err: unknown): boolean {
 
     const msg = message.toLowerCase()
     return (
+        msg.includes('empty response from router') ||
         msg.includes('econnrefused') ||
         msg.includes('enotfound') ||
         msg.includes('etimedout') ||

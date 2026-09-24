@@ -233,6 +233,7 @@ export class KeeperEndpoint {
         }
         const routerResponse = Router.RouterResponse.decode(response.data)
         if (!routerResponse.encryptedPayload || routerResponse.encryptedPayload.length === 0) {
+            if (!('fromBytes' in message) && routerResponse.responseCode === Router.RouterResponseCode.RRC_OK) return
             throw {
                 response_code: routerResponse.responseCode,
                 path: message.path,

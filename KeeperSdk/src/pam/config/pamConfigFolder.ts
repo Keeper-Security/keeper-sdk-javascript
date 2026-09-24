@@ -173,7 +173,7 @@ export async function updatePamConfigurationRecordData(
     configurationUid: string,
     data: PamConfigurationTypedRecordData,
     revision: number,
-    recordKey: Uint8Array
+    recordKey?: Uint8Array
 ): Promise<void> {
     const recordPayload: Record<string, unknown> = {
         type: data.type,
@@ -182,7 +182,9 @@ export async function updatePamConfigurationRecordData(
         custom: data.custom,
         notes: data.notes,
     }
-    const encryptedData = await platform.aesGcmEncrypt(getPaddedJsonBytes(recordPayload), recordKey)
+    const encryptedData = recordKey
+        ? await platform.aesGcmEncrypt(getPaddedJsonBytes(recordPayload), recordKey)
+        : await platform.encrypt(getPaddedJsonBytes(recordPayload), configurationUid, 'gcm', storage)
     const recordUpdate: Records.IRecordUpdate = {
         recordUid: normal64Bytes(configurationUid),
         clientModifiedTime: Date.now(),

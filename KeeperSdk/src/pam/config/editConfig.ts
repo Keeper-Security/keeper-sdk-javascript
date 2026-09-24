@@ -164,13 +164,11 @@ export async function editPamConfiguration(
         const custom = adjusted.custom
         const notes = input.notes != null ? String(input.notes) : existing.notes
 
+        // Browser storage may keep the record key as a non-exportable CryptoKey
+        // rather than exposing it through getKeyBytes(). The update helper can
+        // encrypt by key ID in that case, while preserving the raw-key path for
+        // Node and older storage implementations.
         const recordKey = await storage.getKeyBytes(configurationUid)
-        if (!recordKey) {
-            throw new KeeperSdkError(
-                `Record key not found for PAM Configuration "${configurationUid}". Sync the vault and try again.`,
-                ResultCodes.PAM_CONFIG_EDIT_FAILED
-            )
-        }
 
         try {
             await updatePamConfigurationRecordData(
