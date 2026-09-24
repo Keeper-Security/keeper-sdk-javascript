@@ -125,6 +125,12 @@ import {
 import { UserManager } from '../users/UserManager'
 import { NestedShareFolderManager } from '../nestedShareFolders/NestedShareFolderManager'
 import { isNestedShareFolder, isRootFolderUid } from '../nestedShareFolders/nsfHelpers'
+import { SecretsManagerAppManager } from '../secretsManager/SecretsManagerAppManager'
+import type {
+    FormattedSecretsManagerAppsTable,
+    SecretsManagerAppDetails,
+    SecretsManagerAppRow,
+} from '../secretsManager/types'
 import type {
     AddNsfRecordInput,
     AddNsfRecordResult,
@@ -248,6 +254,9 @@ import type {
     DeleteRotationScriptInput,
     DeleteRotationScriptResult,
 } from '../pam/rotation/rotationScriptTypes'
+import type { PamActionRotateInput, PamActionRotateResult } from '../pam/action/rotateActionTypes'
+import type { PamConnectionEditInput, PamConnectionEditResult } from '../pam/connection/connectionTypes'
+import type { PamRbiEditInput, PamRbiEditResult } from '../pam/rbi/rbiTypes'
 import { buildWhoamiInfo, type WhoamiInfo } from '../account/whoamiInfo'
 import {
     ConsoleLogger,
@@ -304,6 +313,7 @@ export class KeeperVault {
     private readonly enterpriseReportManager: EnterpriseReportManager
     private readonly userManager: UserManager
     private readonly nestedShareFolderManager: NestedShareFolderManager
+    private readonly secretsManagerAppManager: SecretsManagerAppManager
     private readonly pamManager: PamManager
 
     constructor(config?: KeeperVaultConfig) {
@@ -331,6 +341,7 @@ export class KeeperVault {
         this.enterpriseReportManager = new EnterpriseReportManager(authProvider)
         this.userManager = new UserManager(authProvider)
         this.nestedShareFolderManager = new NestedShareFolderManager(this.storage, authProvider)
+        this.secretsManagerAppManager = new SecretsManagerAppManager(this.storage, authProvider)
         this.pamManager = new PamManager(this.storage, authProvider)
     }
 
@@ -348,6 +359,10 @@ export class KeeperVault {
 
     public getNestedShareFolderManager(): NestedShareFolderManager {
         return this.nestedShareFolderManager
+    }
+
+    public getSecretsManagerAppManager(): SecretsManagerAppManager {
+        return this.secretsManagerAppManager
     }
 
     public getFolderManager(): FolderManager {
@@ -1232,6 +1247,10 @@ export class KeeperVault {
         return this.nestedShareFolderManager.formatNsfRecordShareResults(results)
     }
 
+    public formatNsfFolderShareResults(results: ShareNestedShareFolderResult['results']): string {
+        return this.nestedShareFolderManager.formatNsfFolderShareResults(results)
+    }
+
     public listNsfShortcuts(options: ListNsfShortcutsOptions = {}): NsfShortcutRow[] {
         return this.nestedShareFolderManager.listNsfShortcuts(options)
     }
@@ -1347,6 +1366,26 @@ export class KeeperVault {
         return this.nestedShareFolderManager.formatNsfRecordPermissionFailures(failures, kind)
     }
 
+    public async listSecretsManagerApps(): Promise<SecretsManagerAppRow[]> {
+        return this.secretsManagerAppManager.listApplications()
+    }
+
+    public async getSecretsManagerApp(identifier: string): Promise<SecretsManagerAppDetails> {
+        return this.secretsManagerAppManager.getApplication(identifier)
+    }
+
+    public formatSecretsManagerAppDetails(app: SecretsManagerAppDetails): string {
+        return this.secretsManagerAppManager.formatApplicationDetails(app)
+    }
+
+    public formatSecretsManagerAppsTable(rows: SecretsManagerAppRow[]): FormattedSecretsManagerAppsTable {
+        return this.secretsManagerAppManager.formatApplicationsTable(rows)
+    }
+
+    public renderSecretsManagerAppsAsciiTable(table: FormattedSecretsManagerAppsTable): string {
+        return this.secretsManagerAppManager.renderApplicationsAsciiTable(table)
+    }
+
     public async listGateways(options?: ListGatewaysOptions): Promise<ListGatewaysResult> {
         return this.pamManager.listGateways(options ?? {})
     }
@@ -1365,6 +1404,18 @@ export class KeeperVault {
 
     public async setGatewayMaxInstances(input: SetGatewayMaxInstancesInput): Promise<SetGatewayMaxInstancesResult> {
         return this.pamManager.setGatewayMaxInstances(input)
+    }
+
+    public async rotatePamAction(input: PamActionRotateInput): Promise<PamActionRotateResult> {
+        return this.pamManager.rotatePamAction(input)
+    }
+
+    public async editPamConnection(input: PamConnectionEditInput): Promise<PamConnectionEditResult> {
+        return this.pamManager.editPamConnection(input)
+    }
+
+    public async editPamRbi(input: PamRbiEditInput): Promise<PamRbiEditResult> {
+        return this.pamManager.editPamRbi(input)
     }
 
     public formatGatewaysTable(

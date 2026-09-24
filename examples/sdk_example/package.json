@@ -86,6 +86,11 @@
         "pam:rotation:add-script": "ts-node src/pam/rotation/add_script.ts",
         "pam:rotation:edit-script": "ts-node src/pam/rotation/edit_script.ts",
         "pam:rotation:delete-script": "ts-node src/pam/rotation/delete_script.ts",
+        "pam:action:rotate": "ts-node src/pam/action/rotate_action.ts",
+        "pam:connection:edit": "ts-node src/pam/connection/edit_connection.ts",
+        "pam:rbi:edit": "ts-node src/pam/rbi/edit_rbi.ts",
+        "ksm-app:list": "ts-node src/secretsManager/list_apps.ts",
+        "ksm-app:get": "ts-node src/secretsManager/get_app.ts",
         "link-local": "cd ../../KeeperSdk && npm link ../keeperapi && cd ../examples/sdk_example && npm link ../../keeperapi",
         "types": "tsc --watch",
         "types:ci": "tsc"

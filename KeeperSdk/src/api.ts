@@ -126,6 +126,24 @@ export type {
 export { KeeperVault } from './vault/KeeperVault'
 export type { KeeperVaultConfig, VaultSummary } from './vault/KeeperVault'
 
+export {
+    SecretsManagerAppManager,
+    formatSecretsManagerAppDetails,
+    getSecretsManagerApp,
+    listSecretsManagerApps,
+    formatSecretsManagerAppsTable,
+    renderSecretsManagerAppsAsciiTable,
+} from './secretsManager'
+export type {
+    SecretsManagerAppRow,
+    FormattedSecretsManagerAppsTable,
+    SecretsManagerAppDetails,
+    SecretsManagerApplicationUser,
+    SecretsManagerClientDevice,
+    SecretsManagerSharedSecret,
+    AuthProvider as SecretsManagerAppAuthProvider,
+} from './secretsManager'
+
 export { buildWhoamiInfo, normalizeServerHost, resolveDataCenter } from './account/whoamiInfo'
 export type { WhoamiInfo, BuildWhoamiInfoInput } from './account/whoamiInfo'
 
