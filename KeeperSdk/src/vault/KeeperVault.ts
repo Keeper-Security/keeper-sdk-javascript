@@ -127,6 +127,12 @@ import {
 import { UserManager } from '../users/UserManager'
 import { NestedShareFolderManager } from '../nestedShareFolders/NestedShareFolderManager'
 import { isNestedShareFolder, isRootFolderUid } from '../nestedShareFolders/nsfHelpers'
+import { SecretsManagerAppManager } from '../secretsManager/SecretsManagerAppManager'
+import type {
+    FormattedSecretsManagerAppsTable,
+    SecretsManagerAppDetails,
+    SecretsManagerAppRow,
+} from '../secretsManager/types'
 import type {
     AddNsfRecordInput,
     AddNsfRecordResult,
@@ -310,6 +316,7 @@ export class KeeperVault {
     private readonly enterpriseReportManager: EnterpriseReportManager
     private readonly userManager: UserManager
     private readonly nestedShareFolderManager: NestedShareFolderManager
+    private readonly secretsManagerAppManager: SecretsManagerAppManager
     private readonly pamManager: PamManager
 
     constructor(config?: KeeperVaultConfig) {
@@ -339,6 +346,7 @@ export class KeeperVault {
         this.enterpriseReportManager = new EnterpriseReportManager(authProvider)
         this.userManager = new UserManager(authProvider)
         this.nestedShareFolderManager = new NestedShareFolderManager(this.storage, authProvider)
+        this.secretsManagerAppManager = new SecretsManagerAppManager(this.storage, authProvider)
         this.pamManager = new PamManager(this.storage, authProvider)
     }
 
@@ -356,6 +364,10 @@ export class KeeperVault {
 
     public getNestedShareFolderManager(): NestedShareFolderManager {
         return this.nestedShareFolderManager
+    }
+
+    public getSecretsManagerAppManager(): SecretsManagerAppManager {
+        return this.secretsManagerAppManager
     }
 
     public getFolderManager(): FolderManager {
@@ -1367,6 +1379,26 @@ export class KeeperVault {
         kind: 'GRANT' | 'REVOKE'
     ): string {
         return this.nestedShareFolderManager.formatNsfRecordPermissionFailures(failures, kind)
+    }
+
+    public async listSecretsManagerApps(): Promise<SecretsManagerAppRow[]> {
+        return this.secretsManagerAppManager.listApplications()
+    }
+
+    public async getSecretsManagerApp(identifier: string): Promise<SecretsManagerAppDetails> {
+        return this.secretsManagerAppManager.getApplication(identifier)
+    }
+
+    public formatSecretsManagerAppDetails(app: SecretsManagerAppDetails): string {
+        return this.secretsManagerAppManager.formatApplicationDetails(app)
+    }
+
+    public formatSecretsManagerAppsTable(rows: SecretsManagerAppRow[]): FormattedSecretsManagerAppsTable {
+        return this.secretsManagerAppManager.formatApplicationsTable(rows)
+    }
+
+    public renderSecretsManagerAppsAsciiTable(table: FormattedSecretsManagerAppsTable): string {
+        return this.secretsManagerAppManager.renderApplicationsAsciiTable(table)
     }
 
     public async listGateways(options?: ListGatewaysOptions): Promise<ListGatewaysResult> {
