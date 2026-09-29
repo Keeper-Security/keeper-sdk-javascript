@@ -581,14 +581,15 @@ export class KeeperVault {
 
         this.auth = await this.createAuth({ useSessionResumption: true })
 
-        await this.auth.loginV3({
+        const loginResult = await this.auth.loginV3({
+            username,
             loginType: Authentication.LoginType.NORMAL,
             resumeSessionOnly: true,
         })
 
         if (!this.auth.sessionToken) {
             throw new KeeperSdkError(
-                'Persistent login failed — clone code may be expired or persistent login not enabled. Perform a normal login.',
+                `Persistent login failed (${loginResult?.result || 'unknown result'}) — clone code may be expired or persistent login not enabled. Perform a normal login.`,
                 ResultCodes.PERSISTENT_LOGIN_FAILED
             )
         }
