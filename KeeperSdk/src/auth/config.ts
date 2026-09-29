@@ -16,6 +16,7 @@ export type ConfigurationDeviceConfig = {
 }
 
 export type KeeperJsonConfig = {
+    config_storage?: string
     last_login?: string
     last_server?: string
     user?: string
