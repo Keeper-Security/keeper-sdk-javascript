@@ -8,7 +8,13 @@ import {
 import { getSdkPlatform } from '../platform'
 import { logger, extractErrorMessage } from '../utils'
 import type { Nullable } from '../utils'
-import type { ConfigLoader, KeeperJsonConfig, ConfigurationServerConfig, ConfigurationUser } from './config'
+import type {
+    ConfigLoader,
+    KeeperJsonConfig,
+    ConfigurationServerConfig,
+    ConfigurationUser,
+    ConfigurationServer,
+} from './config'
 import { isValidKeeperConfig } from './config'
 
 export type {
@@ -16,6 +22,7 @@ export type {
     ConfigLoader,
     ConfigurationUser,
     ConfigurationServerConfig,
+    ConfigurationServer,
     ConfigurationDeviceConfig,
 } from './config'
 
@@ -97,10 +104,39 @@ export class SessionManager implements SessionStorage {
             const parsed = await this.configLoader.load()
             const config: KeeperJsonConfig = parsed && Object.keys(parsed).length > 0 ? parsed : {}
 
+            config.last_login = username
+            config.last_server = host
             config.device_token = Buffer.from(deviceConfig.deviceToken).toString('base64url')
             config.private_key = Buffer.from(deviceConfig.privateKey).toString('base64url')
             config.user = username
             config.server = host
+
+            const users = config.users || []
+            let user = users.find((entry) => entry.user?.toLowerCase() === username.toLowerCase())
+            if (!user) {
+                user = { user: username }
+                users.push(user)
+            }
+            user.server = host
+            user.last_device = { device_token: config.device_token }
+            config.users = users
+
+            const devices = config.devices || []
+            let device = devices.find((entry) => entry.device_token === config.device_token)
+            if (!device) {
+                device = { device_token: config.device_token }
+                devices.push(device)
+            }
+            device.private_key = config.private_key
+            device.server_info = device.server_info || []
+            config.devices = devices
+
+            const servers = config.servers || []
+            if (!servers.some((entry) => entry.server === host)) {
+                const server: ConfigurationServer = { server: host }
+                servers.push(server)
+            }
+            config.servers = servers
 
             await this.configLoader.save(config)
             this._keeperConfig = null
