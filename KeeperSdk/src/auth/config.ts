@@ -9,6 +9,11 @@ export type ConfigurationServerConfig = {
     clone_code?: string
 }
 
+export type ConfigurationServer = {
+    server?: string
+    server_key_id?: number
+}
+
 export type ConfigurationDeviceConfig = {
     device_token?: string
     private_key?: string
@@ -24,6 +29,7 @@ export type KeeperJsonConfig = {
     private_key?: string
     clone_code?: string
     users?: Array<ConfigurationUser>
+    servers?: Array<ConfigurationServer>
     devices?: Array<ConfigurationDeviceConfig>
 }
 
@@ -37,6 +43,7 @@ export function isValidKeeperConfig(value: unknown): value is KeeperJsonConfig {
     if (typeof value !== 'object' || value === null) return false
     const obj = value as Record<string, unknown>
     if (obj.users !== undefined && !Array.isArray(obj.users)) return false
+    if (obj.servers !== undefined && !Array.isArray(obj.servers)) return false
     if (obj.devices !== undefined && !Array.isArray(obj.devices)) return false
     return true
 }
