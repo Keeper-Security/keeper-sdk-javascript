@@ -41,7 +41,10 @@ async function rotatePamActionExample() {
 
         for (const record of result.records) {
             if (record.status === 'submitted') {
-                logger.info(`${record.recordUid} — Rotation submitted successfully.`)
+                const gateway = record.gatewayUid ? ` --gateway=${record.gatewayUid}` : ''
+                logger.info(
+                    `The action has been scheduled, use command 'pam action job-info ${record.conversationId || ''}${gateway}' to get status of the scheduled action`
+                )
             } else {
                 const suffix = record.message ? `: ${record.message}` : ''
                 logger.info(`${record.recordUid} — ${record.status}${suffix}`)
