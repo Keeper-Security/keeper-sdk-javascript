@@ -383,7 +383,7 @@ export const nodePlatform: Platform = class {
         return Promise.resolve(crypto.createHash('SHA256').update(data).digest())
     }
 
-    static get(url: string, headers?: { [key: string]: string }): Promise<KeeperHttpResponse> {
+    static get(url: string, headers?: { [key: string]: string }, timeoutMs = 300000): Promise<KeeperHttpResponse> {
         return new Promise<KeeperHttpResponse>((resolve, reject) => {
             let get = https.request(
                 url,
@@ -393,12 +393,14 @@ export const nodePlatform: Platform = class {
                         'User-Agent': `Node/${process.version}`,
                         ...headers,
                     },
+                    timeout: timeoutMs,
                 },
                 (res) => {
                     this.fetchData(res, resolve)
                 }
             )
             get.on('error', reject)
+            get.on('timeout', () => get.destroy(new Error(`Request timed out after ${timeoutMs}ms`)))
             get.end()
         })
     }
@@ -406,7 +408,8 @@ export const nodePlatform: Platform = class {
     static post(
         url: string,
         request: Uint8Array | string,
-        headers?: { [key: string]: string }
+        headers?: { [key: string]: string },
+        timeoutMs = 300000
     ): Promise<KeeperHttpResponse> {
         return new Promise<KeeperHttpResponse>((resolve, reject) => {
             let post = https.request(
@@ -419,12 +422,14 @@ export const nodePlatform: Platform = class {
                         'User-Agent': `Node/${process.version}`,
                         ...headers,
                     },
+                    timeout: timeoutMs,
                 },
                 (res) => {
                     this.fetchData(res, resolve)
                 }
             )
             post.on('error', reject)
+            post.on('timeout', () => post.destroy(new Error(`Request timed out after ${timeoutMs}ms`)))
             post.write(request)
             post.end()
         })
