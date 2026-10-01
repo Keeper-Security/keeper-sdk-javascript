@@ -3,6 +3,12 @@ import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { ConfigManager } from './config/ConfigManager'
 import { GatewayManager } from './gateway/GatewayManager'
 import { RotationManager } from './rotation/RotationManager'
+import { ActionManager } from './action/ActionManager'
+import { ConnectionManager } from './connection/ConnectionManager'
+import type { PamConnectionEditInput, PamConnectionEditResult } from './connection/connectionTypes'
+import { RbiManager } from './rbi/RbiManager'
+import type { PamRbiEditInput, PamRbiEditResult } from './rbi/rbiTypes'
+import type { PamActionRotateInput, PamActionRotateResult } from './action/rotateActionTypes'
 import type {
     FormatPamConfigurationsTableOptions,
     FormattedPamConfigurationsTable,
@@ -59,11 +65,17 @@ export class PamManager {
     private readonly gatewayManager: GatewayManager
     private readonly configManager: ConfigManager
     private readonly rotationManager: RotationManager
+    private readonly actionManager: ActionManager
+    private readonly connectionManager: ConnectionManager
+    private readonly rbiManager: RbiManager
 
     constructor(storage: InMemoryStorage, authProvider: AuthProvider) {
         this.gatewayManager = new GatewayManager(storage, authProvider)
         this.configManager = new ConfigManager(storage, authProvider)
         this.rotationManager = new RotationManager(storage, authProvider)
+        this.actionManager = new ActionManager(storage, authProvider)
+        this.connectionManager = new ConnectionManager(storage, authProvider)
+        this.rbiManager = new RbiManager(storage, authProvider)
     }
 
     public getGatewayManager(): GatewayManager {
@@ -76,6 +88,28 @@ export class PamManager {
 
     public getRotationManager(): RotationManager {
         return this.rotationManager
+    }
+
+    public getActionManager(): ActionManager {
+        return this.actionManager
+    }
+    public getConnectionManager(): ConnectionManager {
+        return this.connectionManager
+    }
+    public getRbiManager(): RbiManager {
+        return this.rbiManager
+    }
+
+    public async rotatePamAction(input: PamActionRotateInput): Promise<PamActionRotateResult> {
+        return this.actionManager.rotatePamAction(input)
+    }
+
+    public async editPamConnection(input: PamConnectionEditInput): Promise<PamConnectionEditResult> {
+        return this.connectionManager.editPamConnection(input)
+    }
+
+    public async editPamRbi(input: PamRbiEditInput): Promise<PamRbiEditResult> {
+        return this.rbiManager.editPamRbi(input)
     }
 
     public async listGateways(options: ListGatewaysOptions = {}): Promise<ListGatewaysResult> {
