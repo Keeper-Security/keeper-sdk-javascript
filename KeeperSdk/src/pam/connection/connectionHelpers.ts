@@ -100,13 +100,22 @@ function getOrCreateField(fields: Array<Record<string, unknown>>, type: string):
     return field
 }
 
+function getOrCreatePamSettingsField(
+    fields: Array<Record<string, unknown>>,
+    custom: Array<Record<string, unknown>>
+): Record<string, unknown> {
+
+    if (fields.some((entry) => entry.type === 'pamSettings')) return getOrCreateField(fields, 'pamSettings')
+    return getOrCreateField(custom, 'pamSettings')
+}
+
 export function applyResourceRecordSettings(
     record: DRecord,
     input: PamConnectionEditInput
 ): { data: ReturnType<typeof getTypedRecordData>; changed: boolean } {
     const data = getTypedRecordData(record)
     let changed = false
-    const settings = getOrCreateField(data.custom, 'pamSettings')
+    const settings = getOrCreatePamSettingsField(data.fields, data.custom)
     const value = settings.value as Array<Record<string, unknown>>
     const root = value[0]
     if (!root.connection || typeof root.connection !== 'object') root.connection = {}
@@ -144,7 +153,9 @@ export function applyResourceRecordSettings(
 }
 
 export function makeConnectionSettingsBytes(data: ReturnType<typeof getTypedRecordData>): Uint8Array {
-    const settings = data.custom.find((field) => field.type === 'pamSettings')
+    const settings =
+        data.fields.find((field) => field.type === 'pamSettings') ||
+        data.custom.find((field) => field.type === 'pamSettings')
     return platform.stringToBytes(JSON.stringify(settings?.value?.[0] || { connection: {}, portForward: {} }))
 }
 
