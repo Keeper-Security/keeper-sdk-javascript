@@ -1,10 +1,6 @@
-import type { Auth, DRecord, PAM, Router } from '@keeper-security/keeperapi'
-import {
-    getConfigRootsForRecordUids,
-    normal64Bytes,
-    pamConfigureNetworkGraphMessage,
-    webSafe64FromBytes,
-} from '@keeper-security/keeperapi'
+import { GraphSync, pamAddDataMessage, platform } from '@keeper-security/keeperapi'
+import type { Auth, DRecord } from '@keeper-security/keeperapi'
+import { getConfigRootsForRecordUids, normal64Bytes, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { updateRecord } from '../../records/RecordOperations'
 import { updateNestedShareRecord } from '../../nestedShareFolders/updateNsfRecord'
@@ -19,9 +15,7 @@ import {
     isConnectionConfig,
     isConnectionResource,
     makeAllowedSettings,
-    makeConnectionSettingsBytes,
     makeResourceMetaBytes,
-    recordUidBytes,
     resolveConnectionRecord,
     resolvePamUserUid,
     validateConnectionInput,
@@ -70,15 +64,39 @@ export async function editPamConnection(
     let dagUpdated = false
     const warnings: string[] = []
 
+    const graphData: GraphSync.IGraphSyncData[] = []
+    const refType = (type: string): GraphSync.RefType => {
+        if (type === 'pamRemoteBrowser') return GraphSync.RefType.RFT_PAM_BROWSER
+        if (type === 'pamDatabase') return GraphSync.RefType.RFT_PAM_DATABASE
+        if (type === 'pamDirectory') return GraphSync.RefType.RFT_PAM_DIRECTORY
+        return GraphSync.RefType.RFT_PAM_MACHINE
+    }
+    const ref = (uid: string, type: GraphSync.RefType): GraphSync.IGraphSyncRef => ({
+        type,
+        value: normal64Bytes(uid),
+    })
+    const addGraphData = async () => {
+        if (graphData.length === 0) return
+        await auth.executeRouterRestAction(
+            pamAddDataMessage({
+                origin: { type: GraphSync.RefType.RFT_DEVICE, value: platform.getRandomBytes(16) },
+                data: graphData,
+            })
+        )
+    }
+
     if (isConnectionConfig(record)) {
         const allowedSettings = makeAllowedSettings(input)
         if (Object.keys(allowedSettings).length > 0) {
-            await auth.executeRouterRestAction(
-                pamConfigureNetworkGraphMessage({
-                    recordUid: recordUidBytes(record.uid),
-                    networkSettings: { allowedSettings: new TextEncoder().encode(JSON.stringify(allowedSettings)) },
-                })
-            )
+            const configurationRef = ref(record.uid, GraphSync.RefType.RFT_PAM_NETWORK)
+            graphData.push({
+                type: GraphSync.GraphSyncDataType.GSE_DATA,
+                ref: configurationRef,
+                parentRef: configurationRef,
+                content: platform.stringToBytes(JSON.stringify({ allowedSettings })),
+                path: 'meta',
+            })
+            await addGraphData()
             dagUpdated = true
         }
     } else {
@@ -95,20 +113,36 @@ export async function editPamConnection(
             recordUpdated = await persistResourceRecord(auth, storage, record, modified.data)
         }
 
-        const resource: PAM.IPAMResourceConfig = {
-            recordUid: normal64Bytes(record.uid),
-            networkUid: normal64Bytes(configuration.uid),
-            adminUid: adminUid && supportsUserLinks ? normal64Bytes(adminUid) : undefined,
-            meta: makeResourceMetaBytes(input, recordType),
-            connectionSettings: makeConnectionSettingsBytes(modified.data),
-            connectUsers: launchUid && supportsUserLinks ? { uids: [normal64Bytes(launchUid)] } : undefined,
-        }
-        await auth.executeRouterRestAction(
-            pamConfigureNetworkGraphMessage({
-                recordUid: normal64Bytes(configuration.uid),
-                resources: [resource],
+        const configurationRef = ref(configuration.uid, GraphSync.RefType.RFT_PAM_NETWORK)
+        const resourceRef = ref(record.uid, refType(recordType))
+        graphData.push({ type: GraphSync.GraphSyncDataType.GSE_LINK, ref: resourceRef, parentRef: configurationRef })
+        const resourceMeta = makeResourceMetaBytes(input, recordType)
+        if (resourceMeta) {
+            graphData.push({
+                type: GraphSync.GraphSyncDataType.GSE_DATA,
+                ref: resourceRef,
+                parentRef: resourceRef,
+                content: resourceMeta,
+                path: 'meta',
             })
-        )
+        }
+        if (adminUid && supportsUserLinks) {
+            graphData.push({
+                type: GraphSync.GraphSyncDataType.GSE_ACL,
+                ref: ref(adminUid, GraphSync.RefType.RFT_PAM_USER),
+                parentRef: resourceRef,
+                content: platform.stringToBytes(JSON.stringify({ is_admin: true, belongs_to: true })),
+            })
+        }
+        if (launchUid && supportsUserLinks) {
+            graphData.push({
+                type: GraphSync.GraphSyncDataType.GSE_ACL,
+                ref: ref(launchUid, GraphSync.RefType.RFT_PAM_USER),
+                parentRef: resourceRef,
+                content: platform.stringToBytes(JSON.stringify({ is_admin: true, belongs_to: true })),
+            })
+        }
+        await addGraphData()
         dagUpdated = true
     }
 
