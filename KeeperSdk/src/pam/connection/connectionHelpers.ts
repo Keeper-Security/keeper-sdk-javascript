@@ -106,7 +106,7 @@ export function applyResourceRecordSettings(
 ): { data: ReturnType<typeof getTypedRecordData>; changed: boolean } {
     const data = getTypedRecordData(record)
     let changed = false
-    let settings = getOrCreateField(data.custom, 'pamSettings')
+    const settings = getOrCreateField(data.custom, 'pamSettings')
     const value = settings.value as Array<Record<string, unknown>>
     const root = value[0]
     if (!root.connection || typeof root.connection !== 'object') root.connection = {}

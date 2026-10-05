@@ -1028,6 +1028,11 @@ export const pamGetLeafsMessage = (
         GraphSync.GraphSyncRefsResult
     )
 
+export const pamAddDataMessage = (
+    data: GraphSync.IGraphSyncAddDataRequest
+): RestInMessage<GraphSync.IGraphSyncAddDataRequest> =>
+    createInMessage(data, 'api/user/graph-sync/pam/add_data', GraphSync.GraphSyncAddDataRequest)
+
 export const pamGetOnlineControllersMessage = (): RestOutMessage<PAM.IPAMOnlineControllers> =>
     createOutMessage('api/user/get_controllers', PAM.PAMOnlineControllers)
 
