@@ -104,7 +104,6 @@ function getOrCreatePamSettingsField(
     fields: Array<Record<string, unknown>>,
     custom: Array<Record<string, unknown>>
 ): Record<string, unknown> {
-
     if (fields.some((entry) => entry.type === 'pamSettings')) return getOrCreateField(fields, 'pamSettings')
     return getOrCreateField(custom, 'pamSettings')
 }
