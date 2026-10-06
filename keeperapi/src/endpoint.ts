@@ -33,6 +33,14 @@ import WssConnectionRequest = Push.WssConnectionRequest
 import SsoCloudResponse = SsoCloud.SsoCloudResponse
 import { KeeperHttpResponse, RestCommand } from './commands'
 import { AllowedEcKeyIds, AllowedMlKemKeyIds, isAllowedEcKeyId, isAllowedMlKemKeyId } from './transmissionKeys'
+import {
+    delay,
+    isThrottleResponse,
+    parseErrorResponse,
+    parseThrottleWaitSeconds,
+    throttleBackoffSeconds,
+} from './retry'
+import { defaultMaxThrottleRetries, defaultRequestTimeoutMs } from './configuration'
 
 export type ExecuteRestOptions = {
     skipRegionRedirect?: boolean
@@ -59,6 +67,32 @@ export class KeeperEndpoint {
         if (options.useHpkeForTransmissionKey && options.deviceConfig.useHpkeTransmission !== false) {
             this.useHpkeForTransmissionKey = true
         }
+    }
+
+    private async retryThrottle(response: KeeperHttpResponse, path: string, retryCount: number): Promise<number> {
+        const parsed = parseErrorResponse(response.data, (data) => platform.bytesToString(data))
+        const errorCode = parsed.body?.error
+        if (!isThrottleResponse(response.statusCode, errorCode)) return -1
+        if (this.options.failOnThrottle) {
+            if (parsed.body) throw parsed.body
+            throw new Error(parsed.message)
+        }
+
+        const nextRetry = retryCount + 1
+        const maxRetries = this.options.maxThrottleRetries ?? defaultMaxThrottleRetries
+        if (nextRetry > maxRetries) {
+            if (parsed.body) throw parsed.body
+            throw new Error(parsed.message)
+        }
+        const wait = throttleBackoffSeconds(
+            nextRetry,
+            parseThrottleWaitSeconds(parsed.body?.message || parsed.message, response.headers)
+        )
+        logger.warn(
+            `Throttled ${path} (attempt ${nextRetry}/${maxRetries}), retrying in ${wait} seconds: ${parsed.body?.message || parsed.message}`
+        )
+        await delay(wait * 1000)
+        return nextRetry
     }
 
     async getTransmissionKey(): Promise<TransmissionKey> {
@@ -215,7 +249,24 @@ export class KeeperEndpoint {
             logger.debug(...formatProto(`→ ${url}`, (message as { data?: unknown }).data))
         }
         const startTime = Date.now()
-        const response = await platform.post(url, encryptedPayload, headers)
+        let throttleRetries = 0
+        let response = await platform.post(
+            url,
+            encryptedPayload,
+            headers,
+            this.options.requestTimeoutMs ?? defaultRequestTimeoutMs
+        )
+        while (true) {
+            const nextRetry = await this.retryThrottle(response, message.path, throttleRetries)
+            if (nextRetry < 0) break
+            throttleRetries = nextRetry
+            response = await platform.post(
+                url,
+                encryptedPayload,
+                headers,
+                this.options.requestTimeoutMs ?? defaultRequestTimeoutMs
+            )
+        }
         if (!response.data || response.data.length === 0) {
             if ('fromBytes' in message) throw new Error(`Empty response from router for ${message.path}`)
             return
@@ -254,6 +305,8 @@ export class KeeperEndpoint {
         options?: ExecuteRestOptions
     ): Promise<TOut | void> {
         this._transmissionKey = await this.getTransmissionKey()
+        let throttleRetries = 0
+        let keyRetries = 0
         while (true) {
             const payload = 'toBytes' in message ? message.toBytes() : new Uint8Array()
             const apiVersion = message.apiVersion || 0
@@ -272,7 +325,17 @@ export class KeeperEndpoint {
                 logger.debug(...formatProto(`→ ${url}`, (message as { data?: unknown }).data))
             }
             const startTime = Date.now()
-            const response = await platform.post(url, request)
+            const response = await platform.post(
+                url,
+                request,
+                undefined,
+                this.options.requestTimeoutMs ?? defaultRequestTimeoutMs
+            )
+            const nextThrottleRetry = await this.retryThrottle(response, message.path, throttleRetries)
+            if (nextThrottleRetry >= 0) {
+                throttleRetries = nextThrottleRetry
+                continue
+            }
             if (!response.data || (response.data.length === 0 && response.statusCode === 200)) {
                 if ('fromBytes' in message) {
                     throw Error(`Missing expected a response for ${message.path}`)
@@ -301,6 +364,12 @@ export class KeeperEndpoint {
                     const errorObj: KeeperError = JSON.parse(errorMessage)
                     switch (errorObj.error) {
                         case 'key':
+                            keyRetries += 1
+                            if (keyRetries > (this.options.maxKeyRetries ?? 3)) {
+                                throw new Error(
+                                    `Transmission key refresh failed after ${keyRetries - 1} retries: ${errorMessage}`
+                                )
+                            }
                             let newEcKeyId: AllowedEcKeyIds
                             let newMlKemKeyId: AllowedMlKemKeyIds
                             let disableHpke = false
@@ -374,7 +443,25 @@ export class KeeperEndpoint {
             ...command.request,
         }
         const requestBytes = await this.prepareRequest(payload)
-        const response = await platform.post(this.getUrl('vault/execute_v2_command'), requestBytes)
+        const url = this.getUrl('vault/execute_v2_command')
+        let throttleRetries = 0
+        let response = await platform.post(
+            url,
+            requestBytes,
+            undefined,
+            this.options.requestTimeoutMs ?? defaultRequestTimeoutMs
+        )
+        while (true) {
+            const nextRetry = await this.retryThrottle(response, 'vault/execute_v2_command', throttleRetries)
+            if (nextRetry < 0) break
+            throttleRetries = nextRetry
+            response = await platform.post(
+                url,
+                requestBytes,
+                undefined,
+                this.options.requestTimeoutMs ?? defaultRequestTimeoutMs
+            )
+        }
         let decrypted
         try {
             decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key)
@@ -390,7 +477,7 @@ export class KeeperEndpoint {
     }
 
     async get(path: string): Promise<KeeperHttpResponse> {
-        return platform.get(this.getUrl(path), {})
+        return platform.get(this.getUrl(path), {}, this.options.requestTimeoutMs ?? defaultRequestTimeoutMs)
     }
 
     public async updateTransmissionKey(ecKeyId: AllowedEcKeyIds, mlKemKeyId: AllowedMlKemKeyIds) {

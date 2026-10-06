@@ -989,38 +989,53 @@ export const browserPlatform: Platform = class {
         return new Uint8Array(digest)
     }
 
-    static async get(url: string, headers: any): Promise<KeeperHttpResponse> {
-        let resp = await fetch(url, {
-            method: 'GET',
-            headers: Object.entries(headers),
-        })
-        let body = await resp.arrayBuffer()
-        return {
-            statusCode: resp.status,
-            headers: resp.headers,
-            data: new Uint8Array(body),
+    static async get(url: string, headers: any, timeoutMs = 300000): Promise<KeeperHttpResponse> {
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), timeoutMs)
+        try {
+            let resp = await fetch(url, {
+                method: 'GET',
+                headers: Object.entries(headers),
+                signal: controller.signal,
+            })
+            let body = await resp.arrayBuffer()
+            return {
+                statusCode: resp.status,
+                headers: resp.headers,
+                data: new Uint8Array(body),
+            }
+        } finally {
+            clearTimeout(timeout)
         }
     }
 
     static async post(
         url: string,
         request: Uint8Array | string,
-        headers?: { [key: string]: string }
+        headers?: { [key: string]: string },
+        timeoutMs = 300000
     ): Promise<KeeperHttpResponse> {
-        let resp = await fetch(url, {
-            method: 'POST',
-            headers: new Headers({
-                'Content-Type': 'application/octet-stream',
-                'Content-Length': String(request.length),
-                ...headers,
-            }),
-            body: request,
-        })
-        let body = await resp.arrayBuffer()
-        return {
-            statusCode: resp.status,
-            headers: resp.headers,
-            data: new Uint8Array(body),
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), timeoutMs)
+        try {
+            let resp = await fetch(url, {
+                method: 'POST',
+                headers: new Headers({
+                    'Content-Type': 'application/octet-stream',
+                    'Content-Length': String(request.length),
+                    ...headers,
+                }),
+                body: request,
+                signal: controller.signal,
+            })
+            let body = await resp.arrayBuffer()
+            return {
+                statusCode: resp.status,
+                headers: resp.headers,
+                data: new Uint8Array(body),
+            }
+        } finally {
+            clearTimeout(timeout)
         }
     }
 
