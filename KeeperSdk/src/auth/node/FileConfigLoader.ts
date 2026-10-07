@@ -1,5 +1,4 @@
 import fs from 'fs/promises'
-import { existsSync } from 'fs'
 import path from 'path'
 import os from 'os'
 import type { ConfigLoader, KeeperJsonConfig } from '../config'
@@ -20,10 +19,7 @@ export class FileConfigLoader implements ConfigLoader {
             this.configPath = path.resolve(configuredFile)
             this.configDir = path.dirname(this.configPath)
         } else {
-            const currentDirectoryConfig = path.join(process.cwd(), 'config.json')
-            this.configPath = existsSync(currentDirectoryConfig)
-                ? currentDirectoryConfig
-                : path.join(os.homedir(), SdkDefaults.CONFIG_DIR, 'config.json')
+            this.configPath = path.join(os.homedir(), SdkDefaults.CONFIG_DIR, 'config.json')
             this.configDir = path.dirname(this.configPath)
         }
     }
@@ -37,11 +33,6 @@ export class FileConfigLoader implements ConfigLoader {
             }
         } catch (err) {
             if ((err as NodeJS.ErrnoException)?.code === 'ENOENT') {
-                try {
-                    await this.save({})
-                } catch (saveErr) {
-                    logger.debug('Failed to create keeper config:', extractErrorMessage(saveErr))
-                }
                 return {}
             }
             logger.debug('Failed to load keeper config:', extractErrorMessage(err))
