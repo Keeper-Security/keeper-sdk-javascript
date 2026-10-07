@@ -17,6 +17,7 @@ export type ConfigurationServer = {
 export type ConfigurationDeviceConfig = {
     device_token?: string
     private_key?: string
+    public_key?: string
     server_info?: Array<ConfigurationServerConfig>
 }
 

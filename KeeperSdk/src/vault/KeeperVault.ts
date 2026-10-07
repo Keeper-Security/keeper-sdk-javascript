@@ -14,6 +14,7 @@ import {
 import type { SyncResult, SyncLogFormat, VaultStorage, SessionStorage, AuthUI3 } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { SessionManager } from '../auth/SessionManager'
+import { setPersistentLogin } from '../auth/PersistentLogin'
 import { getSdkPlatform } from '../platform'
 import { toSessionParams, type SessionRestoreInput } from '../auth/sessionRestore'
 import { searchRecords, formatRecord, getRecordTitle, getRecordType } from '../records/RecordUtils'
@@ -478,6 +479,12 @@ export class KeeperVault {
         return this.auth?.sessionToken || undefined
     }
 
+    /** Enables or disables persistent login for the current authenticated session. */
+    public async setPersistentLogin(enabled: boolean, logoutTimerMinutes = 30 * 24 * 60): Promise<void> {
+        const auth = this.getAuthOrThrow()
+        await setPersistentLogin(auth, enabled, logoutTimerMinutes)
+    }
+
     /**
      * Resume a session from extension-exported {@link SessionRestoreInput}.
      * Verifies the token with a lightweight server call so an expired session
@@ -582,10 +589,10 @@ export class KeeperVault {
         this.auth = await this.createAuth({ useSessionResumption: true })
 
         const loginResult = await this.auth.loginV3({
-            username,
             loginType: Authentication.LoginType.NORMAL,
             resumeSessionOnly: true,
         })
+        await this.sessionManager.flush()
 
         if (!this.auth.sessionToken) {
             throw new KeeperSdkError(

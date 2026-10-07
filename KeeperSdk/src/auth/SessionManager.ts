@@ -29,6 +29,7 @@ export type {
 type ResolvedDevice = {
     deviceToken: Uint8Array
     privateKey: Uint8Array
+    publicKey?: Uint8Array
     serverInfo: Array<Required<ConfigurationServerConfig>>
 }
 
@@ -45,6 +46,7 @@ export class SessionManager implements SessionStorage {
     private _deviceCache: Nullable<DeviceCacheEntry> = null
     private sessionDevices = new Map<string, DeviceConfig>()
     private sessionCloneCodes = new Map<string, Uint8Array>()
+    private cloneCodeWrite: Promise<void> = Promise.resolve()
 
     constructor(configDir?: string)
     constructor(loader: ConfigLoader)
@@ -80,6 +82,7 @@ export class SessionManager implements SessionStorage {
                 return {
                     deviceToken: device.deviceToken,
                     privateKey: device.privateKey,
+                    publicKey: device.publicKey,
                 }
             }
         }
@@ -128,6 +131,9 @@ export class SessionManager implements SessionStorage {
                 devices.push(device)
             }
             device.private_key = config.private_key
+            if (deviceConfig.publicKey) {
+                device.public_key = Buffer.from(deviceConfig.publicKey).toString('base64url')
+            }
             device.server_info = device.server_info || []
             config.devices = devices
 
@@ -171,7 +177,14 @@ export class SessionManager implements SessionStorage {
     public async saveCloneCode(host: KeeperHost, username: string, cloneCode: Uint8Array): Promise<void> {
         const key = this.cloneCodeKey(host, username)
         this.sessionCloneCodes.set(key, cloneCode)
-        await this.updateKeeperConfigCloneCode(String(host), username, cloneCode)
+        this.cloneCodeWrite = this.cloneCodeWrite.then(() =>
+            this.updateKeeperConfigCloneCode(String(host), username, cloneCode)
+        )
+        await this.cloneCodeWrite
+    }
+
+    public async flush(): Promise<void> {
+        await this.cloneCodeWrite
     }
 
     private async updateKeeperConfigCloneCode(host: string, username: string, cloneCode: Uint8Array): Promise<void> {
@@ -261,6 +274,7 @@ export class SessionManager implements SessionStorage {
                     return {
                         deviceToken: normal64Bytes(deviceTokenStr),
                         privateKey: normal64Bytes(device.private_key),
+                        publicKey: device.public_key ? normal64Bytes(device.public_key) : undefined,
                         serverInfo: (device.server_info || []).filter(
                             (entry): entry is Required<ConfigurationServerConfig> =>
                                 !!entry.server && !!entry.clone_code

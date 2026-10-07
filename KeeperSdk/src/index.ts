@@ -9,6 +9,7 @@ export { ConsoleAuthUI } from './auth/ConsoleAuthUI'
 export { UnavailableAuthUI } from './auth/UnavailableAuthUI'
 export { FileConfigLoader } from './auth/node/FileConfigLoader'
 export { SessionManager } from './auth/SessionManager'
+export { setPersistentLogin, DEFAULT_PERSISTENT_LOGIN_TIMEOUT_MINUTES } from './auth/PersistentLogin'
 export type {
     KeeperJsonConfig,
     ConfigLoader,
