@@ -4,13 +4,14 @@ import {
     setUserSettingMessage,
     updateDeviceMessage,
     type Auth,
+    type DeviceConfig,
 } from '@keeper-security/keeperapi'
 import { extractResultCode } from '../utils'
 
-export const DEFAULT_PERSISTENT_LOGIN_TIMEOUT_MINUTES = 30 * 24 * 60
+export const DEFAULT_PERSISTENT_LOGIN_TIMEOUT_MINUTES: number = 30 * 24 * 60
 
-function ensureDeviceConfig(auth: Auth) {
-    const deviceConfig = auth.options.deviceConfig
+function ensureDeviceConfig(auth: Auth): DeviceConfig {
+    const deviceConfig: DeviceConfig = auth.options.deviceConfig
     if (!deviceConfig.deviceToken) throw new Error('Device token is missing')
     return deviceConfig
 }
@@ -19,7 +20,7 @@ async function ensureDevicePublicKey(auth: Auth): Promise<void> {
     const deviceConfig = ensureDeviceConfig(auth)
     if (deviceConfig.publicKey) return
 
-    const keyPair = await platform.generateECKeyPair()
+    const keyPair: { privateKey: Uint8Array; publicKey: Uint8Array } = await platform.generateECKeyPair()
     deviceConfig.privateKey = keyPair.privateKey
     deviceConfig.publicKey = keyPair.publicKey
 
@@ -40,7 +41,7 @@ async function registerDataKeyForDevice(auth: Auth): Promise<void> {
     const deviceConfig = ensureDeviceConfig(auth)
     if (!deviceConfig.publicKey) throw new Error('Device public key is missing')
 
-    const encryptedDeviceDataKey = await platform.publicEncryptEC(auth.dataKey, deviceConfig.publicKey)
+    const encryptedDeviceDataKey: Uint8Array = await platform.publicEncryptEC(auth.dataKey, deviceConfig.publicKey)
     try {
         await auth.executeRestAction(
             registerEncryptedDataKeyForDeviceMessage({
