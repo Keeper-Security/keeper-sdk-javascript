@@ -50,15 +50,19 @@ function hasOptionalStringFields(value: Record<string, unknown>, fields: string[
 
 function isValidUser(value: unknown): value is ConfigurationUser {
     if (!isRecord(value) || !hasOptionalStringFields(value, ['user', 'server'])) return false
-    return value.last_device === undefined ||
+    return (
+        value.last_device === undefined ||
         (isRecord(value.last_device) && hasOptionalStringFields(value.last_device, ['device_token']))
+    )
 }
 
 function isValidServer(value: unknown): value is ConfigurationServer {
-    return isRecord(value) &&
+    return (
+        isRecord(value) &&
         hasOptionalStringFields(value, ['server']) &&
         (value.server_key_id === undefined ||
             (typeof value.server_key_id === 'number' && Number.isFinite(value.server_key_id)))
+    )
 }
 
 function isValidServerConfig(value: unknown): value is ConfigurationServerConfig {
@@ -69,8 +73,10 @@ function isValidDevice(value: unknown): value is ConfigurationDeviceConfig {
     if (!isRecord(value) || !hasOptionalStringFields(value, ['device_token', 'private_key', 'public_key'])) {
         return false
     }
-    return value.server_info === undefined ||
+    return (
+        value.server_info === undefined ||
         (Array.isArray(value.server_info) && value.server_info.every(isValidServerConfig))
+    )
 }
 
 export function isValidKeeperConfig(value: unknown): value is KeeperJsonConfig {
@@ -78,7 +84,9 @@ export function isValidKeeperConfig(value: unknown): value is KeeperJsonConfig {
         return false
     }
     if (!hasOptionalStringFields(value, ['device_token', 'private_key', 'clone_code'])) return false
-    return (value.users === undefined || (Array.isArray(value.users) && value.users.every(isValidUser))) &&
+    return (
+        (value.users === undefined || (Array.isArray(value.users) && value.users.every(isValidUser))) &&
         (value.servers === undefined || (Array.isArray(value.servers) && value.servers.every(isValidServer))) &&
         (value.devices === undefined || (Array.isArray(value.devices) && value.devices.every(isValidDevice)))
+    )
 }
