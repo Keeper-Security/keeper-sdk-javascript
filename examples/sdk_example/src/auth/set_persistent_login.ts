@@ -4,7 +4,6 @@ import {
   loadKeeperConfig,
   resolveServer,
   prompt,
-  suppressLogs,
   cleanup,
   logger,
   extractResultCode,
@@ -48,13 +47,10 @@ async function setPersistentLogin() {
           ResultCodes.MISSING_PASSWORD,
         );
 
-      const restore = suppressLogs();
       try {
         await vault.login(username, password);
-        restore();
         break;
       } catch (err) {
-        restore();
         const resultCode = extractResultCode(err);
         if (resultCode === ResultCodes.INVALID_CREDENTIALS) {
           const remaining = MAX_ATTEMPTS - attempt;
