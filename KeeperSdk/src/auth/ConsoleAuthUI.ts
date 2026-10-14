@@ -1,9 +1,16 @@
-import type { AuthUI3, DeviceApprovalChannel, TwoFactorChannelData } from '@keeper-security/keeperapi'
+import type {
+    AuthUI3,
+    DeviceApprovalChannel,
+    TwoFactorChannelData,
+    WebAuthnAssertionProvider,
+} from '@keeper-security/keeperapi'
 import { Authentication } from '@keeper-security/keeperapi'
 import { getSdkPlatform } from '../platform'
 import { logger, extractErrorMessage, KeeperSdkError, AuthDefaults, ResultCodes } from '../utils'
 
 export class ConsoleAuthUI implements AuthUI3 {
+    constructor(private readonly webAuthnAssertionProvider?: WebAuthnAssertionProvider) {}
+
     private static readonly DEVICE_VERIFICATION = {
         Email: 0,
         KeeperPush: 1,
@@ -36,6 +43,8 @@ export class ConsoleAuthUI implements AuthUI3 {
                 return 'Duo Security'
             case Authentication.TwoFactorChannelType.TWO_FA_CT_RSA:
                 return 'RSA SecurID'
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_BACKUP:
+                return 'Backup Code'
             case Authentication.TwoFactorChannelType.TWO_FA_CT_DNA:
                 return 'Keeper DNA'
             case Authentication.TwoFactorChannelType.TWO_FA_CT_U2F:
@@ -130,6 +139,15 @@ export class ConsoleAuthUI implements AuthUI3 {
             const selected = channels[idx]
             const name = ConsoleAuthUI.twoFactorChannelName(selected.channel.channelType!)
 
+            if (
+                selected.channel.channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_U2F ||
+                selected.channel.channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN
+            ) {
+                await selected.sendSecurityKeyAssertion?.()
+                await ConsoleAuthUI.waitWithCancel(AuthDefaults.CODE_VALIDATION_DELAY_MS, cancel)
+                return true
+            }
+
             if (selected.availablePushes && selected.availablePushes.length > 0) {
                 const pushChoice = (await rl.question(`Send push notification for ${name}? (y/n): `)).trim()
                 if (pushChoice.toLowerCase() === 'y' && selected.sendPush) {
@@ -162,6 +180,42 @@ export class ConsoleAuthUI implements AuthUI3 {
         try {
             const label = isAlternate ? 'alternate master password' : 'master password'
             return (await rl.question(`Enter your ${label}: `)).trim()
+        } finally {
+            rl.close()
+        }
+    }
+
+    public async getWebAuthnAssertion(requestOptions: string): Promise<string> {
+        if (!this.webAuthnAssertionProvider) {
+            throw new KeeperSdkError(
+                'WebAuthn assertion provider is not configured',
+                ResultCodes.UNSUPPORTED_2FA_CHANNEL
+            )
+        }
+        return this.webAuthnAssertionProvider(requestOptions)
+    }
+
+    public async ssoLogin(url: string): Promise<any> {
+        const rl = getSdkPlatform().createReadline(
+            typeof process !== 'undefined' ? process.stdin : undefined,
+            typeof process !== 'undefined' ? process.stdout : undefined
+        )
+
+        try {
+            logger.info('\n--- SSO Authentication Required ---')
+            logger.info('Open the following URL in a browser and complete authentication:')
+            logger.info(url)
+
+            const response = (await rl.question('\nPaste the SSO token or response JSON: ')).trim()
+            if (!response) {
+                throw new KeeperSdkError('SSO response is required.', ResultCodes.USER_CANCELLED)
+            }
+
+            try {
+                return JSON.parse(response)
+            } catch {
+                return response
+            }
         } finally {
             rl.close()
         }
