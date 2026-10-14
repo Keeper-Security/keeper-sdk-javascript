@@ -6,6 +6,7 @@ import {
     KeeperError,
     LoginError,
     TwoFactorChannelData,
+    WebAuthnAssertionProvider,
 } from './configuration'
 import { KeeperEndpoint, KeeperEnvironment, ExecuteRestOptions } from './endpoint'
 import { KeyWrapper, platform } from './platform'
@@ -21,6 +22,7 @@ import {
 } from './utils'
 import {
     accountSummaryMessage,
+    generatePasskeyAuthentication,
     getEnterprisePublicKeyMessage,
     logoutV3Message,
     NN,
@@ -40,6 +42,7 @@ import {
     twoFASendDuoMessage,
     validateAuthHashMessage,
     validateDeviceVerificationCodeMessage,
+    verifyPasskeyAuthentication,
 } from './restMessages'
 import { AccountSummary, Authentication } from './proto'
 import { RestCommand } from './commands'
@@ -606,7 +609,9 @@ export class Auth {
                         const onsiteResp = await this.options.authUI3.ssoLogin(onsiteSsoLoginUrl)
                         logger.debug(onsiteResp)
                         this._username = onsiteResp.email
-                        wrappedPassword = wrapPassword(onsiteResp.password)
+                        if (onsiteResp.password) {
+                            wrappedPassword = wrapPassword(this._endpoint.decryptOnsiteSsoPassword(onsiteResp.password))
+                        }
                         loginType = LoginType.SSO
                         loginMethod = LoginMethod.AFTER_SSO
                     }
@@ -682,6 +687,60 @@ export class Auth {
                     return
             }
         }
+    }
+
+    /** Authenticates with a platform passkey and completes the normal login flow. */
+    async loginWithPasskey(username: string, assertionProvider?: WebAuthnAssertionProvider): Promise<void> {
+        const provider =
+            assertionProvider || this.options.authUI3?.getWebAuthnAssertion?.bind(this.options.authUI3)
+        if (!provider) {
+            throw new Error('WebAuthn assertion provider is not configured')
+        }
+
+        this._username = username
+        await this.endpoint.registerDevice()
+
+        const deviceToken = this.options.deviceConfig.deviceToken
+        if (!deviceToken) {
+            throw new Error('Device token was not created')
+        }
+
+        const passkeyResponse = await this.executeRest(
+            generatePasskeyAuthentication({
+                authenticatorAttachment: Authentication.AuthenticatorAttachment.PLATFORM,
+                passkeyPurpose: Authentication.PasskeyPurpose.PK_LOGIN,
+                clientVersion: this.endpoint.clientVersion,
+                encryptedDeviceToken: deviceToken,
+                username,
+            })
+        )
+        if (!passkeyResponse.pkRequestOptions || !passkeyResponse.challengeToken) {
+            throw new Error('Passkey authentication challenge is incomplete')
+        }
+
+        const assertion = await provider(passkeyResponse.pkRequestOptions)
+        if (!assertion) {
+            throw new Error('Passkey assertion is empty')
+        }
+
+        const validationResponse = await this.executeRest(
+            verifyPasskeyAuthentication({
+                challengeToken: passkeyResponse.challengeToken,
+                assertionResponse: platform.stringToBytes(assertion),
+                passkeyPurpose: Authentication.PasskeyPurpose.PK_LOGIN,
+                encryptedLoginToken: passkeyResponse.encryptedLoginToken,
+            })
+        )
+        if (!validationResponse.isValid || !validationResponse.encryptedLoginToken) {
+            throw new Error('Passkey authentication failed')
+        }
+
+        await this.loginV3({
+            username,
+            loginToken: validationResponse.encryptedLoginToken,
+            loginType: Authentication.LoginType.NORMAL,
+            loginMethod: Authentication.LoginMethod.EXISTING_ACCOUNT,
+        })
     }
 
     async switchToActiveAccount({ username }: { username: string }): Promise<Authentication.LoginResponse | undefined> {
@@ -1007,6 +1066,9 @@ export class Auth {
                     case Authentication.TwoFactorChannelType.TWO_FA_CT_RSA:
                         valueType = Authentication.TwoFactorValueType.TWO_FA_CODE_RSA
                         break
+                    case Authentication.TwoFactorChannelType.TWO_FA_CT_BACKUP:
+                        valueType = Authentication.TwoFactorValueType.TWO_FA_CODE_NONE
+                        break
                     case Authentication.TwoFactorChannelType.TWO_FA_CT_U2F:
                         valueType = Authentication.TwoFactorValueType.TWO_FA_RESP_U2F
                         break
@@ -1053,12 +1115,28 @@ export class Auth {
                 .map((ch) => {
                     const tfachannelData: TwoFactorChannelData = {
                         channel: ch,
+                        challenge: ch.challenge || undefined,
                         setExpiration: (exp) => {
                             tfaExpiration = exp
                         },
                         sendCode: async (code) => {
                             await submitCode(ch.channelType!, code)
                         },
+                    }
+                    if (
+                        ch.channelType === TwoFactorChannelType.TWO_FA_CT_U2F ||
+                        ch.channelType === TwoFactorChannelType.TWO_FA_CT_WEBAUTHN
+                    ) {
+                        tfachannelData.sendSecurityKeyAssertion = async () => {
+                            const provider = this.options.authUI3?.getWebAuthnAssertion
+                            if (!provider) {
+                                throw new Error('WebAuthn assertion provider is not configured')
+                            }
+                            if (!ch.challenge) {
+                                throw new Error('WebAuthn challenge is missing')
+                            }
+                            await submitCode(ch.channelType!, await provider(ch.challenge))
+                        }
                     }
                     switch (ch.channelType) {
                         case TwoFactorChannelType.TWO_FA_CT_U2F:

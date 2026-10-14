@@ -11,7 +11,14 @@ import {
     normal64Bytes,
     platform,
 } from '@keeper-security/keeperapi'
-import type { SyncResult, SyncLogFormat, VaultStorage, SessionStorage, AuthUI3 } from '@keeper-security/keeperapi'
+import type {
+    SyncResult,
+    SyncLogFormat,
+    VaultStorage,
+    SessionStorage,
+    AuthUI3,
+    WebAuthnAssertionProvider,
+} from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { SessionManager } from '../auth/SessionManager'
 import { setPersistentLogin, DEFAULT_PERSISTENT_LOGIN_TIMEOUT_MINUTES } from '../auth/PersistentLogin'
@@ -451,6 +458,17 @@ export class KeeperVault {
 
         this.synced = false
         this.log.info(`Logged in as ${username} (via session token)`)
+    }
+
+    /** Logs in using a platform passkey or another WebAuthn authenticator. */
+    public async loginWithPasskey(username: string, assertionProvider?: WebAuthnAssertionProvider): Promise<void> {
+        this.auth = await this.createAuth({ useSessionResumption: false })
+        this.sessionManager.setLastUsername(username)
+
+        await this.auth.loginWithPasskey(username, assertionProvider)
+
+        this.synced = false
+        this.log.info(`Logged in as ${username} (via passkey)`)
     }
 
     /**
