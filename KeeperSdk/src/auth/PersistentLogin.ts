@@ -8,7 +8,7 @@ import {
 } from '@keeper-security/keeperapi'
 import { extractResultCode } from '../utils'
 
-export const DEFAULT_PERSISTENT_LOGIN_TIMEOUT_MINUTES: number = 30 * 24 * 60
+export const DEFAULT_PERSISTENT_LOGIN_TIMEOUT_MINUTES: number = 24 * 60
 
 function ensureDeviceConfig(auth: Auth): DeviceConfig {
     const deviceConfig: DeviceConfig = auth.options.deviceConfig
