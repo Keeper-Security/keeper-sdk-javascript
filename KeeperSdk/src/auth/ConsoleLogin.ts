@@ -169,7 +169,7 @@ export async function resolveServer(username?: string, preloadedConfig?: KeeperJ
     entries.forEach(([region, host], i) => {
         logger.info(`  ${i + 1}. ${region} (${host})`)
     })
-    logger.info(`  Or enter a hostname directly (e.g. dev.keepersecurity.com)`)
+    logger.info(`  Or enter server details directly (e.g. dev.keepersecurity.com)`)
 
     const choice = await prompt(`Region [1 = ${DEFAULT_REGION}]: `)
     if (!choice) return KEEPER_PUBLIC_HOSTS[DEFAULT_REGION]
