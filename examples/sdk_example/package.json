@@ -4,6 +4,7 @@
     "description": "Example usage of the KeeperSdk wrapper",
     "scripts": {
         "auth:login": "ts-node src/auth/login.ts",
+        "auth:set-persistent-login": "ts-node src/auth/set_persistent_login.ts",
         "auth:session-token": "ts-node src/auth/session_token_login.ts",
         "auth:register-device": "ts-node src/auth/register_device.ts",
         "records:list": "ts-node src/records/list_records.ts",
