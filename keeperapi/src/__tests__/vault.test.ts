@@ -1031,7 +1031,6 @@ describe('Sync Down', () => {
                 storage,
             })
             expect(storage.removeDependencies).toHaveBeenCalledWith({
-                '': new Set([recordUidStr]),
                 [sharedFolderUidStr]: new Set([recordUidStr]),
             })
             expect(storage.put).toHaveBeenCalledWith(
@@ -1108,7 +1107,6 @@ describe('Sync Down', () => {
                 ]),
             })
             expect(storage.removeDependencies).toHaveBeenCalledWith({
-                '': new Set([recordUidStr]),
                 [sharedFolderUidStr]: new Set([recordUidStr]),
             })
             expect(storage.put).toHaveBeenCalledWith(
@@ -1121,13 +1119,13 @@ describe('Sync Down', () => {
         })
         it('updates the record data when it is moved out of a shared folder (moved to another shared folder)', async () => {
             /*
-      [before update]
-      shared folder A/  <-- contains a record
-      shared folder B/
-      [after update]
-      shared folder A/
-      shared-folder folder B/  <-- the record moved from A to B
-      */
+              [before update]
+              shared folder A/ <-- contains a record
+              shared folder B/
+              [after update]
+              shared folder A/
+              shared-folder folder B/ <-- the record moved from A to B
+            */
             const decryptedRecordData = {
                 title: 'a record removed from a shared folder to a root vault',
             }
@@ -1197,7 +1195,6 @@ describe('Sync Down', () => {
                 })
             )
             expect(storage.removeDependencies).toHaveBeenCalledWith({
-                '': new Set([recordUidStr]),
                 [sharedFolderUidAStr]: new Set([recordUidStr]),
             })
             expect(storage.put).toHaveBeenCalledWith(
@@ -1719,15 +1716,15 @@ describe('Sync Down', () => {
         })
         it('updates the record data when a child record of a shared-folder folder is moved out of their parent shared folder', async () => {
             /*
-      [before update]
-      root
-      └── shared folder
-          └── shared-folder folder/  <-- contains a record C
-      [after update]
-      root  <-- contains a record C
-      └── shared folder
-          └── shared-folder folder/
-      */
+              [before update]
+              root
+              └── shared folder
+                  └── shared-folder folder/ <-- contains a record C
+              [after update]
+              root <-- contains a record C
+              └── shared folder
+                  └── shared-folder folder/
+            */
             const decryptedRecordData = {
                 title: 'a record removed from a shared-folder folder to a root vault',
             }
@@ -1918,7 +1915,6 @@ describe('Sync Down', () => {
                 })
             )
             expect(storage.removeDependencies).toHaveBeenCalledWith({
-                '': new Set([recordUidStr]),
                 [sharedFolderUidStr]: new Set([recordUidStr]),
             })
         })
