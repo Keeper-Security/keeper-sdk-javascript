@@ -969,6 +969,9 @@ const processRemovedSharedFolderFolderRecords = async (
     dependencies: RemovedDependencies
 ) => {
     for (const record of records as NN<ISharedFolderFolderRecord>[]) {
+        if (!record.folderUid?.length) {
+            continue
+        }
         const sharedFolderFolderUid = webSafe64FromBytes(record.folderUid)
         const recordUid = webSafe64FromBytes(record.recordUid)
         addRemovedDependencies(dependencies, sharedFolderFolderUid, recordUid)
