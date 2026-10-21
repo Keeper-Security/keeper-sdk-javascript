@@ -19,6 +19,9 @@ export interface SdkPlatform {
     /** HMAC digest (e.g. SHA-1 for TOTP). */
     hmac(algorithm: 'sha1' | 'sha256' | 'sha512', key: Uint8Array, data: Uint8Array): Uint8Array
 
+    /** Derives P-256 public key from EC private key. */
+    deriveECPublicKey(privateKey: Uint8Array): Promise<Uint8Array>
+
     createFileConfigLoader(configDir?: string): ConfigLoader
 
     createAuthUI(useConsoleAuth: boolean): AuthUI3

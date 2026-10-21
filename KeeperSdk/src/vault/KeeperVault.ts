@@ -14,7 +14,7 @@ import {
 import type { SyncResult, SyncLogFormat, VaultStorage, SessionStorage, AuthUI3 } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { SessionManager } from '../auth/SessionManager'
-import { setPersistentLogin } from '../auth/PersistentLogin'
+import { setPersistentLogin, DEFAULT_PERSISTENT_LOGIN_TIMEOUT_MINUTES } from '../auth/PersistentLogin'
 import { getSdkPlatform } from '../platform'
 import { toSessionParams, type SessionRestoreInput } from '../auth/sessionRestore'
 import { searchRecords, formatRecord, getRecordTitle, getRecordType } from '../records/RecordUtils'
@@ -480,7 +480,10 @@ export class KeeperVault {
     }
 
     /** Enables or disables persistent login for the current authenticated session. */
-    public async setPersistentLogin(enabled: boolean, logoutTimerMinutes = 30 * 24 * 60): Promise<void> {
+    public async setPersistentLogin(
+        enabled: boolean,
+        logoutTimerMinutes = DEFAULT_PERSISTENT_LOGIN_TIMEOUT_MINUTES
+    ): Promise<void> {
         const auth = this.getAuthOrThrow()
         await setPersistentLogin(auth, enabled, logoutTimerMinutes)
     }

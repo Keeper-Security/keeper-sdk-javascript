@@ -6,6 +6,7 @@ import {
     type Auth,
     type DeviceConfig,
 } from '@keeper-security/keeperapi'
+import { getSdkPlatform } from '../platform'
 import { extractResultCode } from '../utils'
 
 export const DEFAULT_PERSISTENT_LOGIN_TIMEOUT_MINUTES: number = 60
@@ -19,6 +20,10 @@ function ensureDeviceConfig(auth: Auth): DeviceConfig {
 async function ensureDevicePublicKey(auth: Auth): Promise<void> {
     const deviceConfig = ensureDeviceConfig(auth)
     if (deviceConfig.publicKey) return
+    if (deviceConfig.privateKey) {
+        deviceConfig.publicKey = await getSdkPlatform().deriveECPublicKey(deviceConfig.privateKey)
+        return
+    }
 
     const keyPair: { privateKey: Uint8Array; publicKey: Uint8Array } = await platform.generateECKeyPair()
     deviceConfig.privateKey = keyPair.privateKey

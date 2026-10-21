@@ -30,7 +30,6 @@ export type {
 type ResolvedDevice = {
     deviceToken: Uint8Array
     privateKey: Uint8Array
-    publicKey?: Uint8Array
     serverInfo: Array<Required<ConfigurationServerConfig>>
 }
 
@@ -83,7 +82,6 @@ export class SessionManager implements SessionStorage {
                 return {
                     deviceToken: device.deviceToken,
                     privateKey: device.privateKey,
-                    publicKey: device.publicKey,
                 }
             }
         }
@@ -136,9 +134,6 @@ export class SessionManager implements SessionStorage {
                 devices.push(device)
             }
             device.private_key = config.private_key
-            if (deviceConfig.publicKey) {
-                device.public_key = Buffer.from(deviceConfig.publicKey).toString('base64url')
-            }
             device.server_info = device.server_info || []
             config.devices = devices
 
@@ -279,7 +274,6 @@ export class SessionManager implements SessionStorage {
                     return {
                         deviceToken: normal64Bytes(deviceTokenStr),
                         privateKey: normal64Bytes(device.private_key),
-                        publicKey: device.public_key ? normal64Bytes(device.public_key) : undefined,
                         serverInfo: (device.server_info || []).filter(
                             (entry): entry is Required<ConfigurationServerConfig> =>
                                 !!entry.server && !!entry.clone_code
