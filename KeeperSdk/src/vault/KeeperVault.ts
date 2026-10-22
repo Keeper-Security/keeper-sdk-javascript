@@ -414,16 +414,36 @@ export class KeeperVault {
         return this.auth
     }
 
-    public async login(username: string, password: string): Promise<void> {
+    private static async startLogin(
+        auth: Auth,
+        username: string,
+        password: string | undefined,
+        loginType: Authentication.LoginType
+    ): Promise<void> {
+        await auth.loginV3({
+            username,
+            password,
+            loginType,
+            loginMethod: Authentication.LoginMethod.EXISTING_ACCOUNT,
+        })
+    }
+
+    private static isSsoMasterPasswordRequest(err: unknown): boolean {
+        return err instanceof KeeperSdkError && err.resultCode === ResultCodes.SSO_MASTER_PASSWORD_LOGIN
+    }
+
+    public async login(username: string, password?: string): Promise<void> {
         this.auth = await this.createAuth({ useSessionResumption: false })
         this.sessionManager.setLastUsername(username)
 
-        await this.auth.loginV3({
-            username,
-            password,
-            loginType: Authentication.LoginType.NORMAL,
-            loginMethod: Authentication.LoginMethod.EXISTING_ACCOUNT,
-        })
+        try {
+            await KeeperVault.startLogin(this.auth, username, password, Authentication.LoginType.NORMAL)
+        } catch (err) {
+            if (!KeeperVault.isSsoMasterPasswordRequest(err)) throw err
+
+            this.auth = await this.createAuth({ useSessionResumption: false })
+            await KeeperVault.startLogin(this.auth, username, password, Authentication.LoginType.ALTERNATE)
+        }
 
         this.synced = false
         this.log.info(`Logged in as ${username}`)

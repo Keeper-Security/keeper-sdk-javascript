@@ -6,6 +6,8 @@ connectSdkPlatform(nodeSdkPlatform)
 export * from './api'
 
 export { ConsoleAuthUI } from './auth/ConsoleAuthUI'
+export { createFido2AssertionProvider } from './auth/node/Fido2AssertionProvider'
+export type { Fido2AssertionProviderOptions } from './auth/node/fido2/types'
 export { UnavailableAuthUI } from './auth/UnavailableAuthUI'
 export { FileConfigLoader } from './auth/node/FileConfigLoader'
 export { SessionManager } from './auth/SessionManager'

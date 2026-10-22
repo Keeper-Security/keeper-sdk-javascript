@@ -123,6 +123,7 @@ export interface AuthUI3 {
     getSSOToken?(redirectUrl: string): Promise<Uint8Array>
     redirectCallback?(url: string): Promise<void>
     ssoLogin?(url: string): Promise<any>
+    detachedSsoLogin?: boolean
     idpLogout?(url: string): Promise<void>
 }
 

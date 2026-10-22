@@ -578,7 +578,14 @@ export class Auth {
                     logger.debug('Cloud SSO Connect login')
                     this.ssoLogoutUrl = loginResponse.url.replace('login', 'logout')
                     this.userType = UserType.cloudSso
-                    let payload = await this._endpoint.prepareSsoPayload(this.messageSessionUid)
+                    const detachedSsoLogin =
+                        !this.options.authUI3?.redirectCallback && !!this.options.authUI3?.detachedSsoLogin
+                    let payload = await this._endpoint.prepareSsoPayload(
+                        this.messageSessionUid,
+                        '',
+                        '',
+                        detachedSsoLogin
+                    )
                     let cloudSsoLoginUrl = loginResponse.url + '?payload=' + payload
                     if (this.options.authUI3?.redirectCallback) {
                         await this.options.authUI3.redirectCallback(cloudSsoLoginUrl)
@@ -1128,7 +1135,7 @@ export class Auth {
                         ch.channelType === TwoFactorChannelType.TWO_FA_CT_WEBAUTHN
                     ) {
                         tfachannelData.sendSecurityKeyAssertion = async () => {
-                            const provider = this.options.authUI3?.getWebAuthnAssertion
+                            const provider = this.options.authUI3?.getWebAuthnAssertion?.bind(this.options.authUI3)
                             if (!provider) {
                                 throw new Error('WebAuthn assertion provider is not configured')
                             }
@@ -1237,9 +1244,18 @@ export class Auth {
         useAlternate: boolean = false
     ) {
         // TODO test for account transfer and account recovery
-        const salt = useAlternate ? loginResponse.salt.find((s) => s.name === 'alternate') : loginResponse.salt[0]
+        // Same as Commander: prefer the "alternate" salt for alternate (SSO master password) login, else the first one.
+        const salt = useAlternate
+            ? (loginResponse.salt.find((s) => s.name?.toLowerCase() === 'alternate') ?? loginResponse.salt[0])
+            : loginResponse.salt[0]
         if (!salt?.salt || !salt?.iterations) {
-            const error = new Error('Salt missing from API response')
+            const error = new Error(
+                loginResponse.message ||
+                    (loginResponse.salt.length === 0
+                        ? 'Your account requires account recovery in order to use a Master Password authentication method. ' +
+                          'Account recovery (Forgot Password) is available in the Web Vault or Enterprise Console.'
+                        : 'Salt missing from API response')
+            )
             if (useAlternate && !salt) {
                 error.cause = Error('No alternate master password found')
             }
