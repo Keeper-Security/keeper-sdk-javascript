@@ -1,4 +1,4 @@
-import { createHmac } from 'crypto'
+import { createECDH, createHmac } from 'crypto'
 import readline from 'readline/promises'
 import type { AuthUI3 } from '@keeper-security/keeperapi'
 import { ConsoleAuthUI } from '../../auth/ConsoleAuthUI'
@@ -30,6 +30,12 @@ export const nodeSdkPlatform: SdkPlatform = {
     hmac(algorithm, key, data) {
         const algo = algorithm.toLowerCase()
         return new Uint8Array(createHmac(algo, Buffer.from(key)).update(data).digest())
+    },
+
+    async deriveECPublicKey(privateKey: Uint8Array): Promise<Uint8Array> {
+        const ecdh = createECDH('prime256v1')
+        ecdh.setPrivateKey(privateKey)
+        return new Uint8Array(ecdh.getPublicKey())
     },
 
     createFileConfigLoader(configDir?: string): ConfigLoader {

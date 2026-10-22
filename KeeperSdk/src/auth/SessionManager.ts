@@ -8,7 +8,14 @@ import {
 import { getSdkPlatform } from '../platform'
 import { logger, extractErrorMessage } from '../utils'
 import type { Nullable } from '../utils'
-import type { ConfigLoader, KeeperJsonConfig, ConfigurationServerConfig, ConfigurationUser } from './config'
+import type {
+    ConfigLoader,
+    KeeperJsonConfig,
+    ConfigurationDeviceConfig,
+    ConfigurationServerConfig,
+    ConfigurationUser,
+    ConfigurationServer,
+} from './config'
 import { isValidKeeperConfig } from './config'
 
 export type {
@@ -16,6 +23,7 @@ export type {
     ConfigLoader,
     ConfigurationUser,
     ConfigurationServerConfig,
+    ConfigurationServer,
     ConfigurationDeviceConfig,
 } from './config'
 
@@ -38,6 +46,7 @@ export class SessionManager implements SessionStorage {
     private _deviceCache: Nullable<DeviceCacheEntry> = null
     private sessionDevices = new Map<string, DeviceConfig>()
     private sessionCloneCodes = new Map<string, Uint8Array>()
+    private cloneCodeWrite: Promise<void> = Promise.resolve()
 
     constructor(configDir?: string)
     constructor(loader: ConfigLoader)
@@ -97,10 +106,43 @@ export class SessionManager implements SessionStorage {
             const parsed = await this.configLoader.load()
             const config: KeeperJsonConfig = parsed && Object.keys(parsed).length > 0 ? parsed : {}
 
+            config.last_login = username
+            config.last_server = host
             config.device_token = Buffer.from(deviceConfig.deviceToken).toString('base64url')
             config.private_key = Buffer.from(deviceConfig.privateKey).toString('base64url')
             config.user = username
             config.server = host
+
+            const users: Array<ConfigurationUser> = config.users || []
+            let user: ConfigurationUser | undefined = users.find(
+                (entry: ConfigurationUser) => entry.user?.toLowerCase() === username.toLowerCase()
+            )
+            if (!user) {
+                user = { user: username }
+                users.push(user)
+            }
+            user.server = host
+            user.last_device = { device_token: config.device_token }
+            config.users = users
+
+            const devices: Array<ConfigurationDeviceConfig> = config.devices || []
+            let device: ConfigurationDeviceConfig | undefined = devices.find(
+                (entry: ConfigurationDeviceConfig) => entry.device_token === config.device_token
+            )
+            if (!device) {
+                device = { device_token: config.device_token }
+                devices.push(device)
+            }
+            device.private_key = config.private_key
+            device.server_info = device.server_info || []
+            config.devices = devices
+
+            const servers: Array<ConfigurationServer> = config.servers || []
+            if (!servers.some((entry) => entry.server === host)) {
+                const server: ConfigurationServer = { server: host }
+                servers.push(server)
+            }
+            config.servers = servers
 
             await this.configLoader.save(config)
             this._keeperConfig = null
@@ -135,7 +177,14 @@ export class SessionManager implements SessionStorage {
     public async saveCloneCode(host: KeeperHost, username: string, cloneCode: Uint8Array): Promise<void> {
         const key = this.cloneCodeKey(host, username)
         this.sessionCloneCodes.set(key, cloneCode)
-        await this.updateKeeperConfigCloneCode(String(host), username, cloneCode)
+        this.cloneCodeWrite = this.cloneCodeWrite.then(() =>
+            this.updateKeeperConfigCloneCode(String(host), username, cloneCode)
+        )
+        await this.cloneCodeWrite
+    }
+
+    public async flush(): Promise<void> {
+        await this.cloneCodeWrite
     }
 
     private async updateKeeperConfigCloneCode(host: string, username: string, cloneCode: Uint8Array): Promise<void> {
