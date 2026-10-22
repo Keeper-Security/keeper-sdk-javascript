@@ -126,9 +126,9 @@ export interface Platform {
 
     sha256(data: Uint8Array): Promise<Uint8Array>
 
-    get(url: string, headers: any): Promise<KeeperHttpResponse>
+    get(url: string, headers: any, timeoutMs?: number): Promise<KeeperHttpResponse>
 
-    post(url: string, request: Uint8Array, headers?: any): Promise<KeeperHttpResponse>
+    post(url: string, request: Uint8Array, headers?: any, timeoutMs?: number): Promise<KeeperHttpResponse>
 
     fileUpload(url: string, uploadParameters: any, data: Uint8Array | Blob): Promise<any>
 
