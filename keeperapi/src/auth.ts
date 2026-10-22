@@ -6,6 +6,7 @@ import {
     KeeperError,
     LoginError,
     TwoFactorChannelData,
+    WebAuthnAssertionProvider,
 } from './configuration'
 import { KeeperEndpoint, KeeperEnvironment, ExecuteRestOptions } from './endpoint'
 import { KeyWrapper, platform } from './platform'
@@ -21,6 +22,7 @@ import {
 } from './utils'
 import {
     accountSummaryMessage,
+    generatePasskeyAuthentication,
     getEnterprisePublicKeyMessage,
     logoutV3Message,
     NN,
@@ -40,6 +42,7 @@ import {
     twoFASendDuoMessage,
     validateAuthHashMessage,
     validateDeviceVerificationCodeMessage,
+    verifyPasskeyAuthentication,
 } from './restMessages'
 import { AccountSummary, Authentication } from './proto'
 import { RestCommand } from './commands'
@@ -575,7 +578,14 @@ export class Auth {
                     logger.debug('Cloud SSO Connect login')
                     this.ssoLogoutUrl = loginResponse.url.replace('login', 'logout')
                     this.userType = UserType.cloudSso
-                    let payload = await this._endpoint.prepareSsoPayload(this.messageSessionUid)
+                    const detachedSsoLogin =
+                        !this.options.authUI3?.redirectCallback && !!this.options.authUI3?.detachedSsoLogin
+                    let payload = await this._endpoint.prepareSsoPayload(
+                        this.messageSessionUid,
+                        '',
+                        '',
+                        detachedSsoLogin
+                    )
                     let cloudSsoLoginUrl = loginResponse.url + '?payload=' + payload
                     if (this.options.authUI3?.redirectCallback) {
                         await this.options.authUI3.redirectCallback(cloudSsoLoginUrl)
@@ -606,7 +616,9 @@ export class Auth {
                         const onsiteResp = await this.options.authUI3.ssoLogin(onsiteSsoLoginUrl)
                         logger.debug(onsiteResp)
                         this._username = onsiteResp.email
-                        wrappedPassword = wrapPassword(onsiteResp.password)
+                        if (onsiteResp.password) {
+                            wrappedPassword = wrapPassword(this._endpoint.decryptOnsiteSsoPassword(onsiteResp.password))
+                        }
                         loginType = LoginType.SSO
                         loginMethod = LoginMethod.AFTER_SSO
                     }
@@ -682,6 +694,59 @@ export class Auth {
                     return
             }
         }
+    }
+
+    /** Authenticates with a platform passkey and completes the normal login flow. */
+    async loginWithPasskey(username: string, assertionProvider?: WebAuthnAssertionProvider): Promise<void> {
+        const provider = assertionProvider || this.options.authUI3?.getWebAuthnAssertion?.bind(this.options.authUI3)
+        if (!provider) {
+            throw new Error('WebAuthn assertion provider is not configured')
+        }
+
+        this._username = username
+        await this.endpoint.registerDevice()
+
+        const deviceToken = this.options.deviceConfig.deviceToken
+        if (!deviceToken) {
+            throw new Error('Device token was not created')
+        }
+
+        const passkeyResponse = await this.executeRest(
+            generatePasskeyAuthentication({
+                authenticatorAttachment: Authentication.AuthenticatorAttachment.PLATFORM,
+                passkeyPurpose: Authentication.PasskeyPurpose.PK_LOGIN,
+                clientVersion: this.endpoint.clientVersion,
+                encryptedDeviceToken: deviceToken,
+                username,
+            })
+        )
+        if (!passkeyResponse.pkRequestOptions || !passkeyResponse.challengeToken) {
+            throw new Error('Passkey authentication challenge is incomplete')
+        }
+
+        const assertion = await provider(passkeyResponse.pkRequestOptions)
+        if (!assertion) {
+            throw new Error('Passkey assertion is empty')
+        }
+
+        const validationResponse = await this.executeRest(
+            verifyPasskeyAuthentication({
+                challengeToken: passkeyResponse.challengeToken,
+                assertionResponse: platform.stringToBytes(assertion),
+                passkeyPurpose: Authentication.PasskeyPurpose.PK_LOGIN,
+                encryptedLoginToken: passkeyResponse.encryptedLoginToken,
+            })
+        )
+        if (!validationResponse.isValid || !validationResponse.encryptedLoginToken) {
+            throw new Error('Passkey authentication failed')
+        }
+
+        await this.loginV3({
+            username,
+            loginToken: validationResponse.encryptedLoginToken,
+            loginType: Authentication.LoginType.NORMAL,
+            loginMethod: Authentication.LoginMethod.EXISTING_ACCOUNT,
+        })
     }
 
     async switchToActiveAccount({ username }: { username: string }): Promise<Authentication.LoginResponse | undefined> {
@@ -1007,6 +1072,9 @@ export class Auth {
                     case Authentication.TwoFactorChannelType.TWO_FA_CT_RSA:
                         valueType = Authentication.TwoFactorValueType.TWO_FA_CODE_RSA
                         break
+                    case Authentication.TwoFactorChannelType.TWO_FA_CT_BACKUP:
+                        valueType = Authentication.TwoFactorValueType.TWO_FA_CODE_NONE
+                        break
                     case Authentication.TwoFactorChannelType.TWO_FA_CT_U2F:
                         valueType = Authentication.TwoFactorValueType.TWO_FA_RESP_U2F
                         break
@@ -1053,12 +1121,28 @@ export class Auth {
                 .map((ch) => {
                     const tfachannelData: TwoFactorChannelData = {
                         channel: ch,
+                        challenge: ch.challenge || undefined,
                         setExpiration: (exp) => {
                             tfaExpiration = exp
                         },
                         sendCode: async (code) => {
                             await submitCode(ch.channelType!, code)
                         },
+                    }
+                    if (
+                        ch.channelType === TwoFactorChannelType.TWO_FA_CT_U2F ||
+                        ch.channelType === TwoFactorChannelType.TWO_FA_CT_WEBAUTHN
+                    ) {
+                        tfachannelData.sendSecurityKeyAssertion = async () => {
+                            const provider = this.options.authUI3?.getWebAuthnAssertion?.bind(this.options.authUI3)
+                            if (!provider) {
+                                throw new Error('WebAuthn assertion provider is not configured')
+                            }
+                            if (!ch.challenge) {
+                                throw new Error('WebAuthn challenge is missing')
+                            }
+                            await submitCode(ch.channelType!, await provider(ch.challenge))
+                        }
                     }
                     switch (ch.channelType) {
                         case TwoFactorChannelType.TWO_FA_CT_U2F:
@@ -1159,9 +1243,18 @@ export class Auth {
         useAlternate: boolean = false
     ) {
         // TODO test for account transfer and account recovery
-        const salt = useAlternate ? loginResponse.salt.find((s) => s.name === 'alternate') : loginResponse.salt[0]
+        // Same as Commander: prefer the "alternate" salt for alternate (SSO master password) login, else the first one.
+        const salt = useAlternate
+            ? (loginResponse.salt.find((s) => s.name?.toLowerCase() === 'alternate') ?? loginResponse.salt[0])
+            : loginResponse.salt[0]
         if (!salt?.salt || !salt?.iterations) {
-            const error = new Error('Salt missing from API response')
+            const error = new Error(
+                loginResponse.message ||
+                    (loginResponse.salt.length === 0
+                        ? 'Your account requires account recovery in order to use a Master Password authentication method. ' +
+                          'Account recovery (Forgot Password) is available in the Web Vault or Enterprise Console.'
+                        : 'Salt missing from API response')
+            )
             if (useAlternate && !salt) {
                 error.cause = Error('No alternate master password found')
             }

@@ -13,6 +13,7 @@ import {
     KEEPER_PUBLIC_HOSTS,
 } from '../utils'
 import { ConsoleAuthUI } from './ConsoleAuthUI'
+import { createFido2AssertionProvider } from './node/Fido2AssertionProvider'
 import type { KeeperJsonConfig } from './config'
 
 const DEFAULT_REGION = 'US'
@@ -229,12 +230,31 @@ function unsuppressLogs(): () => void {
     }
 }
 
-function unsuppressedAuthUI(): AuthUI3 {
-    const ui = new ConsoleAuthUI()
+type ConsoleLoginAuthUIOptions = {
+    /** Account being logged in; shown before the password prompt. */
+    username?: string
+    /** Called after the user completes SSO authentication. */
+    onSsoLogin?: () => void
+}
+
+async function promptMasterPassword(isAlternate: boolean, username?: string): Promise<string> {
+    if (username) logger.info(`\nEnter password for ${username}`)
+    const password = await prompt(isAlternate ? 'Master Password: ' : 'Password: ', true)
+    if (!password) {
+        throw new KeeperSdkError('Password is required.', ResultCodes.MISSING_PASSWORD)
+    }
+    return password
+}
+
+/** Console auth UI whose prompts stay visible while the login output itself is suppressed. */
+function createConsoleLoginAuthUI(options: ConsoleLoginAuthUIOptions = {}): AuthUI3 {
+    const ui = new ConsoleAuthUI(createFido2AssertionProvider())
     const wrap =
         <A extends unknown[], R>(fn: (...args: A) => Promise<R>) =>
         async (...args: A): Promise<R> => {
             const restore = unsuppressLogs()
+            // The auth UI opens its own readline; release ours so stdin input is not echoed twice.
+            closePrompt()
             try {
                 return await fn(...args)
             } finally {
@@ -244,7 +264,14 @@ function unsuppressedAuthUI(): AuthUI3 {
     return {
         waitForDeviceApproval: wrap(ui.waitForDeviceApproval.bind(ui)),
         waitForTwoFactorCode: wrap(ui.waitForTwoFactorCode.bind(ui)),
-        getPassword: wrap(ui.getPassword.bind(ui)),
+        getPassword: wrap((isAlternate: boolean) => promptMasterPassword(isAlternate, options.username)),
+        getWebAuthnAssertion: wrap(ui.getWebAuthnAssertion.bind(ui)),
+        ssoLogin: wrap(async (url: string): Promise<unknown> => {
+            const response = await ui.ssoLogin(url)
+            options.onSsoLogin?.()
+            return response
+        }),
+        detachedSsoLogin: ui.detachedSsoLogin,
     }
 }
 
@@ -261,7 +288,7 @@ export async function login(): Promise<KeeperVault> {
 
     let username: string
     if (defaultUsername) {
-        logger.info(`Enter master password for ${defaultUsername}`)
+        logger.info(`Logging in to Keeper as "${defaultUsername}"`)
         username = defaultUsername
     } else {
         username = await prompt('Username (email): ')
@@ -279,7 +306,7 @@ async function tryPersistentLogin(host: string, username: string): Promise<Keepe
     const vault = new KeeperVault({
         host,
         clientVersion: SdkDefaults.CLIENT_VERSION,
-        authUI: unsuppressedAuthUI(),
+        authUI: createConsoleLoginAuthUI(),
     })
     try {
         await withSuppressedOutput(() => vault.resumeSession())
@@ -294,22 +321,27 @@ async function tryPersistentLogin(host: string, username: string): Promise<Keepe
 }
 
 async function interactiveLogin(host: string, username: string): Promise<KeeperVault> {
+    let authenticatedWithSso = false
     const vault = new KeeperVault({
         host,
         clientVersion: SdkDefaults.CLIENT_VERSION,
-        authUI: unsuppressedAuthUI(),
+        authUI: createConsoleLoginAuthUI({
+            username,
+            onSsoLogin: () => {
+                authenticatedWithSso = true
+            },
+        }),
     })
 
     for (let attempt = 1; attempt <= AuthDefaults.MAX_LOGIN_ATTEMPTS; attempt++) {
-        const password = await prompt('Password: ', true)
-
-        if (!password) {
-            throw new KeeperSdkError('Password is required.', ResultCodes.MISSING_PASSWORD)
-        }
-
+        authenticatedWithSso = false
         try {
-            await withSuppressedOutput(() => vault.login(username, password))
-            logger.info('Successfully authenticated with Master Password\n')
+            // No password here: authUI.getPassword() is called only if the account needs one (not for SSO).
+            await withSuppressedOutput(() => vault.login(username))
+            if (!vault.isLoggedIn) {
+                throw new KeeperSdkError('Authentication attempt cancelled.', ResultCodes.USER_CANCELLED)
+            }
+            logger.info(`Successfully authenticated with ${authenticatedWithSso ? 'SSO' : 'Master Password'}\n`)
             return await syncVault(vault)
         } catch (err) {
             const resultCode = extractResultCode(err)

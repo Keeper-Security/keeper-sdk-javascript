@@ -119,9 +119,11 @@ export interface AuthUI3 {
     waitForDeviceApproval(channels: DeviceApprovalChannel[], isCloud: boolean): Promise<boolean>
     waitForTwoFactorCode(channels: TwoFactorChannelData[], cancel: Promise<void>): Promise<boolean>
     getPassword?(isAlternate: boolean): Promise<string | KeyWrapper>
+    getWebAuthnAssertion?(requestOptions: string): Promise<string>
     getSSOToken?(redirectUrl: string): Promise<Uint8Array>
     redirectCallback?(url: string): Promise<void>
     ssoLogin?(url: string): Promise<any>
+    detachedSsoLogin?: boolean
     idpLogout?(url: string): Promise<void>
 }
 
@@ -147,10 +149,14 @@ export type DeviceApprovalChannel = {
 export type TwoFactorChannelData = {
     availablePushes?: TwoFactorPushType[]
     channel: Authentication.ITwoFactorChannelInfo
+    challenge?: string
     sendPush?: (type: TwoFactorPushType) => void
     sendCode: (code: string) => void
+    sendSecurityKeyAssertion?: () => Promise<void>
     setExpiration: (expiration: TwoFactorExpiration) => void
 }
+
+export type WebAuthnAssertionProvider = (requestOptions: string) => Promise<string>
 
 export type LoginError = {
     error: string
