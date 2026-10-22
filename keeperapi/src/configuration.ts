@@ -5,6 +5,7 @@ import TwoFactorPushType = Authentication.TwoFactorPushType
 import TwoFactorChannelType = Authentication.TwoFactorChannelType
 import { KeyWrapper } from './platform'
 import { SessionParams } from './auth'
+import { DEFAULT_REQUEST_TIMEOUT_MS, MAX_THROTTLE_RETRIES } from './retry'
 
 export type KeeperHost = KeeperEnvironment | string
 
@@ -31,10 +32,17 @@ export interface ClientConfiguration {
     // (`wss://connect.<host>/api/user/client`) once a session token is available,
     // in addition to the KeeperApp push socket. See `Auth.connectToRouter`.
     connectToRouter?: boolean
+    requestTimeoutMs?: number
+    failOnThrottle?: boolean
+    maxThrottleRetries?: number
+    maxKeyRetries?: number
 }
 export interface ClientConfigurationInternal extends ClientConfiguration {
     deviceConfig: DeviceConfig // v15+ device config
 }
+
+export const defaultRequestTimeoutMs = DEFAULT_REQUEST_TIMEOUT_MS
+export const defaultMaxThrottleRetries = MAX_THROTTLE_RETRIES
 
 export type KeeperError = {
     additional_info?: string
