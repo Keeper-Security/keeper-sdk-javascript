@@ -698,8 +698,7 @@ export class Auth {
 
     /** Authenticates with a platform passkey and completes the normal login flow. */
     async loginWithPasskey(username: string, assertionProvider?: WebAuthnAssertionProvider): Promise<void> {
-        const provider =
-            assertionProvider || this.options.authUI3?.getWebAuthnAssertion?.bind(this.options.authUI3)
+        const provider = assertionProvider || this.options.authUI3?.getWebAuthnAssertion?.bind(this.options.authUI3)
         if (!provider) {
             throw new Error('WebAuthn assertion provider is not configured')
         }
