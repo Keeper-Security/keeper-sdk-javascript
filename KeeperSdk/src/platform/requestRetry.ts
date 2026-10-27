@@ -11,9 +11,7 @@ export const RequestRetryDefaults = {
 } as const
 
 export type RequestRetryOptions = {
-    /** Per-request HTTP timeout. Applied only when the active SdkPlatform implements `httpRequest`. */
     requestTimeoutMs?: number
-    /** Surface throttle errors immediately instead of waiting and retrying. */
     failOnThrottle?: boolean
     maxThrottleRetries?: number
 }
@@ -24,7 +22,6 @@ let options: Required<RequestRetryOptions> = {
     maxThrottleRetries: RequestRetryDefaults.MAX_THROTTLE_RETRIES,
 }
 
-/** Updates the process-wide timeout/throttle settings used for every keeperapi request. */
 export function configureRequestRetry(update: RequestRetryOptions): void {
     options = {
         requestTimeoutMs: update.requestTimeoutMs ?? options.requestTimeoutMs,
@@ -48,13 +45,6 @@ export function throttleBackoffSeconds(retryNumber: number, waitSeconds: number)
     return Math.max(waitSeconds, 30 * 2 ** Math.max(0, retryNumber - 1))
 }
 
-/**
- * Recognizes a throttle error in the shapes KeeperEndpoint throws them:
- * - executeRest / executeRestAction: `Error` whose message is the JSON error body
- * - executeRouterRest: the parsed JSON error object
- * - executeRestCommand: `"Unable to decrypt response: <json>"` string, or a JSON result with `result_code`
- * Returns the server's message when the error is a throttle, otherwise undefined.
- */
 export function getThrottleMessage(error: unknown): string | undefined {
     let body: { error?: string; result_code?: string; message?: string } | undefined
     if (error && typeof error === 'object' && !(error instanceof Error)) {
@@ -83,11 +73,6 @@ function describeRequest(message: unknown): string {
     return m?.path ?? m?.request?.command ?? 'request'
 }
 
-/**
- * Re-runs `execute()` while it fails with a throttle error. Each run goes back through KeeperEndpoint,
- * so the payload is re-encrypted (fresh IV) and the server's replay protection is not triggered.
- * When retries are exhausted (or `failOnThrottle` is set) the original keeperapi error is rethrown.
- */
 async function withThrottleRetry<T>(label: string, execute: () => Promise<T>): Promise<T> {
     for (let retry = 0; ; retry++) {
         try {
@@ -107,7 +92,6 @@ async function withThrottleRetry<T>(label: string, execute: () => Promise<T>): P
     }
 }
 
-/** KeeperEndpoint methods that build, encrypt and send one request. They do not call each other. */
 const RETRIED_ENDPOINT_METHODS = [
     'executeRest',
     'executeRestAction',
@@ -117,10 +101,6 @@ const RETRIED_ENDPOINT_METHODS = [
 
 const RETRY_INSTALLED = Symbol.for('keeper-sdk.requestRetry')
 
-/**
- * Adds throttle retry to KeeperEndpoint and a request timeout to keeperapi's HTTP transport.
- * No keeperapi changes are needed. Safe to call more than once.
- */
 export function installRequestRetry(): void {
     const proto = KeeperEndpoint.prototype as unknown as Record<string | symbol, unknown>
     if (!proto[RETRY_INSTALLED]) {
@@ -136,7 +116,6 @@ export function installRequestRetry(): void {
     const base = platform as Platform & { [RETRY_INSTALLED]?: boolean }
     if (!base || base[RETRY_INSTALLED]) return
 
-    // Only the transport is swapped here (to add a timeout); responses are passed back untouched.
     const transport = (method: 'GET' | 'POST', url: string, body?: Uint8Array, headers?: Record<string, string>) => {
         const sdk = isSdkPlatformConnected() ? getSdkPlatform() : undefined
         if (sdk?.httpRequest) return sdk.httpRequest(method, url, body, headers, options.requestTimeoutMs)
