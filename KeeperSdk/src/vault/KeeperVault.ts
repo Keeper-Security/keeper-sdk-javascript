@@ -16,6 +16,7 @@ import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { SessionManager } from '../auth/SessionManager'
 import { setPersistentLogin, DEFAULT_PERSISTENT_LOGIN_TIMEOUT_MINUTES } from '../auth/PersistentLogin'
 import { getSdkPlatform } from '../platform'
+import { configureRequestRetry, type RequestRetryOptions } from '../platform/requestRetry'
 import { toSessionParams, type SessionRestoreInput } from '../auth/sessionRestore'
 import { searchRecords, formatRecord, getRecordTitle, getRecordType } from '../records/RecordUtils'
 import {
@@ -277,6 +278,7 @@ export type KeeperVaultConfig = {
     storage?: InMemoryStorage
     sessionStorage?: SessionManager
     authUI?: AuthUI3
+    requestRetry?: RequestRetryOptions
 }
 
 export type VaultSummary = {
@@ -291,7 +293,7 @@ export class KeeperVault {
     private readonly storage: InMemoryStorage
     private readonly sessionManager: SessionManager
     private readonly authUI: AuthUI3
-    private readonly config: Required<Omit<KeeperVaultConfig, 'storage' | 'sessionStorage' | 'authUI'>>
+    private readonly config: Required<Omit<KeeperVaultConfig, 'storage' | 'sessionStorage' | 'authUI' | 'requestRetry'>>
     private readonly log: ILogger
     private synced = false
     private batchDepth = 0
@@ -317,6 +319,8 @@ export class KeeperVault {
             logLevel: config?.logLevel ?? LogLevel.INFO,
             autoSync: config?.autoSync !== false,
         }
+
+        if (config?.requestRetry) configureRequestRetry(config.requestRetry)
 
         this.log = new ConsoleLogger(this.config.logLevel)
         this.storage = config?.storage || new InMemoryStorage()

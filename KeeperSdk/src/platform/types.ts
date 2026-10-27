@@ -1,4 +1,4 @@
-import type { AuthUI3 } from '@keeper-security/keeperapi'
+import type { AuthUI3, KeeperHttpResponse } from '@keeper-security/keeperapi'
 import type { ConfigLoader } from '../auth/config'
 
 export type SdkRuntime = 'node' | 'browser'
@@ -25,4 +25,12 @@ export interface SdkPlatform {
     createFileConfigLoader(configDir?: string): ConfigLoader
 
     createAuthUI(useConsoleAuth: boolean): AuthUI3
+
+    httpRequest?(
+        method: 'GET' | 'POST',
+        url: string,
+        body: Uint8Array | undefined,
+        headers: Record<string, string> | undefined,
+        timeoutMs: number
+    ): Promise<KeeperHttpResponse>
 }
