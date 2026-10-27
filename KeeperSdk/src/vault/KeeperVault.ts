@@ -278,7 +278,6 @@ export type KeeperVaultConfig = {
     storage?: InMemoryStorage
     sessionStorage?: SessionManager
     authUI?: AuthUI3
-    /** Process-wide: applies to every KeeperVault and any direct keeperapi usage in this process. */
     requestRetry?: RequestRetryOptions
 }
 

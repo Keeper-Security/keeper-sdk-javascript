@@ -26,10 +26,6 @@ export interface SdkPlatform {
 
     createAuthUI(useConsoleAuth: boolean): AuthUI3
 
-    /**
-     * HTTP transport with a timeout, used by the request retry wrapper in place of keeperapi's
-     * `platform.post`/`platform.get`. Optional: when absent keeperapi's transport is used without a timeout.
-     */
     httpRequest?(
         method: 'GET' | 'POST',
         url: string,
