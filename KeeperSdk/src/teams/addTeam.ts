@@ -377,10 +377,10 @@ async function sendTeamAdd(
 ): Promise<void> {
     const teamKeyBytes = generateEncryptionKey()
     const forbidKeyType2 = !!auth.accountSummary?.forbidKeyType2
-    
+
     const eccKeyPair = await platform.generateECKeyPair()
     const encryptedEccPrivateKey = await encryptKey(eccKeyPair.privateKey, teamKeyBytes)
-    
+
     let rsaPublicKey: string | undefined
     let encryptedRsaPrivateKey: string | undefined
     if (!forbidKeyType2) {
