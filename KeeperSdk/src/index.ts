@@ -1,7 +1,9 @@
 import { connectSdkPlatform } from './platform'
+import { installRequestRetry } from './platform/requestRetry'
 import { nodeSdkPlatform } from './platform/node/platform'
 
 connectSdkPlatform(nodeSdkPlatform)
+installRequestRetry()
 
 export * from './api'
 
