@@ -1,4 +1,4 @@
-import { normal64Bytes, type AuthUI3 } from '@keeper-security/keeperapi'
+import { normal64Bytes, type AuthUI3, type KeeperHttpResponse } from '@keeper-security/keeperapi'
 import { UnavailableAuthUI } from '../../auth/UnavailableAuthUI'
 import { KeeperSdkError, ResultCodes } from '../../utils'
 import type { ConfigLoader } from '../../auth/config'
@@ -98,5 +98,35 @@ export const browserSdkPlatform: SdkPlatform = {
             )
         }
         return new UnavailableAuthUI()
+    },
+
+    async httpRequest(method, url, body, headers, timeoutMs): Promise<KeeperHttpResponse> {
+        const controller = new AbortController()
+        const timeout = globalThis.setTimeout(() => controller.abort(), timeoutMs)
+        try {
+            const resp = await fetch(url, {
+                method,
+                headers:
+                    method === 'POST'
+                        ? new Headers({
+                              'Content-Type': 'application/octet-stream',
+                              'Content-Length': String(body?.length ?? 0),
+                              ...headers,
+                          })
+                        : new Headers(headers ?? {}),
+                body: method === 'POST' ? body : undefined,
+                signal: controller.signal,
+            })
+            return {
+                statusCode: resp.status,
+                headers: resp.headers,
+                data: new Uint8Array(await resp.arrayBuffer()),
+            }
+        } catch (e) {
+            if (controller.signal.aborted) throw new Error(`Request to ${url} timed out after ${timeoutMs}ms`)
+            throw e
+        } finally {
+            globalThis.clearTimeout(timeout)
+        }
     },
 }
