@@ -376,9 +376,19 @@ async function sendTeamAdd(
     }
 ): Promise<void> {
     const teamKeyBytes = generateEncryptionKey()
-    const [rsaKeyPair, eccKeyPair] = await Promise.all([platform.generateRSAKeyPair(), platform.generateECKeyPair()])
-    const encryptedPrivateKey = await encryptForStorage(rsaKeyPair.privateKey, teamKeyBytes)
+    const forbidKeyType2 = !!auth.accountSummary?.forbidKeyType2
+    
+    const eccKeyPair = await platform.generateECKeyPair()
     const encryptedEccPrivateKey = await encryptKey(eccKeyPair.privateKey, teamKeyBytes)
+    
+    let rsaPublicKey: string | undefined
+    let encryptedRsaPrivateKey: string | undefined
+    if (!forbidKeyType2) {
+        const rsaKeyPair = await platform.generateRSAKeyPair()
+        encryptedRsaPrivateKey = await encryptForStorage(rsaKeyPair.privateKey, teamKeyBytes)
+        rsaPublicKey = webSafe64FromBytes(rsaKeyPair.publicKey)
+    }
+
     const encryptedTeamKeyByDataKey = await encryptForStorage(teamKeyBytes, dataKey)
     const encryptedTeamKeyByTreeKey = await encryptKey(teamKeyBytes, treeKey)
 
@@ -386,8 +396,8 @@ async function sendTeamAdd(
         team_uid: request.teamUid,
         team_name: request.teamName,
         node_id: parentNodeId,
-        public_key: webSafe64FromBytes(rsaKeyPair.publicKey),
-        private_key: encryptedPrivateKey,
+        public_key: rsaPublicKey,
+        private_key: encryptedRsaPrivateKey,
         team_key: encryptedTeamKeyByDataKey,
         encrypted_team_key: encryptedTeamKeyByTreeKey,
         ecc_public_key: webSafe64FromBytes(eccKeyPair.publicKey),
