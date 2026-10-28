@@ -8,6 +8,13 @@ export type {
 } from './auth/SessionManager'
 export { connectSdkPlatform, getSdkPlatform, isSdkPlatformConnected } from './platform'
 export type { SdkPlatform, SdkReadline, SdkRuntime } from './platform'
+export {
+    configureRequestRetry,
+    getRequestRetryOptions,
+    installRequestRetry,
+    RequestRetryDefaults,
+} from './platform/requestRetry'
+export type { RequestRetryOptions } from './platform/requestRetry'
 
 export { InMemoryStorage } from './storage/InMemoryStorage'
 
