@@ -60,6 +60,7 @@ export {
     ActionReportErrorCode,
     PasswordReportErrorCode,
     PamErrorCode,
+    SecretsManagerErrorCode,
     KEEPER_PUBLIC_HOSTS,
     isBoolean,
     isString,
@@ -502,6 +503,38 @@ export type {
     DeleteNodeItemResult,
     FormattedDeleteNodeTable,
 } from './nodes'
+
+export {
+    SecretsManager,
+    AppManager,
+    listApps,
+    formatAppsTable,
+    renderAppsAsciiTable,
+    formatAppsOutput,
+    EMPTY_SECRETS_MANAGER_APPS_MESSAGE,
+    SECRETS_MANAGER_APP_LIST_HEADERS,
+    getApp,
+    formatAppDetailOutput,
+    SecretsManagerClientDeviceExpireStatus,
+    SecretsManagerAppShareKind,
+    createApp,
+    formatCreateAppOutput,
+} from './secrets-manager'
+export type {
+    SecretsManagerAuthProvider,
+    AppAuthProvider,
+    SecretsManagerAppListRow,
+    ListSecretsManagerAppsResult,
+    FormattedSecretsManagerTable,
+    RenderSecretsManagerAsciiTableOptions,
+    SecretsManagerAppUserRole,
+    SecretsManagerAppClientDevice,
+    SecretsManagerAppUser,
+    SecretsManagerAppShare,
+    SecretsManagerAppDetail,
+    CreateSecretsManagerAppInput,
+    CreateSecretsManagerAppResult,
+} from './secrets-manager'
 
 export { viewTeam, formatTeamView, teamViewTable } from './teams/viewTeam'
 export type {

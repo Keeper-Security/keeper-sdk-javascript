@@ -70,7 +70,7 @@ function isSupportedKsmAppRecordVersion(version: number): boolean {
     return (SUPPORTED_KSM_APP_RECORD_VERSIONS as readonly number[]).includes(version)
 }
 
-function isKsmApplicationRecord(record: DRecord): boolean {
+export function isKsmApplicationRecord(record: DRecord): boolean {
     if (!isSupportedKsmAppRecordVersion(record.version)) return false
     const data: unknown = record.data
     if (!data || typeof data !== 'object') return false

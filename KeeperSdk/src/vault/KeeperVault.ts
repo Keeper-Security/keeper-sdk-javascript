@@ -124,6 +124,15 @@ import {
     type UpdateNodeInput,
     type UpdateNodeResult,
 } from '../nodes'
+import {
+    SecretsManager,
+    type CreateSecretsManagerAppInput,
+    type CreateSecretsManagerAppResult,
+    type FormattedSecretsManagerTable,
+    type SecretsManagerAppDetail,
+    type ListSecretsManagerAppsResult,
+    type RenderSecretsManagerAsciiTableOptions,
+} from '../secrets-manager'
 import { UserManager } from '../users/UserManager'
 import { NestedShareFolderManager } from '../nestedShareFolders/NestedShareFolderManager'
 import { isNestedShareFolder, isRootFolderUid } from '../nestedShareFolders/nsfHelpers'
@@ -308,6 +317,7 @@ export class KeeperVault {
     private readonly userManager: UserManager
     private readonly nestedShareFolderManager: NestedShareFolderManager
     private readonly pamManager: PamManager
+    private readonly secretsManager: SecretsManager
 
     constructor(config?: KeeperVaultConfig) {
         this.config = {
@@ -337,6 +347,7 @@ export class KeeperVault {
         this.userManager = new UserManager(authProvider)
         this.nestedShareFolderManager = new NestedShareFolderManager(this.storage, authProvider)
         this.pamManager = new PamManager(this.storage, authProvider)
+        this.secretsManager = new SecretsManager(this.storage, authProvider)
     }
 
     public getPamManager(): PamManager {
@@ -1520,6 +1531,43 @@ export class KeeperVault {
 
     public async deleteRotationScript(input: DeleteRotationScriptInput): Promise<DeleteRotationScriptResult> {
         return this.pamManager.deleteRotationScript(input)
+    }
+
+    public async listSecretsManagerApps(): Promise<ListSecretsManagerAppsResult> {
+        return this.secretsManager.listApps()
+    }
+
+    public formatSecretsManagerAppsTable(result: ListSecretsManagerAppsResult): FormattedSecretsManagerTable {
+        return this.secretsManager.formatAppsTable(result)
+    }
+
+    public renderSecretsManagerAppsAsciiTable(
+        table: FormattedSecretsManagerTable,
+        options?: RenderSecretsManagerAsciiTableOptions
+    ): string {
+        return this.secretsManager.renderAppsAsciiTable(table, options ?? {})
+    }
+
+    public formatSecretsManagerAppsOutput(result: ListSecretsManagerAppsResult): string {
+        return this.secretsManager.formatAppsOutput(result)
+    }
+
+    public async getSecretsManagerApp(appNameOrUid: string): Promise<SecretsManagerAppDetail> {
+        return this.secretsManager.getApp(appNameOrUid)
+    }
+
+    public formatSecretsManagerAppOutput(detail: SecretsManagerAppDetail): string {
+        return this.secretsManager.formatAppDetailOutput(detail)
+    }
+
+    public async createSecretsManagerApp(input: CreateSecretsManagerAppInput): Promise<CreateSecretsManagerAppResult> {
+        const result = await this.secretsManager.createApp(input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public formatSecretsManagerCreateAppOutput(result: CreateSecretsManagerAppResult): string {
+        return this.secretsManager.formatCreateAppOutput(result)
     }
 
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {

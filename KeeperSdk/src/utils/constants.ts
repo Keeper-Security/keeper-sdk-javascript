@@ -192,6 +192,14 @@ export enum PamErrorCode {
     RotationRecordRequired = 'pam_rotation_record_required',
 }
 
+export enum SecretsManagerErrorCode {
+    AppListFailed = 'secrets_manager_app_list_failed',
+    AppGetFailed = 'secrets_manager_app_get_failed',
+    AppNameRequired = 'secrets_manager_app_name_required',
+    AppAlreadyExists = 'secrets_manager_app_already_exists',
+    AppCreateFailed = 'secrets_manager_app_create_failed',
+}
+
 export enum UserErrorCode {
     NoUsersToUpdate = 'no_users_to_update',
     NoUsersToAdd = 'no_users_to_add',
@@ -374,6 +382,11 @@ export const ResultCodes = {
     PAM_ROTATION_LIST_FAILED: PamErrorCode.RotationListFailed,
     PAM_ROTATION_INFO_FAILED: PamErrorCode.RotationInfoFailed,
     PAM_ROTATION_RECORD_REQUIRED: PamErrorCode.RotationRecordRequired,
+    SECRETS_MANAGER_APP_LIST_FAILED: SecretsManagerErrorCode.AppListFailed,
+    SECRETS_MANAGER_APP_GET_FAILED: SecretsManagerErrorCode.AppGetFailed,
+    SECRETS_MANAGER_APP_NAME_REQUIRED: SecretsManagerErrorCode.AppNameRequired,
+    SECRETS_MANAGER_APP_ALREADY_EXISTS: SecretsManagerErrorCode.AppAlreadyExists,
+    SECRETS_MANAGER_APP_CREATE_FAILED: SecretsManagerErrorCode.AppCreateFailed,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {
