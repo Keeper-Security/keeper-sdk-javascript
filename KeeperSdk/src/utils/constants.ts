@@ -198,6 +198,9 @@ export enum SecretsManagerErrorCode {
     AppNameRequired = 'secrets_manager_app_name_required',
     AppAlreadyExists = 'secrets_manager_app_already_exists',
     AppCreateFailed = 'secrets_manager_app_create_failed',
+    AppUpdateFailed = 'secrets_manager_app_update_failed',
+    AppRemoveFailed = 'secrets_manager_app_remove_failed',
+    AppRemoveNotOwner = 'secrets_manager_app_remove_not_owner',
 }
 
 export enum UserErrorCode {
@@ -387,6 +390,9 @@ export const ResultCodes = {
     SECRETS_MANAGER_APP_NAME_REQUIRED: SecretsManagerErrorCode.AppNameRequired,
     SECRETS_MANAGER_APP_ALREADY_EXISTS: SecretsManagerErrorCode.AppAlreadyExists,
     SECRETS_MANAGER_APP_CREATE_FAILED: SecretsManagerErrorCode.AppCreateFailed,
+    SECRETS_MANAGER_APP_UPDATE_FAILED: SecretsManagerErrorCode.AppUpdateFailed,
+    SECRETS_MANAGER_APP_REMOVE_FAILED: SecretsManagerErrorCode.AppRemoveFailed,
+    SECRETS_MANAGER_APP_REMOVE_NOT_OWNER: SecretsManagerErrorCode.AppRemoveNotOwner,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {

@@ -7,6 +7,10 @@ import type {
     ListSecretsManagerAppsResult,
     RenderSecretsManagerAsciiTableOptions,
     SecretsManagerAppDetail,
+    RemoveSecretsManagerAppInput,
+    RemoveSecretsManagerAppResult,
+    UpdateSecretsManagerAppInput,
+    UpdateSecretsManagerAppResult,
 } from './app/appTypes'
 
 export type { AuthProvider }
@@ -34,6 +38,14 @@ export class SecretsManager {
         return this.appManager.createApp(input)
     }
 
+    public async updateApp(input: UpdateSecretsManagerAppInput): Promise<UpdateSecretsManagerAppResult> {
+        return this.appManager.updateApp(input)
+    }
+
+    public async removeApp(input: RemoveSecretsManagerAppInput): Promise<RemoveSecretsManagerAppResult> {
+        return this.appManager.removeApp(input)
+    }
+
     public formatAppsTable(result: ListSecretsManagerAppsResult): FormattedSecretsManagerTable {
         return this.appManager.formatAppsTable(result)
     }
@@ -55,5 +67,13 @@ export class SecretsManager {
 
     public formatCreateAppOutput(result: CreateSecretsManagerAppResult): string {
         return this.appManager.formatCreateAppOutput(result)
+    }
+
+    public formatUpdateAppOutput(result: UpdateSecretsManagerAppResult): string {
+        return this.appManager.formatUpdateAppOutput(result)
+    }
+
+    public formatRemoveAppOutput(result: RemoveSecretsManagerAppResult): string {
+        return this.appManager.formatRemoveAppOutput(result)
     }
 }

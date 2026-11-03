@@ -4,6 +4,8 @@ export type { AuthProvider } from './AppManager'
 export { listApps, formatAppsTable, renderAppsAsciiTable, formatAppsOutput } from './listApps'
 export { getApp, formatAppDetailOutput } from './getApp'
 export { createApp, formatCreateAppOutput } from './createApp'
+export { updateApp, formatUpdateAppOutput } from './updateApp'
+export { removeApp, formatRemoveAppOutput } from './removeApp'
 
 export { SecretsManagerClientDeviceExpireStatus, SecretsManagerAppShareKind } from './appTypes'
 export type {
@@ -16,8 +18,15 @@ export type {
     SecretsManagerAppUser,
     SecretsManagerAppShare,
     SecretsManagerAppDetail,
+    SecretsManagerAppReference,
+    SecretsManagerAppOperationResult,
     CreateSecretsManagerAppInput,
     CreateSecretsManagerAppResult,
+    UpdateSecretsManagerAppInput,
+    UpdateSecretsManagerAppResult,
+    RemoveSecretsManagerAppConfirm,
+    RemoveSecretsManagerAppInput,
+    RemoveSecretsManagerAppResult,
 } from './appTypes'
 
 export {

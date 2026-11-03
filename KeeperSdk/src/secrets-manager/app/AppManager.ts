@@ -4,6 +4,8 @@ import { KeeperSdkError, ResultCodes } from '../../utils'
 import { createApp, formatCreateAppOutput } from './createApp'
 import { formatAppDetailOutput, getApp } from './getApp'
 import { formatAppsOutput, formatAppsTable, listApps, renderAppsAsciiTable } from './listApps'
+import { formatRemoveAppOutput, removeApp } from './removeApp'
+import { formatUpdateAppOutput, updateApp } from './updateApp'
 import type {
     CreateSecretsManagerAppInput,
     CreateSecretsManagerAppResult,
@@ -11,6 +13,10 @@ import type {
     ListSecretsManagerAppsResult,
     RenderSecretsManagerAsciiTableOptions,
     SecretsManagerAppDetail,
+    RemoveSecretsManagerAppInput,
+    RemoveSecretsManagerAppResult,
+    UpdateSecretsManagerAppInput,
+    UpdateSecretsManagerAppResult,
 } from './appTypes'
 
 export type AuthProvider = () => Auth
@@ -44,6 +50,14 @@ export class AppManager {
         return createApp(this.requireAuth(), this.storage, input)
     }
 
+    public async updateApp(input: UpdateSecretsManagerAppInput): Promise<UpdateSecretsManagerAppResult> {
+        return updateApp(this.requireAuth(), this.storage, input)
+    }
+
+    public async removeApp(input: RemoveSecretsManagerAppInput): Promise<RemoveSecretsManagerAppResult> {
+        return removeApp(this.requireAuth(), this.storage, input)
+    }
+
     public formatAppsTable(result: ListSecretsManagerAppsResult): FormattedSecretsManagerTable {
         return formatAppsTable(result)
     }
@@ -65,5 +79,13 @@ export class AppManager {
 
     public formatCreateAppOutput(result: CreateSecretsManagerAppResult): string {
         return formatCreateAppOutput(result)
+    }
+
+    public formatUpdateAppOutput(result: UpdateSecretsManagerAppResult): string {
+        return formatUpdateAppOutput(result)
+    }
+
+    public formatRemoveAppOutput(result: RemoveSecretsManagerAppResult): string {
+        return formatRemoveAppOutput(result)
     }
 }

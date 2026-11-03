@@ -7,24 +7,12 @@ import {
     webSafe64FromBytes,
 } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
-import { getRecordTitle } from '../../records/RecordUtils'
 import { requireAuthDataKey } from '../../nestedShareFolders/nsfHelpers'
 import { getPaddedJsonBytes } from '../../pam/config/configRecordPayload'
-import { isKsmApplicationRecord } from '../../pam/gateway/gatewayHelpers'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
 import { KSM_APP_RECORD_TYPE } from './appConstants'
+import { findAppRecord } from './appHelpers'
 import type { CreateSecretsManagerAppInput, CreateSecretsManagerAppResult } from './appTypes'
-
-function hasExistingApp(storage: InMemoryStorage, appName: string): boolean {
-    const lower = appName.toLowerCase()
-    return storage
-        .getRecords()
-        .some(
-            (record) =>
-                isKsmApplicationRecord(record) &&
-                (record.uid === appName || getRecordTitle(record).toLowerCase() === lower)
-        )
-}
 
 export async function createApp(
     auth: Auth,
@@ -35,7 +23,7 @@ export async function createApp(
     if (!appName) {
         throw new KeeperSdkError('Application name is required.', ResultCodes.SECRETS_MANAGER_APP_NAME_REQUIRED)
     }
-    if (hasExistingApp(storage, appName)) {
+    if (findAppRecord(storage, appName)) {
         throw new KeeperSdkError(
             `Application with the same name "${appName}" already exists.`,
             ResultCodes.SECRETS_MANAGER_APP_ALREADY_EXISTS

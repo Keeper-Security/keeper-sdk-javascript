@@ -519,6 +519,10 @@ export {
     SecretsManagerAppShareKind,
     createApp,
     formatCreateAppOutput,
+    updateApp,
+    formatUpdateAppOutput,
+    removeApp,
+    formatRemoveAppOutput,
 } from './secrets-manager'
 export type {
     SecretsManagerAuthProvider,
@@ -532,8 +536,15 @@ export type {
     SecretsManagerAppUser,
     SecretsManagerAppShare,
     SecretsManagerAppDetail,
+    SecretsManagerAppReference,
+    SecretsManagerAppOperationResult,
     CreateSecretsManagerAppInput,
     CreateSecretsManagerAppResult,
+    UpdateSecretsManagerAppInput,
+    UpdateSecretsManagerAppResult,
+    RemoveSecretsManagerAppConfirm,
+    RemoveSecretsManagerAppInput,
+    RemoveSecretsManagerAppResult,
 } from './secrets-manager'
 
 export { viewTeam, formatTeamView, teamViewTable } from './teams/viewTeam'

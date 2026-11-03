@@ -1,3 +1,5 @@
+import type { KeeperResponse } from '@keeper-security/keeperapi'
+
 export type SecretsManagerAppListRow = {
     appUid: string
     appName: string
@@ -72,12 +74,53 @@ export type SecretsManagerAppDetail = {
     shares: SecretsManagerAppShare[]
 }
 
+export type SecretsManagerAppReference = {
+    appNameOrUid: string
+}
+
+export type SecretsManagerAppOperationResult = {
+    success: boolean
+    appUid: string
+    appName: string
+}
+
 export type CreateSecretsManagerAppInput = {
     name: string
 }
 
-export type CreateSecretsManagerAppResult = {
-    success: boolean
-    appName: string
-    appUid: string
+export type CreateSecretsManagerAppResult = SecretsManagerAppOperationResult
+
+export type UpdateSecretsManagerAppInput = SecretsManagerAppReference & {
+    name: string
+}
+
+export type UpdateSecretsManagerAppResult = SecretsManagerAppOperationResult & {
+    previousName: string
+}
+
+export type RemoveSecretsManagerAppConfirm = (summary: string) => boolean | Promise<boolean>
+
+export type RemoveSecretsManagerAppInput = SecretsManagerAppReference & {
+    purge?: boolean
+    force?: boolean
+    confirm?: RemoveSecretsManagerAppConfirm
+}
+
+export type RemoveSecretsManagerAppResult = SecretsManagerAppOperationResult & {
+    cancelled: boolean
+    purged: boolean
+}
+
+export type DeleteRecordsRequest = {
+    delete_records: string[]
+}
+
+export type DeleteRecordStatus = {
+    record_uid: string
+    status: string
+    message?: string
+}
+
+export type DeleteRecordsResponse = KeeperResponse & {
+    delete_records?: DeleteRecordStatus[]
 }

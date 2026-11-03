@@ -15,6 +15,10 @@ export {
     SecretsManagerAppShareKind,
     createApp,
     formatCreateAppOutput,
+    updateApp,
+    formatUpdateAppOutput,
+    removeApp,
+    formatRemoveAppOutput,
 } from './app'
 export type {
     AuthProvider as AppAuthProvider,
@@ -27,6 +31,13 @@ export type {
     SecretsManagerAppUser,
     SecretsManagerAppShare,
     SecretsManagerAppDetail,
+    SecretsManagerAppReference,
+    SecretsManagerAppOperationResult,
     CreateSecretsManagerAppInput,
     CreateSecretsManagerAppResult,
+    UpdateSecretsManagerAppInput,
+    UpdateSecretsManagerAppResult,
+    RemoveSecretsManagerAppConfirm,
+    RemoveSecretsManagerAppInput,
+    RemoveSecretsManagerAppResult,
 } from './app'

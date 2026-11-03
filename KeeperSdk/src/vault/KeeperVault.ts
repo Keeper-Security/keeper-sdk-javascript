@@ -128,6 +128,10 @@ import {
     SecretsManager,
     type CreateSecretsManagerAppInput,
     type CreateSecretsManagerAppResult,
+    type UpdateSecretsManagerAppInput,
+    type UpdateSecretsManagerAppResult,
+    type RemoveSecretsManagerAppInput,
+    type RemoveSecretsManagerAppResult,
     type FormattedSecretsManagerTable,
     type SecretsManagerAppDetail,
     type ListSecretsManagerAppsResult,
@@ -1568,6 +1572,26 @@ export class KeeperVault {
 
     public formatSecretsManagerCreateAppOutput(result: CreateSecretsManagerAppResult): string {
         return this.secretsManager.formatCreateAppOutput(result)
+    }
+
+    public async updateSecretsManagerApp(input: UpdateSecretsManagerAppInput): Promise<UpdateSecretsManagerAppResult> {
+        const result = await this.secretsManager.updateApp(input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public formatSecretsManagerUpdateAppOutput(result: UpdateSecretsManagerAppResult): string {
+        return this.secretsManager.formatUpdateAppOutput(result)
+    }
+
+    public async removeSecretsManagerApp(input: RemoveSecretsManagerAppInput): Promise<RemoveSecretsManagerAppResult> {
+        const result = await this.secretsManager.removeApp(input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public formatSecretsManagerRemoveAppOutput(result: RemoveSecretsManagerAppResult): string {
+        return this.secretsManager.formatRemoveAppOutput(result)
     }
 
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {

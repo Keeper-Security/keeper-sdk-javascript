@@ -1,6 +1,42 @@
-import { formatTimestampMs, toFiniteNumber } from '../../pam/gateway/gatewayHelpers'
+import type { Auth, Authentication, DRecord } from '@keeper-security/keeperapi'
+import { getAppInfoMessage, normal64Bytes } from '@keeper-security/keeperapi'
+import type { InMemoryStorage } from '../../storage/InMemoryStorage'
+import { getRecordTitle } from '../../records/RecordUtils'
+import { formatTimestampMs, isKsmApplicationRecord, toFiniteNumber } from '../../pam/gateway/gatewayHelpers'
+import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
 import { DEFAULT_MIN_COLUMN_WIDTH, NEVER_LABEL } from './appConstants'
 import type { FormattedSecretsManagerTable, RenderSecretsManagerAsciiTableOptions } from './appTypes'
+
+export async function fetchAppInfo(auth: Auth, appUid: string): Promise<Authentication.IAppInfo> {
+    let appInfo: Authentication.IAppInfo | undefined
+    try {
+        const response = await auth.executeRest(getAppInfoMessage({ appRecordUid: [normal64Bytes(appUid)] }))
+        appInfo = response.appInfo?.[0]
+    } catch (err) {
+        throw new KeeperSdkError(
+            `Failed to get Secrets Manager application "${appUid}": ${extractErrorMessage(err)}`,
+            ResultCodes.SECRETS_MANAGER_APP_GET_FAILED
+        )
+    }
+    if (!appInfo) {
+        throw new KeeperSdkError(
+            `No information returned for Secrets Manager application "${appUid}".`,
+            ResultCodes.SECRETS_MANAGER_APP_GET_FAILED
+        )
+    }
+    return appInfo
+}
+
+export function findAppRecord(storage: InMemoryStorage, appNameOrUid: string): DRecord | undefined {
+    const lower = appNameOrUid.toLowerCase()
+    return storage
+        .getRecords()
+        .find(
+            (record) =>
+                isKsmApplicationRecord(record) &&
+                (record.uid === appNameOrUid || getRecordTitle(record).toLowerCase() === lower)
+        )
+}
 
 export function toOptionalTimestamp(value: number | null | undefined): number | null {
     return toFiniteNumber(value) || null

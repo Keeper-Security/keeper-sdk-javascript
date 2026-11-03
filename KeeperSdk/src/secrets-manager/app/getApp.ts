@@ -1,5 +1,5 @@
 import type { Auth, DRecord } from '@keeper-security/keeperapi'
-import { Authentication, Enterprise, getAppInfoMessage, normal64Bytes } from '@keeper-security/keeperapi'
+import { Authentication, Enterprise } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { VaultObjectKind } from '../../folders/folderHelpers'
 import { getRecordTitle } from '../../records/RecordUtils'
@@ -12,7 +12,6 @@ import {
     toFiniteNumber,
     webSafeUidFromBytes,
 } from '../../pam/gateway/gatewayHelpers'
-import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
 import {
     MIN_SHORT_CLIENT_ID_LENGTH,
     NEVER_LABEL,
@@ -21,7 +20,7 @@ import {
     SECRETS_MANAGER_APP_SHARE_HEADERS,
     SECRETS_MANAGER_APP_USER_HEADERS,
 } from './appConstants'
-import { formatTimestampOrNever, renderAsciiTable, toOptionalTimestamp } from './appHelpers'
+import { fetchAppInfo, formatTimestampOrNever, renderAsciiTable, toOptionalTimestamp } from './appHelpers'
 import {
     SecretsManagerAppShareKind,
     SecretsManagerClientDeviceExpireStatus,
@@ -107,26 +106,6 @@ function toAppUser(permission: RecordUserPermission): SecretsManagerAppUser {
         shareable: permission.shareable,
         editable: permission.editable,
     }
-}
-
-async function fetchAppInfo(auth: Auth, appUid: string): Promise<Authentication.IAppInfo> {
-    let appInfo: Authentication.IAppInfo | undefined
-    try {
-        const response = await auth.executeRest(getAppInfoMessage({ appRecordUid: [normal64Bytes(appUid)] }))
-        appInfo = response.appInfo?.[0]
-    } catch (err) {
-        throw new KeeperSdkError(
-            `Failed to get Secrets Manager application "${appUid}": ${extractErrorMessage(err)}`,
-            ResultCodes.SECRETS_MANAGER_APP_GET_FAILED
-        )
-    }
-    if (!appInfo) {
-        throw new KeeperSdkError(
-            `No information returned for Secrets Manager application "${appUid}".`,
-            ResultCodes.SECRETS_MANAGER_APP_GET_FAILED
-        )
-    }
-    return appInfo
 }
 
 export async function getApp(
