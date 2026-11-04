@@ -13,6 +13,7 @@ export {
     ActionReportErrorCode,
     PasswordReportErrorCode,
     PamErrorCode,
+    SecretsManagerErrorCode,
     NsfErrorCode,
     KEEPER_PUBLIC_HOSTS,
 } from './constants'

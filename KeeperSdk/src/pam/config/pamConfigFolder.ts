@@ -38,7 +38,7 @@ import type {
 
 export type { PamConfigFolderKind, PamConfigFolderTarget } from './configTypes'
 
-function isRecordModifySuccess(status: Records.RecordModifyResult | null | undefined): boolean {
+export function isRecordModifySuccess(status: Records.RecordModifyResult | null | undefined): boolean {
     return status == null || status === Records.RecordModifyResult.RS_SUCCESS
 }
 

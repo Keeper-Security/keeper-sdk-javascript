@@ -192,6 +192,18 @@ export enum PamErrorCode {
     RotationRecordRequired = 'pam_rotation_record_required',
 }
 
+export enum SecretsManagerErrorCode {
+    AppListFailed = 'secrets_manager_app_list_failed',
+    AppGetFailed = 'secrets_manager_app_get_failed',
+    AppNameRequired = 'secrets_manager_app_name_required',
+    AppAlreadyExists = 'secrets_manager_app_already_exists',
+    AppCreateFailed = 'secrets_manager_app_create_failed',
+    AppUpdateFailed = 'secrets_manager_app_update_failed',
+    AppRemoveFailed = 'secrets_manager_app_remove_failed',
+    AppRemoveNotOwner = 'secrets_manager_app_remove_not_owner',
+    AppCacheOutOfSync = 'secrets_manager_app_cache_out_of_sync',
+}
+
 export enum UserErrorCode {
     NoUsersToUpdate = 'no_users_to_update',
     NoUsersToAdd = 'no_users_to_add',
@@ -374,6 +386,15 @@ export const ResultCodes = {
     PAM_ROTATION_LIST_FAILED: PamErrorCode.RotationListFailed,
     PAM_ROTATION_INFO_FAILED: PamErrorCode.RotationInfoFailed,
     PAM_ROTATION_RECORD_REQUIRED: PamErrorCode.RotationRecordRequired,
+    SECRETS_MANAGER_APP_LIST_FAILED: SecretsManagerErrorCode.AppListFailed,
+    SECRETS_MANAGER_APP_GET_FAILED: SecretsManagerErrorCode.AppGetFailed,
+    SECRETS_MANAGER_APP_NAME_REQUIRED: SecretsManagerErrorCode.AppNameRequired,
+    SECRETS_MANAGER_APP_ALREADY_EXISTS: SecretsManagerErrorCode.AppAlreadyExists,
+    SECRETS_MANAGER_APP_CREATE_FAILED: SecretsManagerErrorCode.AppCreateFailed,
+    SECRETS_MANAGER_APP_UPDATE_FAILED: SecretsManagerErrorCode.AppUpdateFailed,
+    SECRETS_MANAGER_APP_REMOVE_FAILED: SecretsManagerErrorCode.AppRemoveFailed,
+    SECRETS_MANAGER_APP_REMOVE_NOT_OWNER: SecretsManagerErrorCode.AppRemoveNotOwner,
+    SECRETS_MANAGER_APP_CACHE_OUT_OF_SYNC: SecretsManagerErrorCode.AppCacheOutOfSync,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {
