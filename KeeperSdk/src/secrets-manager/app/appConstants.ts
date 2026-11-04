@@ -16,6 +16,8 @@ export const NO_CLIENT_DEVICES_MESSAGE = 'No client devices registered for this 
 
 export const NO_APP_SHARES_MESSAGE = 'No shared folders or records' as const
 
+export const APP_NOT_IN_LOCAL_VAULT_LABEL = '[NOT IN LOCAL VAULT]' as const
+
 export const APP_REMOVAL_CANCELLED_MESSAGE = 'Application removal cancelled.' as const
 
 export const SECRETS_MANAGER_APP_LIST_HEADERS = [

@@ -201,6 +201,7 @@ export enum SecretsManagerErrorCode {
     AppUpdateFailed = 'secrets_manager_app_update_failed',
     AppRemoveFailed = 'secrets_manager_app_remove_failed',
     AppRemoveNotOwner = 'secrets_manager_app_remove_not_owner',
+    AppCacheOutOfSync = 'secrets_manager_app_cache_out_of_sync',
 }
 
 export enum UserErrorCode {
@@ -393,6 +394,7 @@ export const ResultCodes = {
     SECRETS_MANAGER_APP_UPDATE_FAILED: SecretsManagerErrorCode.AppUpdateFailed,
     SECRETS_MANAGER_APP_REMOVE_FAILED: SecretsManagerErrorCode.AppRemoveFailed,
     SECRETS_MANAGER_APP_REMOVE_NOT_OWNER: SecretsManagerErrorCode.AppRemoveNotOwner,
+    SECRETS_MANAGER_APP_CACHE_OUT_OF_SYNC: SecretsManagerErrorCode.AppCacheOutOfSync,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {

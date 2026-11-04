@@ -11,7 +11,7 @@ import { requireAuthDataKey } from '../../nestedShareFolders/nsfHelpers'
 import { getPaddedJsonBytes } from '../../pam/config/configRecordPayload'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
 import { KSM_APP_RECORD_TYPE } from './appConstants'
-import { findAppRecord } from './appHelpers'
+import { assertAppCacheInSync, findAppRecord } from './appHelpers'
 import type { CreateSecretsManagerAppInput, CreateSecretsManagerAppResult } from './appTypes'
 
 export async function createApp(
@@ -23,6 +23,7 @@ export async function createApp(
     if (!appName) {
         throw new KeeperSdkError('Application name is required.', ResultCodes.SECRETS_MANAGER_APP_NAME_REQUIRED)
     }
+    await assertAppCacheInSync(auth, storage)
     if (findAppRecord(storage, appName)) {
         throw new KeeperSdkError(
             `Application with the same name "${appName}" already exists.`,

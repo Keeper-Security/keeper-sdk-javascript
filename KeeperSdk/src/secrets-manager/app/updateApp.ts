@@ -6,7 +6,7 @@ import { isRecordModifySuccess } from '../../pam/config/pamConfigFolder'
 import { resolveKsmApplication, webSafeUidFromBytes } from '../../pam/gateway/gatewayHelpers'
 import { extractErrorMessage, isObject, KeeperSdkError, ResultCodes } from '../../utils'
 import { KSM_APP_RECORD_TYPE } from './appConstants'
-import { findAppRecord } from './appHelpers'
+import { assertAppCacheInSync, findAppRecord } from './appHelpers'
 import type { UpdateSecretsManagerAppInput, UpdateSecretsManagerAppResult } from './appTypes'
 
 async function sendAppRecordUpdate(
@@ -36,6 +36,7 @@ export async function updateApp(
     }
 
     const app = await resolveKsmApplication(storage, input.appNameOrUid)
+    await assertAppCacheInSync(auth, storage)
     const conflictingApp = findAppRecord(storage, newName)
     if (conflictingApp && conflictingApp.uid !== app.uid) {
         throw new KeeperSdkError(

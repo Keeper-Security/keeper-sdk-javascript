@@ -2,7 +2,7 @@ import type { KeeperResponse } from '@keeper-security/keeperapi'
 
 export type SecretsManagerAppListRow = {
     appUid: string
-    appName: string
+    appName: string | null
     records: number
     folders: number
     devices: number
