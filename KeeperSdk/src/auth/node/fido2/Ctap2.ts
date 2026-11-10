@@ -189,7 +189,7 @@ export class Ctap2Client {
     }
 
     /** PIN/UV auth protocol version used for PIN tokens: 2 when supported, otherwise 1. */
-    get pinUvAuthProtocolVersion(): number {
+    private get pinUvAuthProtocolVersion(): number {
         return this.info.pinUvAuthProtocols.includes(2) ? 2 : 1
     }
 

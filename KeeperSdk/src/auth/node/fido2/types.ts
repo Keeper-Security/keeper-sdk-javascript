@@ -1,5 +1,3 @@
-/** Shared types for the Node-only FIDO2 / CTAP2 security key client. */
-
 /** CBOR value subset used by CTAP2. */
 export type CborValue = number | string | boolean | null | Uint8Array | CborValue[] | CborMap
 export type CborMap = Map<CborValue, CborValue>
@@ -20,7 +18,6 @@ export type AuthenticatorInfo = {
     pinUvAuthProtocols: number[]
 }
 
-/** Parameters of a CTAP2 `authenticatorGetAssertion` request. */
 export type GetAssertionRequest = {
     rpId: string
     clientDataHash: Uint8Array
@@ -28,11 +25,16 @@ export type GetAssertionRequest = {
     pinUvAuthToken?: Uint8Array
 }
 
-/** Assertion returned by the security key. */
 export type AuthenticatorAssertion = {
     credentialId: Uint8Array
     authenticatorData: Uint8Array
     signature: Uint8Array
+}
+
+export type SecurityKeyAssertionResult = {
+    assertion: AuthenticatorAssertion
+    /** The legacy U2F AppID was used instead of the rpId. */
+    usedAppId: boolean
 }
 
 export type UserVerificationRequirement = 'required' | 'preferred' | 'discouraged'

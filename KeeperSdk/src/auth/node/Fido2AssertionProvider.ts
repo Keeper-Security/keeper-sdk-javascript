@@ -3,10 +3,12 @@ import { normal64Bytes, webSafe64FromBytes, type WebAuthnAssertionProvider } fro
 import { isNonEmptyString, isNumber, isObject, logger } from '../../utils'
 import { CtapHidDevice } from './fido2/CtapHidDevice'
 import { Ctap2Client, CtapError, CtapStatus } from './fido2/Ctap2'
+import { WindowsWebAuthn } from './fido2/WindowsWebAuthn'
 import type {
     AuthenticatorAssertion,
     Fido2AssertionProviderOptions,
     SecurityKeyAssertionRequest,
+    SecurityKeyAssertionResult,
     UserVerificationRequirement,
 } from './fido2/types'
 
@@ -114,14 +116,34 @@ async function resolvePin(
     return pin
 }
 
-/** Signs a WebAuthn request with the first attached USB FIDO2 security key (Keeper Commander's `yubikey_authenticate`). */
+/** Signs a WebAuthn request with a security key (Keeper Commander's `yubikey_authenticate`). */
 async function getSecurityKeyAssertion(requestJson: string, getPin: () => Promise<string>): Promise<string> {
     const request = parseAssertionRequest(requestJson)
     const clientDataJson = buildClientDataJson(request)
+
+    const windowsWebAuthn = await WindowsWebAuthn.load()
+    const { assertion, usedAppId } = windowsWebAuthn
+        ? await windowsWebAuthn.getAssertion(request, clientDataJson)
+        : await getHidSecurityKeyAssertion(request, clientDataJson, getPin)
+    return serializeAssertion(assertion, clientDataJson, request, usedAppId)
+}
+
+/** Signs a WebAuthn request with the first attached USB FIDO2 security key over raw CTAPHID. */
+async function getHidSecurityKeyAssertion(
+    request: SecurityKeyAssertionRequest,
+    clientDataJson: Buffer,
+    getPin: () => Promise<string>
+): Promise<SecurityKeyAssertionResult> {
     const clientDataHash = new Uint8Array(createHash('sha256').update(clientDataJson).digest())
 
     const device = await CtapHidDevice.openFirst()
-    if (!device) throw new Error('No security key detected. Insert your security key and try again.')
+    if (!device) {
+        const windowsHint =
+            process.platform === 'win32'
+                ? ' On Windows, install the optional "koffi" package (or run as Administrator) to access security keys.'
+                : ''
+        throw new Error(`No security key detected. Insert your security key and try again.${windowsHint}`)
+    }
 
     try {
         const client = await Ctap2Client.create(device)
@@ -142,15 +164,13 @@ async function getSecurityKeyAssertion(requestJson: string, getPin: () => Promis
             )
 
         try {
-            const assertion = await getAssertionForRpId(request.rpId)
-            return serializeAssertion(assertion, clientDataJson, request, false)
+            return { assertion: await getAssertionForRpId(request.rpId), usedAppId: false }
         } catch (err) {
             // Security keys registered as legacy U2F are scoped to the AppID instead of the rpId.
             const appId = request.appId
             if (!appId || !(err instanceof CtapError) || err.status !== CtapStatus.NO_CREDENTIALS) throw err
             logger.info('Retrying with the legacy U2F registration. Touch the security key one more time.')
-            const assertion = await getAssertionForRpId(appId)
-            return serializeAssertion(assertion, clientDataJson, request, true)
+            return { assertion: await getAssertionForRpId(appId), usedAppId: true }
         }
     } finally {
         await device.close()
@@ -160,6 +180,8 @@ async function getSecurityKeyAssertion(requestJson: string, getPin: () => Promis
 /**
  * CAUTION: Node-only. Creates a WebAuthn assertion provider backed by a USB FIDO2 security key
  * (requires the optional `node-hid` package). Handles PIN entry and the user-presence touch.
+ * On Windows it uses the Windows WebAuthn API (optional `koffi` package), which shows its own
+ * PIN prompt, so `getPin` is not called there.
  */
 export function createFido2AssertionProvider(options?: Fido2AssertionProviderOptions): WebAuthnAssertionProvider {
     const getPin: () => Promise<string> = options?.getPin || promptSecurityKeyPin
