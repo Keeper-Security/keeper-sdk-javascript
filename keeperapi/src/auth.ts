@@ -1243,7 +1243,6 @@ export class Auth {
         useAlternate: boolean = false
     ) {
         // TODO test for account transfer and account recovery
-        // Same as Commander: prefer the "alternate" salt for alternate (SSO master password) login, else the first one.
         const salt = useAlternate
             ? (loginResponse.salt.find((s) => s.name?.toLowerCase() === 'alternate') ?? loginResponse.salt[0])
             : loginResponse.salt[0]
