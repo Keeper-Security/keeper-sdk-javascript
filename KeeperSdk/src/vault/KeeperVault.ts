@@ -10,6 +10,7 @@ import {
     Authentication,
     normal64Bytes,
     platform,
+    setLogger as setKeeperApiLogger,
 } from '@keeper-security/keeperapi'
 import type {
     SyncResult,
@@ -268,6 +269,10 @@ import {
 } from '../utils'
 import type { ILogger } from '../utils'
 
+// keeperapi logs non-fatal push socket close reasons (e.g. "Invalid public key id") with this prefix
+// as errors straight to the console, which breaks into interactive login prompts.
+const PUSH_SOCKET_CLOSE_LOG_PREFIX = 'Incorrect internal error'
+
 enum VaultStatus {
     RecordNotFound = 'RECORD_NOT_FOUND',
     RecordKeyNotFound = 'RECORD_KEY_NOT_FOUND',
@@ -395,6 +400,17 @@ export class KeeperVault {
                       saveSessionParameters: (p) => this.sessionManager.saveSessionParameters(p),
                   }
                 : this.sessionManager
+
+        // Same as keeperapi's default console logger, except push socket close reasons go to debug.
+        setKeeperApiLogger({
+            debug: (...args) => console.log(...args),
+            info: (...args) => console.info(...args),
+            warn: (...args) => console.warn(...args),
+            error: (...args) =>
+                typeof args[0] === 'string' && args[0].startsWith(PUSH_SOCKET_CLOSE_LOG_PREFIX)
+                    ? this.log.debug(...args)
+                    : console.error(...args),
+        })
 
         return new Auth({
             host,
