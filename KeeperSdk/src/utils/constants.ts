@@ -23,6 +23,7 @@ export enum AuthErrorCode {
     MaxAttemptsExceeded = 'max_attempts_exceeded',
     UserCancelled = 'user_cancelled',
     Unsupported2FAChannel = 'unsupported_2fa_channel',
+    SsoMasterPasswordLogin = 'sso_master_password_login',
 }
 
 export enum SessionErrorCode {
@@ -220,6 +221,7 @@ export const ResultCodes = {
     MAX_ATTEMPTS_EXCEEDED: AuthErrorCode.MaxAttemptsExceeded,
     USER_CANCELLED: AuthErrorCode.UserCancelled,
     UNSUPPORTED_2FA_CHANNEL: AuthErrorCode.Unsupported2FAChannel,
+    SSO_MASTER_PASSWORD_LOGIN: AuthErrorCode.SsoMasterPasswordLogin,
     NOT_LOGGED_IN: SessionErrorCode.NotLoggedIn,
     DEVICE_NOT_REGISTERED: SessionErrorCode.DeviceNotRegistered,
     NO_PREVIOUS_LOGIN: SessionErrorCode.NoPreviousLogin,

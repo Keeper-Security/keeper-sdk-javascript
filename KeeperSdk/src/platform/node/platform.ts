@@ -2,6 +2,7 @@ import { createECDH, createHmac } from 'crypto'
 import readline from 'readline/promises'
 import type { AuthUI3 } from '@keeper-security/keeperapi'
 import { ConsoleAuthUI } from '../../auth/ConsoleAuthUI'
+import { createFido2AssertionProvider } from '../../auth/node/Fido2AssertionProvider'
 import { UnavailableAuthUI } from '../../auth/UnavailableAuthUI'
 import { FileConfigLoader } from '../../auth/node/FileConfigLoader'
 import type { ConfigLoader } from '../../auth/config'
@@ -43,6 +44,6 @@ export const nodeSdkPlatform: SdkPlatform = {
     },
 
     createAuthUI(useConsoleAuth: boolean): AuthUI3 {
-        return useConsoleAuth ? new ConsoleAuthUI() : new UnavailableAuthUI()
+        return useConsoleAuth ? new ConsoleAuthUI(createFido2AssertionProvider()) : new UnavailableAuthUI()
     },
 }
