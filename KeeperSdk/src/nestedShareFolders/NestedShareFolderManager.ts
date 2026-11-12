@@ -17,6 +17,7 @@ import {
     shareNestedShareRecord,
     formatNsfRecordSharePlan,
     formatNsfRecordShareResults,
+    formatNsfFolderShareResults,
 } from './nsfShare'
 import { listNsfShortcuts, keepNsfShortcut, formatNsfShortcutOutput, formatKeepNsfShortcutPlan } from './nsfShortcut'
 import { transferNestedShareRecords, formatTransferNestedShareRecordResults } from './nsfTransferRecord'
@@ -168,6 +169,10 @@ export class NestedShareFolderManager {
 
     public formatNsfRecordShareResults(results: ShareNestedShareRecordResult['results']): string {
         return formatNsfRecordShareResults(results)
+    }
+
+    public formatNsfFolderShareResults(results: ShareNestedShareFolderResult['results']): string {
+        return formatNsfFolderShareResults(results)
     }
 
     public listNsfShortcuts(options: ListNsfShortcutsOptions = {}): NsfShortcutRow[] {
