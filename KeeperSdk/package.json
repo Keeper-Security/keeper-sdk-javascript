@@ -33,5 +33,9 @@
     "devDependencies": {
         "@types/node": "^25.6.0",
         "prettier": "^3.8.1"
+    },
+    "optionalDependencies": {
+        "koffi": "^3.3.3",
+        "node-hid": "^3.4.0"
     }
 }

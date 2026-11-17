@@ -457,18 +457,27 @@ export class KeeperEndpoint {
     public async prepareSsoPayload(
         messageSessionUid: Uint8Array,
         username: string = '',
-        idpSessionId = ''
+        idpSessionId = '',
+        detached = false
     ): Promise<string> {
         this._transmissionKey = await this.getTransmissionKey()
-        const payload: SsoCloud.ISsoCloudRequest = {
-            embedded: true,
-            clientVersion: this.clientVersion,
-            dest: 'vault',
-            forceLogin: false,
-            messageSessionUid: messageSessionUid,
-            idpSessionId: idpSessionId,
-            username: username,
-        }
+        const payload: SsoCloud.ISsoCloudRequest = detached
+            ? {
+                  clientVersion: this.clientVersion,
+                  dest: 'commander',
+                  forceLogin: false,
+                  detached: true,
+                  messageSessionUid: messageSessionUid,
+              }
+            : {
+                  embedded: true,
+                  clientVersion: this.clientVersion,
+                  dest: 'vault',
+                  forceLogin: false,
+                  messageSessionUid: messageSessionUid,
+                  idpSessionId: idpSessionId,
+                  username: username,
+              }
         const request = await prepareApiRequest({
             payload: SsoCloud.SsoCloudRequest.encode(payload).finish(),
             transmissionKey: this._transmissionKey,

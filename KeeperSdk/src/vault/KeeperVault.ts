@@ -10,8 +10,16 @@ import {
     Authentication,
     normal64Bytes,
     platform,
+    setLogger as setKeeperApiLogger,
 } from '@keeper-security/keeperapi'
-import type { SyncResult, SyncLogFormat, VaultStorage, SessionStorage, AuthUI3 } from '@keeper-security/keeperapi'
+import type {
+    SyncResult,
+    SyncLogFormat,
+    VaultStorage,
+    SessionStorage,
+    AuthUI3,
+    WebAuthnAssertionProvider,
+} from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { SessionManager } from '../auth/SessionManager'
 import { setPersistentLogin, DEFAULT_PERSISTENT_LOGIN_TIMEOUT_MINUTES } from '../auth/PersistentLogin'
@@ -261,6 +269,10 @@ import {
 } from '../utils'
 import type { ILogger } from '../utils'
 
+// keeperapi logs non-fatal push socket close reasons (e.g. "Invalid public key id") with this prefix
+// as errors straight to the console, which breaks into interactive login prompts.
+const PUSH_SOCKET_CLOSE_LOG_PREFIX = 'Incorrect internal error'
+
 enum VaultStatus {
     RecordNotFound = 'RECORD_NOT_FOUND',
     RecordKeyNotFound = 'RECORD_KEY_NOT_FOUND',
@@ -389,6 +401,17 @@ export class KeeperVault {
                   }
                 : this.sessionManager
 
+        // Same as keeperapi's default console logger, except push socket close reasons go to debug.
+        setKeeperApiLogger({
+            debug: (...args) => console.log(...args),
+            info: (...args) => console.info(...args),
+            warn: (...args) => console.warn(...args),
+            error: (...args) =>
+                typeof args[0] === 'string' && args[0].startsWith(PUSH_SOCKET_CLOSE_LOG_PREFIX)
+                    ? this.log.debug(...args)
+                    : console.error(...args),
+        })
+
         return new Auth({
             host,
             clientVersion: this.config.clientVersion,
@@ -407,16 +430,36 @@ export class KeeperVault {
         return this.auth
     }
 
-    public async login(username: string, password: string): Promise<void> {
+    private static async startLogin(
+        auth: Auth,
+        username: string,
+        password: string | undefined,
+        loginType: Authentication.LoginType
+    ): Promise<void> {
+        await auth.loginV3({
+            username,
+            password,
+            loginType,
+            loginMethod: Authentication.LoginMethod.EXISTING_ACCOUNT,
+        })
+    }
+
+    private static isSsoMasterPasswordRequest(err: unknown): boolean {
+        return err instanceof KeeperSdkError && err.resultCode === ResultCodes.SSO_MASTER_PASSWORD_LOGIN
+    }
+
+    public async login(username: string, password?: string): Promise<void> {
         this.auth = await this.createAuth({ useSessionResumption: false })
         this.sessionManager.setLastUsername(username)
 
-        await this.auth.loginV3({
-            username,
-            password,
-            loginType: Authentication.LoginType.NORMAL,
-            loginMethod: Authentication.LoginMethod.EXISTING_ACCOUNT,
-        })
+        try {
+            await KeeperVault.startLogin(this.auth, username, password, Authentication.LoginType.NORMAL)
+        } catch (err) {
+            if (!KeeperVault.isSsoMasterPasswordRequest(err)) throw err
+
+            this.auth = await this.createAuth({ useSessionResumption: false })
+            await KeeperVault.startLogin(this.auth, username, password, Authentication.LoginType.ALTERNATE)
+        }
 
         this.synced = false
         this.log.info(`Logged in as ${username}`)
@@ -451,6 +494,17 @@ export class KeeperVault {
 
         this.synced = false
         this.log.info(`Logged in as ${username} (via session token)`)
+    }
+
+    /** Logs in using a platform passkey or another WebAuthn authenticator. */
+    public async loginWithPasskey(username: string, assertionProvider?: WebAuthnAssertionProvider): Promise<void> {
+        this.auth = await this.createAuth({ useSessionResumption: false })
+        this.sessionManager.setLastUsername(username)
+
+        await this.auth.loginWithPasskey(username, assertionProvider)
+
+        this.synced = false
+        this.log.info(`Logged in as ${username} (via passkey)`)
     }
 
     /**
