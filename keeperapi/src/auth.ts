@@ -1181,7 +1181,7 @@ export class Auth {
                     }
                     if (tfachannelData.availablePushes) {
                         tfachannelData.sendPush = async (pushType: TwoFactorPushType) => {
-                            submitPush(ch.channelType!, pushType)
+                            await submitPush(ch.channelType!, pushType)
                         }
                     }
                     return tfachannelData

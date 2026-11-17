@@ -280,7 +280,7 @@ export class ConsoleAuthUI implements AuthUI3 {
                 push === Authentication.TwoFactorPushType.TWO_FA_PUSH_DNA
         )
         if (codePush !== undefined) {
-            selected.sendPush?.(codePush)
+            await ConsoleAuthUI.trySendPush(selected, codePush)
             return false
         }
         if (pushes.length === 0 || !selected.sendPush) return false
@@ -289,10 +289,30 @@ export class ConsoleAuthUI implements AuthUI3 {
         if (answer === undefined) return true
         if (answer.toLowerCase() !== 'y') return false
 
-        selected.sendPush(pushes[0])
+        if (!(await ConsoleAuthUI.trySendPush(selected, pushes[0]))) return false
         logger.info('Push sent. Waiting for approval...')
-        await ConsoleAuthUI.waitWithCancel(AuthDefaults.APPROVAL_TIMEOUT_MS, cancel)
-        return true
+
+        const approved = await Promise.race([
+            cancel.then(() => true),
+            getSdkPlatform()
+                .delay(AuthDefaults.APPROVAL_TIMEOUT_MS)
+                .then(() => false),
+        ])
+        if (!approved) logger.warn('Timed out waiting for push approval. Enter a code or choose another method.')
+        return approved
+    }
+
+    private static async trySendPush(
+        selected: TwoFactorChannelData,
+        push: Authentication.TwoFactorPushType
+    ): Promise<boolean> {
+        try {
+            await selected.sendPush?.(push)
+            return true
+        } catch (e) {
+            logger.error(extractErrorMessage(e))
+            return false
+        }
     }
 
     /** Durations the channel allows: "login" always, plus every duration up to the channel's maximum. */

@@ -150,7 +150,7 @@ export type TwoFactorChannelData = {
     availablePushes?: TwoFactorPushType[]
     channel: Authentication.ITwoFactorChannelInfo
     challenge?: string
-    sendPush?: (type: TwoFactorPushType) => void
+    sendPush?: (type: TwoFactorPushType) => Promise<void>
     sendCode: (code: string) => void
     sendSecurityKeyAssertion?: () => Promise<void>
     setExpiration: (expiration: TwoFactorExpiration) => void
