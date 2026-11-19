@@ -36,6 +36,8 @@ import { AllowedEcKeyIds, AllowedMlKemKeyIds, isAllowedEcKeyId, isAllowedMlKemKe
 
 export type ExecuteRestOptions = {
     skipRegionRedirect?: boolean
+    /** Do not log request or response bodies. */
+    sensitive?: boolean
 }
 
 export class KeeperEndpoint {
@@ -268,7 +270,7 @@ export class KeeperEndpoint {
             })
             const url = this.getUrl(message.path)
             const requestId = url.substring(url.lastIndexOf('/') + 1)
-            if (isLevelEnabled('debug')) {
+            if (!options?.sensitive && isLevelEnabled('debug')) {
                 logger.debug(...formatProto(`→ ${url}`, (message as { data?: unknown }).data))
             }
             const startTime = Date.now()
@@ -288,7 +290,7 @@ export class KeeperEndpoint {
                 const elapsed = formatTimeDiff(new Date(Date.now() - startTime))
                 if ('fromBytes' in message) {
                     const result = message.fromBytes(decrypted)
-                    if (isLevelEnabled('debug')) {
+                    if (!options?.sensitive && isLevelEnabled('debug')) {
                         logger.debug(...formatProto(`← ${requestId} ${elapsed}s`, result))
                     }
                     return result

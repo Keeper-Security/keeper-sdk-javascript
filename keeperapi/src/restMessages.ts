@@ -162,6 +162,14 @@ export const validateAuthHashMessage = (
         Authentication.LoginResponse
     )
 
+export const changeMasterPasswordMessage = (data: Authentication.IChangeMasterPasswordRequest) =>
+    createMessage(
+        data,
+        'authentication/change_master_password',
+        Authentication.ChangeMasterPasswordRequest,
+        Authentication.ChangeMasterPasswordResponse
+    )
+
 export const twoFactorValidateMessage = (
     data: Authentication.ITwoFactorValidateRequest
 ): RestMessage<Authentication.ITwoFactorValidateRequest, Authentication.ITwoFactorValidateResponse> =>

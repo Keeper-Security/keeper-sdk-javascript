@@ -2,9 +2,17 @@
  * @jest-environment jsdom
  */
 
-import { Auth, InvalidKdfParametersError, LoginV3ResultEnum, validateKdfParameters } from '../auth'
+import {
+    Auth,
+    createEncryptionParams,
+    decryptEncryptionParams,
+    InvalidKdfParametersError,
+    LoginV3ResultEnum,
+    validateKdfParameters,
+} from '../auth'
 import { browserPlatform } from '../browser/platform'
 import { KeeperEnvironment } from '../endpoint'
+import { logger } from '../log'
 import { nodePlatform } from '../node/platform'
 import { connectPlatform, platform } from '../platform'
 import { Authentication } from '../proto'
@@ -48,16 +56,11 @@ describe.each([
     it.each([
         ['missing salt', undefined, 100000],
         ['null salt', null, 100000],
-        ['empty salt and one iteration', new Uint8Array(), 1],
         ['empty salt', new Uint8Array(), 100000],
         ['short salt', new Uint8Array(15), 100000],
         ['long salt', new Uint8Array(17), 100000],
         ['missing iterations', new Uint8Array(16), undefined],
         ['null iterations', new Uint8Array(16), null],
-        ['zero iterations', new Uint8Array(16), 0],
-        ['negative iterations', new Uint8Array(16), -1],
-        ['one iteration', new Uint8Array(16), 1],
-        ['below-minimum iterations', new Uint8Array(16), 99999],
         ['fractional iterations', new Uint8Array(16), 100000.5],
         ['NaN iterations', new Uint8Array(16), NaN],
         ['infinite iterations', new Uint8Array(16), Infinity],
@@ -79,53 +82,62 @@ describe.each([
     })
 
     it.each([
-        [100000, false],
-        [100001, false],
-        [100000, true],
-    ])('allows %i iterations with a 16-byte salt (alternate: %s)', async (iterations, useAlternate) => {
-        const salt = new Uint8Array(16).fill(7)
-        const response = loginResponse({ salt, iterations })
-        if (useAlternate) {
-            response.salt = [
-                { salt: new Uint8Array(), iterations: 1 },
-                { name: 'alternate', salt, iterations },
-            ]
+        [10000, false, true],
+        [999999, false, true],
+        [1000000, false, false],
+        [1000001, false, false],
+        [1000000, true, false],
+    ])(
+        'handles %i iterations (alternate: %s, approval required: %s)',
+        async (iterations, useAlternate, needsApproval) => {
+            const approve = jest.fn().mockResolvedValue(true)
+            configureApproval(approve)
+            const salt = new Uint8Array(16).fill(7)
+            const response = loginResponse({ salt, iterations })
+            if (useAlternate) {
+                response.salt = [
+                    { salt: new Uint8Array(), iterations: 1 },
+                    { name: 'alternate', salt, iterations },
+                ]
+            }
+            const password = wrapPassword('test-password')
+
+            await auth.authHashLogin(response, 'test', password, useAlternate)
+
+            expect(approve.mock.calls).toEqual(needsApproval ? [[iterations]] : [])
+            expect(deriveKey).toHaveBeenCalledWith(password, salt, iterations)
+            expect(executeRest).toHaveBeenCalledTimes(1)
+            expect(executeRest.mock.calls[0][0]).toMatchObject({
+                path: 'authentication/validate_auth_hash',
+                data: {
+                    authResponse: expect.objectContaining({ length: 32 }),
+                    encryptedLoginToken: response.encryptedLoginToken,
+                },
+            })
+            expect(loginSuccess).toHaveBeenCalledTimes(1)
+            expect(auth.options.salt).toEqual(salt)
+            expect(auth.options.iterations).toBe(iterations)
         }
-        const password = wrapPassword('test-password')
-
-        expect(() => validateKdfParameters({ salt, iterations })).not.toThrow()
-        await auth.authHashLogin(response, 'test', password, useAlternate)
-
-        expect(deriveKey).toHaveBeenCalledWith(password, salt, iterations)
-        expect(executeRest).toHaveBeenCalledTimes(1)
-        expect(executeRest.mock.calls[0][0]).toMatchObject({
-            path: 'authentication/validate_auth_hash',
-            data: {
-                authResponse: expect.objectContaining({ length: 32 }),
-                encryptedLoginToken: response.encryptedLoginToken,
-            },
-        })
-        expect(loginSuccess).toHaveBeenCalledTimes(1)
-        expect(auth.options.salt).toBe(salt)
-        expect(auth.options.iterations).toBe(iterations)
-    })
+    )
 
     it('validates the selected alternate salt rather than the primary salt', async () => {
         const response = loginResponse({ salt: new Uint8Array(16), iterations: 100000 })
         response.salt.push({ name: 'alternate', salt: new Uint8Array(), iterations: 1 })
 
-        await expect(auth.authHashLogin(response, 'test', wrapPassword('test-password'), true)).rejects.toBeInstanceOf(
-            InvalidKdfParametersError
-        )
+        await expect(auth.authHashLogin(response, 'test', wrapPassword('test-password'), true)).rejects.toMatchObject({
+            code: 'kdf_iterations_below_minimum',
+        })
         expect(deriveKey).not.toHaveBeenCalled()
         expect(executeRest).not.toHaveBeenCalled()
     })
 
-    it.each([false, true])('stops login on invalid KDF parameters (failure handler: %s)', async (withHandler) => {
+    it.each([false, true])('reports the security concern (failure handler: %s)', async (withHandler) => {
         const onCommandFailure = jest.fn()
         const getPassword = jest.fn().mockResolvedValue('test-password')
+        const approve = jest.fn().mockResolvedValue(true)
         auth.options.authUI3 = {
             getPassword,
+            approveLowKdfIterations: approve,
             waitForDeviceApproval: jest.fn(),
             waitForTwoFactorCode: jest.fn(),
         }
@@ -133,21 +145,130 @@ describe.each([
             auth.options.onCommandFailure = onCommandFailure
         }
         jest.spyOn(auth, 'connect').mockResolvedValue(undefined)
-        executeRest.mockResolvedValueOnce(loginResponse({ salt: new Uint8Array(), iterations: 1 }))
+        executeRest.mockResolvedValueOnce(loginResponse({ salt: new Uint8Array(16), iterations: 9999 }))
 
         const login = auth.loginV3({ username: 'test' })
         if (withHandler) {
             await expect(login).resolves.toEqual({ result: LoginV3ResultEnum.NOT_LOGGED_IN })
             expect(onCommandFailure).toHaveBeenCalledWith(
-                expect.objectContaining({ result_code: 'invalid_kdf_parameters' })
+                expect.objectContaining({
+                    result_code: 'kdf_iterations_below_minimum',
+                    message: expect.stringContaining('Security concern'),
+                })
             )
         } else {
-            await expect(login).rejects.toBeInstanceOf(InvalidKdfParametersError)
+            await expect(login).rejects.toMatchObject({ code: 'kdf_iterations_below_minimum' })
         }
 
         expect(getPassword).toHaveBeenCalledTimes(1)
+        expect(approve).not.toHaveBeenCalled()
         expect(deriveKey).not.toHaveBeenCalled()
         expect(executeRest).toHaveBeenCalledTimes(1)
         expect(loginSuccess).not.toHaveBeenCalled()
     })
+
+    it.each(['missing', 'declined', 'failed'])('stops login when approval is %s', async (approval) => {
+        if (approval !== 'missing') {
+            configureApproval(async () => {
+                if (approval === 'failed') throw new Error('UI closed')
+                return false
+            })
+        }
+        jest.spyOn(auth, 'connect').mockResolvedValue(undefined)
+        executeRest.mockResolvedValueOnce(loginResponse({ salt: new Uint8Array(16), iterations: 10000 }))
+        await expect(auth.loginV3({ username: 'test', password: 'test-password' })).rejects.toMatchObject({
+            code: 'kdf_iterations_approval_required',
+        })
+        expect(deriveKey).not.toHaveBeenCalled()
+        expect(executeRest).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not derive or submit while approval is pending', async () => {
+        let approve!: (approved: boolean) => void
+        const approval = new Promise<boolean>((resolve) => {
+            approve = resolve
+        })
+        configureApproval(() => approval)
+        const response = loginResponse({ salt: new Uint8Array(16), iterations: 10000 })
+        const login = auth.authHashLogin(response, 'test', wrapPassword('test-password'))
+
+        expect(deriveKey).not.toHaveBeenCalled()
+        expect(executeRest).not.toHaveBeenCalled()
+        approve(true)
+        await login
+        expect(deriveKey).toHaveBeenCalledTimes(1)
+        expect(executeRest).toHaveBeenCalledTimes(1)
+    })
+
+    it.each(['upgraded', 'failed', 'restricted', 'alternate'])('handles post-login upgrade: %s', async (outcome) => {
+        const password = wrapPassword('test-password')
+        const dataKey = new Uint8Array(32).fill(42)
+        const encryptedDataKey = await createEncryptionParams(password, dataKey, 10000)
+        const useAlternate = outcome === 'alternate'
+        const registerLogin = jest.fn()
+        const saveSessionParameters = jest.fn().mockResolvedValue(undefined)
+        Object.assign(auth, { socket: { getIsConnected: () => true, registerLogin, onOpen: jest.fn() } })
+        Object.assign(auth.options.sessionStorage!, { saveSessionParameters })
+        const loadSummary = jest.spyOn(auth, 'loadAccountSummary').mockResolvedValue(undefined)
+        const warn = jest.spyOn(logger, 'warn').mockImplementation(() => {})
+        loginSuccess.mockRestore()
+        configureApproval(async () => true)
+        executeRest.mockResolvedValueOnce(
+            new Authentication.LoginResponse({
+                loginState: Authentication.LoginState.LOGGED_IN,
+                sessionTokenType:
+                    outcome === 'restricted'
+                        ? Authentication.SessionTokenType.RESTRICT
+                        : Authentication.SessionTokenType.NO_RESTRICTION,
+                encryptedSessionToken: new Uint8Array([1]),
+                encryptedDataKey,
+                encryptedDataKeyType: Authentication.EncryptedDataKeyType.BY_PASSWORD,
+            })
+        )
+        const upgraded = outcome === 'upgraded'
+        const atUpgrade = jest.fn()
+        if (upgraded || outcome === 'failed') {
+            executeRest.mockImplementationOnce(async () => {
+                atUpgrade(loadSummary.mock.calls.length, Array.from(auth.dataKey ?? []), auth.sessionToken)
+                if (outcome === 'failed') throw new Error('Server error')
+                return { encryptedSessionToken: new Uint8Array([2]) }
+            })
+        }
+
+        const response = loginResponse({
+            name: useAlternate ? 'alternate' : undefined,
+            salt: new Uint8Array(16),
+            iterations: 10000,
+        })
+        await auth.authHashLogin(response, 'test', password, useAlternate)
+
+        expect(executeRest).toHaveBeenCalledTimes(upgraded || outcome === 'failed' ? 2 : 1)
+        expect(auth.options.iterations).toBe(upgraded ? 1000000 : 10000)
+        expect(saveSessionParameters).toHaveBeenCalledTimes(1)
+        expect(saveSessionParameters).toHaveBeenCalledWith(
+            expect.objectContaining({ sessionToken: upgraded ? 'Ag' : 'AQ' })
+        )
+        if (upgraded) {
+            expect(atUpgrade).toHaveBeenCalledWith(1, Array.from(dataKey), 'AQ')
+            const { path, data } = executeRest.mock.calls[1][0]
+            expect(path).toBe('authentication/change_master_password')
+            expect(data.iterationsChange).toBe(true)
+            expect(new DataView(data.authVerifier.buffer, data.authVerifier.byteOffset).getUint32(0)).toBe(
+                0x01000000 + 1000000
+            )
+            expect(Array.from(await decryptEncryptionParams(password, data.encryptionParams))).toEqual(
+                Array.from(dataKey)
+            )
+            expect(registerLogin).toHaveBeenLastCalledWith('Ag')
+        }
+        expect(warn).toHaveBeenCalledTimes(outcome === 'failed' ? 1 : 0)
+    })
+
+    function configureApproval(approveLowKdfIterations: (iterations: number) => Promise<boolean>) {
+        auth.options.authUI3 = {
+            approveLowKdfIterations,
+            waitForDeviceApproval: jest.fn(),
+            waitForTwoFactorCode: jest.fn(),
+        }
+    }
 })
