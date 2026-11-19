@@ -123,6 +123,31 @@ export const enum LoginV3ResultEnum {
     LINKING_BLOCKED_BY_YUBIKEY_2FA = 'linkingBlockedByYubikey2fa',
 }
 
+export class InvalidKdfParametersError extends Error {
+    readonly code = 'invalid_kdf_parameters'
+
+    constructor() {
+        super(
+            'Server-supplied KDF parameters must use a 16-byte salt and an integer iteration count of at least 100000'
+        )
+        this.name = 'InvalidKdfParametersError'
+    }
+}
+
+export function validateKdfParameters(
+    parameters: Authentication.ISalt
+): asserts parameters is Authentication.ISalt & { salt: Uint8Array; iterations: number } {
+    if (
+        !parameters.salt ||
+        parameters.salt.length !== 16 ||
+        typeof parameters.iterations !== 'number' ||
+        !Number.isSafeInteger(parameters.iterations) ||
+        parameters.iterations < 100000
+    ) {
+        throw new InvalidKdfParametersError()
+    }
+}
+
 export class Auth {
     ssoLogoutUrl: string = ''
     userType: UserType = UserType.normal
@@ -656,6 +681,10 @@ export class Auth {
                         return
                     } catch (e: any) {
                         wrappedPassword = undefined
+                        if (e instanceof InvalidKdfParametersError) {
+                            handleError(e.code, loginResponse, e)
+                            return { result: LoginV3ResultEnum.NOT_LOGGED_IN }
+                        }
                         handleError('auth_failed', loginResponse, e)
                         const error = e as Error
                         // @ts-ignore
@@ -1160,13 +1189,14 @@ export class Auth {
     ) {
         // TODO test for account transfer and account recovery
         const salt = useAlternate ? loginResponse.salt.find((s) => s.name === 'alternate') : loginResponse.salt[0]
-        if (!salt?.salt || !salt?.iterations) {
+        if (!salt) {
             const error = new Error('Salt missing from API response')
-            if (useAlternate && !salt) {
+            if (useAlternate) {
                 error.cause = Error('No alternate master password found')
             }
             throw error
         }
+        validateKdfParameters(salt)
 
         this.options.salt = salt.salt
         this.options.iterations = salt.iterations
