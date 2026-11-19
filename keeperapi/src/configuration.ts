@@ -119,6 +119,8 @@ export interface AuthUI3 {
     waitForDeviceApproval(channels: DeviceApprovalChannel[], isCloud: boolean): Promise<boolean>
     waitForTwoFactorCode(channels: TwoFactorChannelData[], cancel: Promise<void>): Promise<boolean>
     getPassword?(isAlternate: boolean): Promise<string | KeyWrapper>
+    /** Return true only if the user explicitly approves this login with the supplied iteration count. */
+    approveLowKdfIterations?(iterations: number): Promise<boolean>
     getSSOToken?(redirectUrl: string): Promise<Uint8Array>
     redirectCallback?(url: string): Promise<void>
     ssoLogin?(url: string): Promise<any>
