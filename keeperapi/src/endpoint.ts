@@ -36,7 +36,7 @@ import { AllowedEcKeyIds, AllowedMlKemKeyIds, isAllowedEcKeyId, isAllowedMlKemKe
 
 export type ExecuteRestOptions = {
     skipRegionRedirect?: boolean
-    /** Do not log request or response bodies. */
+    /** Log only request and response metadata, not bodies. */
     sensitive?: boolean
 }
 
@@ -270,19 +270,29 @@ export class KeeperEndpoint {
             })
             const url = this.getUrl(message.path)
             const requestId = url.substring(url.lastIndexOf('/') + 1)
-            if (!options?.sensitive && isLevelEnabled('debug')) {
+            const startTime = Date.now()
+            const sensitiveEndpoint = options?.sensitive ? message.path.split(/[?#]/, 1)[0] : undefined
+            if (sensitiveEndpoint !== undefined) {
+                if (isLevelEnabled('debug')) {
+                    logger.debug(`→ POST ${sensitiveEndpoint} at ${new Date(startTime).toISOString()}`)
+                }
+            } else if (isLevelEnabled('debug')) {
                 logger.debug(...formatProto(`→ ${url}`, (message as { data?: unknown }).data))
             }
-            const startTime = Date.now()
             const response = await platform.post(url, request)
+            if (sensitiveEndpoint !== undefined) {
+                logger.debug(`← POST ${sensitiveEndpoint} HTTP ${response.statusCode} (${Date.now() - startTime}ms)`)
+            }
             if (!response.data || (response.data.length === 0 && response.statusCode === 200)) {
                 if ('fromBytes' in message) {
                     throw Error(`Missing expected a response for ${message.path}`)
                 }
-                logger.debug(`← ${requestId} ${formatTimeDiff(new Date(Date.now() - startTime))}s`)
+                if (!options?.sensitive) {
+                    logger.debug(`← ${requestId} ${formatTimeDiff(new Date(Date.now() - startTime))}s`)
+                }
                 return
             }
-            if (response.statusCode != 200) {
+            if (!options?.sensitive && response.statusCode != 200) {
                 logger.debug(`← ${requestId} Response code:`, response.statusCode)
             }
             try {
@@ -295,7 +305,9 @@ export class KeeperEndpoint {
                     }
                     return result
                 }
-                logger.debug(`← ${requestId} ${elapsed}s`)
+                if (!options?.sensitive) {
+                    logger.debug(`← ${requestId} ${elapsed}s`)
+                }
                 return
             } catch {
                 const errorMessage = platform.bytesToString(response.data.slice(0, 1000))

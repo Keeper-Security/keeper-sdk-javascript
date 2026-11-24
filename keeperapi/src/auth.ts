@@ -1235,7 +1235,8 @@ export class Auth {
             )
         }
         const salt = { salt: selectedSalt.salt, iterations: selectedSalt.iterations }
-        const needsApproval = salt.iterations < TARGET_LOGIN_KDF_ITERATIONS
+        const needsApproval =
+            this.options.enableLowKdfIterationUpgrade === true && salt.iterations < TARGET_LOGIN_KDF_ITERATIONS
         if (needsApproval) {
             // Keep the accepted parameters independent of changes while the application awaits the user.
             salt.salt = new Uint8Array(salt.salt)

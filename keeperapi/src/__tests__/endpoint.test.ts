@@ -14,6 +14,7 @@ import { HPKE_ECDH_KYBER, Ciphersuite, MlKemVariant, mlKemKeygen, encodeMlKemPub
 import { getKeeperMlKemKeyVariant } from '../transmissionKeys'
 import { KeeperHttpResponse } from '../commands'
 import { generateTransmissionKey } from '../utils'
+import { getLogLevel, logger, setLogLevel } from '../log'
 
 // Mock server key configuration
 interface MockServerKeys {
@@ -120,6 +121,28 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
 
     afterEach(() => {
         jest.restoreAllMocks()
+    })
+
+    it('logs only HTTP metadata for a sensitive request and its retry', async () => {
+        mockServerKeys.ecKeyId = 11
+        const debug = jest.spyOn(logger, 'debug').mockImplementation(() => {})
+        const previousLevel = getLogLevel()
+        setLogLevel('debug')
+        try {
+            await endpoint.executeRest(startLoginRequest, undefined, { sensitive: true })
+        } finally {
+            setLogLevel(previousLevel)
+        }
+
+        const sent = expect.stringMatching(
+            /^→ POST authentication\/start_login at \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+        )
+        expect(debug.mock.calls.filter(([entry]) => String(entry).includes('start_login'))).toEqual([
+            [sent],
+            [expect.stringMatching(/^← POST authentication\/start_login HTTP 401 \(\d+ms\)$/)],
+            [sent],
+            [expect.stringMatching(/^← POST authentication\/start_login HTTP 200 \(\d+ms\)$/)],
+        ])
     })
 
     it('should rotate both EC and ML-KEM keys when using HPKE', async () => {

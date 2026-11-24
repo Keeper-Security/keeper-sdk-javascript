@@ -135,6 +135,7 @@ describe.each([
         const onCommandFailure = jest.fn()
         const getPassword = jest.fn().mockResolvedValue('test-password')
         const approve = jest.fn().mockResolvedValue(true)
+        auth.options.enableLowKdfIterationUpgrade = withHandler
         auth.options.authUI3 = {
             getPassword,
             approveLowKdfIterations: approve,
@@ -168,6 +169,7 @@ describe.each([
     })
 
     it.each(['missing', 'declined', 'failed'])('stops login when approval is %s', async (approval) => {
+        auth.options.enableLowKdfIterationUpgrade = true
         if (approval !== 'missing') {
             configureApproval(async () => {
                 if (approval === 'failed') throw new Error('UI closed')
@@ -200,71 +202,80 @@ describe.each([
         expect(executeRest).toHaveBeenCalledTimes(1)
     })
 
-    it.each(['upgraded', 'failed', 'restricted', 'alternate'])('handles post-login upgrade: %s', async (outcome) => {
-        const password = wrapPassword('test-password')
-        const dataKey = new Uint8Array(32).fill(42)
-        const encryptedDataKey = await createEncryptionParams(password, dataKey, 10000)
-        const useAlternate = outcome === 'alternate'
-        const registerLogin = jest.fn()
-        const saveSessionParameters = jest.fn().mockResolvedValue(undefined)
-        Object.assign(auth, { socket: { getIsConnected: () => true, registerLogin, onOpen: jest.fn() } })
-        Object.assign(auth.options.sessionStorage!, { saveSessionParameters })
-        const loadSummary = jest.spyOn(auth, 'loadAccountSummary').mockResolvedValue(undefined)
-        const warn = jest.spyOn(logger, 'warn').mockImplementation(() => {})
-        loginSuccess.mockRestore()
-        configureApproval(async () => true)
-        executeRest.mockResolvedValueOnce(
-            new Authentication.LoginResponse({
-                loginState: Authentication.LoginState.LOGGED_IN,
-                sessionTokenType:
-                    outcome === 'restricted'
-                        ? Authentication.SessionTokenType.RESTRICT
-                        : Authentication.SessionTokenType.NO_RESTRICTION,
-                encryptedSessionToken: new Uint8Array([1]),
-                encryptedDataKey,
-                encryptedDataKeyType: Authentication.EncryptedDataKeyType.BY_PASSWORD,
-            })
-        )
-        const upgraded = outcome === 'upgraded'
-        const atUpgrade = jest.fn()
-        if (upgraded || outcome === 'failed') {
-            executeRest.mockImplementationOnce(async () => {
-                atUpgrade(loadSummary.mock.calls.length, Array.from(auth.dataKey ?? []), auth.sessionToken)
-                if (outcome === 'failed') throw new Error('Server error')
-                return { encryptedSessionToken: new Uint8Array([2]) }
-            })
-        }
-
-        const response = loginResponse({
-            name: useAlternate ? 'alternate' : undefined,
-            salt: new Uint8Array(16),
-            iterations: 10000,
-        })
-        await auth.authHashLogin(response, 'test', password, useAlternate)
-
-        expect(executeRest).toHaveBeenCalledTimes(upgraded || outcome === 'failed' ? 2 : 1)
-        expect(auth.options.iterations).toBe(upgraded ? 1000000 : 10000)
-        expect(saveSessionParameters).toHaveBeenCalledTimes(1)
-        expect(saveSessionParameters).toHaveBeenCalledWith(
-            expect.objectContaining({ sessionToken: upgraded ? 'Ag' : 'AQ' })
-        )
-        if (upgraded) {
-            expect(atUpgrade).toHaveBeenCalledWith(1, Array.from(dataKey), 'AQ')
-            const { path, data } = executeRest.mock.calls[1][0]
-            expect(path).toBe('authentication/change_master_password')
-            expect(data.iterationsChange).toBe(true)
-            expect(new DataView(data.authVerifier.buffer, data.authVerifier.byteOffset).getUint32(0)).toBe(
-                0x01000000 + 1000000
+    it.each(['upgraded', 'failed', 'restricted', 'alternate', 'default', 'disabled'])(
+        'handles post-login upgrade: %s',
+        async (outcome) => {
+            const password = wrapPassword('test-password')
+            const dataKey = new Uint8Array(32).fill(42)
+            const encryptedDataKey = await createEncryptionParams(password, dataKey, 10000)
+            const useAlternate = outcome === 'alternate'
+            const registerLogin = jest.fn()
+            const saveSessionParameters = jest.fn().mockResolvedValue(undefined)
+            Object.assign(auth, { socket: { getIsConnected: () => true, registerLogin, onOpen: jest.fn() } })
+            Object.assign(auth.options.sessionStorage!, { saveSessionParameters })
+            const loadSummary = jest.spyOn(auth, 'loadAccountSummary').mockResolvedValue(undefined)
+            const warn = jest.spyOn(logger, 'warn').mockImplementation(() => {})
+            loginSuccess.mockRestore()
+            const approve = jest.fn().mockResolvedValue(true)
+            configureApproval(approve)
+            if (outcome === 'default' || outcome === 'disabled') {
+                auth.options.enableLowKdfIterationUpgrade = outcome === 'default' ? undefined : false
+            }
+            executeRest.mockResolvedValueOnce(
+                new Authentication.LoginResponse({
+                    loginState: Authentication.LoginState.LOGGED_IN,
+                    sessionTokenType:
+                        outcome === 'restricted'
+                            ? Authentication.SessionTokenType.RESTRICT
+                            : Authentication.SessionTokenType.NO_RESTRICTION,
+                    encryptedSessionToken: new Uint8Array([1]),
+                    encryptedDataKey,
+                    encryptedDataKeyType: Authentication.EncryptedDataKeyType.BY_PASSWORD,
+                })
             )
-            expect(Array.from(await decryptEncryptionParams(password, data.encryptionParams))).toEqual(
-                Array.from(dataKey)
+            const upgraded = outcome === 'upgraded'
+            const atUpgrade = jest.fn()
+            if (upgraded || outcome === 'failed') {
+                executeRest.mockImplementationOnce(async () => {
+                    atUpgrade(loadSummary.mock.calls.length, Array.from(auth.dataKey ?? []), auth.sessionToken)
+                    if (outcome === 'failed') throw new Error('Server error')
+                    return { encryptedSessionToken: new Uint8Array([2]) }
+                })
+            }
+
+            const response = loginResponse({
+                name: useAlternate ? 'alternate' : undefined,
+                salt: new Uint8Array(16),
+                iterations: 10000,
+            })
+            await auth.authHashLogin(response, 'test', password, useAlternate)
+
+            expect(approve.mock.calls).toEqual(outcome === 'default' || outcome === 'disabled' ? [] : [[10000]])
+            expect(executeRest).toHaveBeenCalledTimes(upgraded || outcome === 'failed' ? 2 : 1)
+            expect(auth.options.iterations).toBe(upgraded ? 1000000 : 10000)
+            expect(saveSessionParameters).toHaveBeenCalledTimes(1)
+            expect(saveSessionParameters).toHaveBeenCalledWith(
+                expect.objectContaining({ sessionToken: upgraded ? 'Ag' : 'AQ' })
             )
-            expect(registerLogin).toHaveBeenLastCalledWith('Ag')
+            if (upgraded) {
+                expect(atUpgrade).toHaveBeenCalledWith(1, Array.from(dataKey), 'AQ')
+                const { path, data } = executeRest.mock.calls[1][0]
+                expect(path).toBe('authentication/change_master_password')
+                expect(data.iterationsChange).toBe(true)
+                expect(new DataView(data.authVerifier.buffer, data.authVerifier.byteOffset).getUint32(0)).toBe(
+                    0x01000000 + 1000000
+                )
+                expect(Array.from(await decryptEncryptionParams(password, data.encryptionParams))).toEqual(
+                    Array.from(dataKey)
+                )
+                expect(registerLogin).toHaveBeenLastCalledWith('Ag')
+            }
+            expect(warn).toHaveBeenCalledTimes(outcome === 'failed' ? 1 : 0)
         }
-        expect(warn).toHaveBeenCalledTimes(outcome === 'failed' ? 1 : 0)
-    })
+    )
 
     function configureApproval(approveLowKdfIterations: (iterations: number) => Promise<boolean>) {
+        auth.options.enableLowKdfIterationUpgrade = true
         auth.options.authUI3 = {
             approveLowKdfIterations,
             waitForDeviceApproval: jest.fn(),

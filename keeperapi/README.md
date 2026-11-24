@@ -13,16 +13,23 @@ npm install @keeper-security/keeperapi
 Before deriving or submitting a normal or alternate password authentication hash,
 the SDK requires a 16-byte PBKDF2 salt and a safe integer iteration count:
 
-| Iterations        | Login behavior                                                                                                                                                                                 |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Below 10,000      | Always rejected with `kdf_iterations_below_minimum`, reported as a security concern.                                                                                                           |
-| 10,000 to 999,999 | The SDK awaits `authUI3.approveLowKdfIterations(iterations)`. The application supplies the UI. Only `true` continues login; otherwise the SDK rejects with `kdf_iterations_approval_required`. |
-| 1,000,000 or more | No approval required.                                                                                                                                                                          |
+| Iterations        | Login behavior                                                                                                        |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Below 10,000      | Always rejected with `kdf_iterations_below_minimum`, reported as a security concern.                                  |
+| 10,000 to 999,999 | Login continues without prompting or upgrading by default. Opted-in apps must obtain approval before login continues. |
+| 1,000,000 or more | No approval required.                                                                                                 |
 
 Malformed parameters are rejected with `invalid_kdf_parameters`. During `loginV3`,
 `onCommandFailure` receives the rejection code as `result_code`, and login stops
 with `NOT_LOGGED_IN`. Without a handler, the SDK throws the typed error.
 Rejected parameters do not trigger verifier submission or a server report.
+
+To opt in, set `enableLowKdfIterationUpgrade: true` in the `Auth` or `KeeperVault`
+configuration. The SDK then awaits `authUI3.approveLowKdfIterations(iterations)`
+for counts in the approval range. Return `true` only after explicit user approval.
+If the callback is missing, declines, or throws, login stops with
+`kdf_iterations_approval_required` before deriving or sending a verifier. Apps
+that do not opt in do not need to implement this callback.
 
 After an approved, unrestricted primary-password sign-in, the SDK uses the
 same password and the unlocked data key to request a server-side increase to
