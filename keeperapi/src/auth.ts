@@ -21,6 +21,7 @@ import {
 } from './utils'
 import {
     accountSummaryMessage,
+    changeMasterPasswordMessage,
     getEnterprisePublicKeyMessage,
     logoutV3Message,
     NN,
@@ -121,6 +122,50 @@ export const enum LoginV3ResultEnum {
     NOT_LOGGED_IN = 'notLoggedin',
     LINKING_BLOCKED_BY_CROSS_REGION = 'linkingBlockedByCrossRegion',
     LINKING_BLOCKED_BY_YUBIKEY_2FA = 'linkingBlockedByYubikey2fa',
+}
+
+export class InvalidKdfParametersError extends Error {
+    readonly code = 'invalid_kdf_parameters'
+
+    constructor(
+        message = 'Server-supplied KDF parameters must use a 16-byte salt and an integer iteration count of at least 100000'
+    ) {
+        super(message)
+        this.name = 'InvalidKdfParametersError'
+    }
+}
+
+const MIN_LOGIN_KDF_ITERATIONS = 10000
+const TARGET_LOGIN_KDF_ITERATIONS = 1000000
+
+export class LoginKdfPolicyError extends Error {
+    constructor(readonly code: 'kdf_iterations_below_minimum' | 'kdf_iterations_approval_required') {
+        super(
+            code === 'kdf_iterations_below_minimum'
+                ? 'Security concern: the server supplied fewer than 10,000 PBKDF2 iterations. This should not be possible.'
+                : 'User approval is required to sign in with fewer than 1,000,000 PBKDF2 iterations.'
+        )
+        this.name = 'LoginKdfPolicyError'
+    }
+}
+
+function hasValidKdfParameters(
+    parameters: Authentication.ISalt
+): parameters is Authentication.ISalt & { salt: Uint8Array; iterations: number } {
+    return (
+        !!parameters.salt &&
+        parameters.salt.length === 16 &&
+        typeof parameters.iterations === 'number' &&
+        Number.isSafeInteger(parameters.iterations)
+    )
+}
+
+export function validateKdfParameters(
+    parameters: Authentication.ISalt
+): asserts parameters is Authentication.ISalt & { salt: Uint8Array; iterations: number } {
+    if (!hasValidKdfParameters(parameters) || parameters.iterations < 100000) {
+        throw new InvalidKdfParametersError()
+    }
 }
 
 export class Auth {
@@ -424,7 +469,10 @@ export class Auth {
             loginResponse: NN<Authentication.ILoginResponse>,
             error: KeeperError
         ) => {
-            const errorMessage = chooseErrorMessage(loginResponse.loginState)
+            const errorMessage =
+                error instanceof InvalidKdfParametersError || error instanceof LoginKdfPolicyError
+                    ? error.message
+                    : chooseErrorMessage(loginResponse.loginState)
             if (this.options.onCommandFailure) {
                 this.options.onCommandFailure({
                     result_code: resultCode,
@@ -656,6 +704,10 @@ export class Auth {
                         return
                     } catch (e: any) {
                         wrappedPassword = undefined
+                        if (e instanceof InvalidKdfParametersError || e instanceof LoginKdfPolicyError) {
+                            handleError(e.code, loginResponse, e)
+                            return { result: LoginV3ResultEnum.NOT_LOGGED_IN }
+                        }
                         handleError('auth_failed', loginResponse, e)
                         const error = e as Error
                         // @ts-ignore
@@ -1159,13 +1211,46 @@ export class Auth {
         useAlternate: boolean = false
     ) {
         // TODO test for account transfer and account recovery
-        const salt = useAlternate ? loginResponse.salt.find((s) => s.name === 'alternate') : loginResponse.salt[0]
-        if (!salt?.salt || !salt?.iterations) {
+        const selectedSalt = useAlternate
+            ? loginResponse.salt.find((s) => s.name === 'alternate')
+            : loginResponse.salt[0]
+        if (!selectedSalt) {
             const error = new Error('Salt missing from API response')
-            if (useAlternate && !salt) {
+            if (useAlternate) {
                 error.cause = Error('No alternate master password found')
             }
             throw error
+        }
+        const { iterations } = selectedSalt
+        if (
+            typeof iterations === 'number' &&
+            Number.isSafeInteger(iterations) &&
+            iterations < MIN_LOGIN_KDF_ITERATIONS
+        ) {
+            throw new LoginKdfPolicyError('kdf_iterations_below_minimum')
+        }
+        if (!hasValidKdfParameters(selectedSalt)) {
+            throw new InvalidKdfParametersError(
+                'Server-supplied KDF parameters must use a 16-byte salt and a safe integer iteration count'
+            )
+        }
+        const salt = { salt: selectedSalt.salt, iterations: selectedSalt.iterations }
+        const needsApproval =
+            this.options.enableLowKdfIterationUpgrade === true && salt.iterations < TARGET_LOGIN_KDF_ITERATIONS
+        if (needsApproval) {
+            // Keep the accepted parameters independent of changes while the application awaits the user.
+            salt.salt = new Uint8Array(salt.salt)
+            const rejection = new LoginKdfPolicyError('kdf_iterations_approval_required')
+            let approved: boolean | undefined
+            try {
+                approved = await this.options.authUI3?.approveLowKdfIterations?.(salt.iterations)
+            } catch (error) {
+                rejection.cause = error instanceof Error ? error : undefined
+                throw rejection
+            }
+            if (approved !== true) {
+                throw rejection
+            }
         }
 
         this.options.salt = salt.salt
@@ -1178,7 +1263,7 @@ export class Auth {
             authResponse: authHash,
             encryptedLoginToken: loginResponse.encryptedLoginToken,
         })
-        const loginResp = await this.executeRest(loginMsg)
+        const loginResp = await this.executeRest(loginMsg, { sensitive: true })
         if (loginResp.cloneCode && loginResp.cloneCode.length > 0) {
             await this.options.sessionStorage?.saveCloneCode(
                 this.options.host as KeeperEnvironment,
@@ -1186,19 +1271,29 @@ export class Auth {
                 loginResp.cloneCode
             )
         }
-        await this.loginSuccess(loginResp, password, salt)
+        const upgradeIterations =
+            needsApproval &&
+            !useAlternate &&
+            this.userType === UserType.normal &&
+            loginResp.encryptedDataKeyType !== Authentication.EncryptedDataKeyType.BY_ALTERNATE &&
+            loginResp.loginState === Authentication.LoginState.LOGGED_IN &&
+            loginResp.sessionTokenType === Authentication.SessionTokenType.NO_RESTRICTION &&
+            loginResp.encryptedSessionToken.length > 0
+        await this.loginSuccess(loginResp, password, salt, upgradeIterations)
     }
 
     async loginSuccess(
         loginResponse: NN<Authentication.ILoginResponse>,
         password?: KeyWrapper,
-        salt: Authentication.ISalt | undefined = undefined
+        salt: Authentication.ISalt | undefined = undefined,
+        upgradeIterations = false
     ) {
         this._username = loginResponse.primaryUsername || this._username
         this.setLoginParameters(
             webSafe64FromBytes(loginResponse.encryptedSessionToken),
             loginResponse.sessionTokenType ?? undefined,
-            loginResponse.accountUid
+            loginResponse.accountUid,
+            !upgradeIterations
         )
         switch (loginResponse.encryptedDataKeyType) {
             case Authentication.EncryptedDataKeyType.BY_DEVICE_PUBLIC_KEY:
@@ -1282,8 +1377,52 @@ export class Auth {
             this.clientKey = await platform.aesCbcDecrypt(this.accountSummary.clientKey, this.dataKey, true)
         }
 
+        if (upgradeIterations) {
+            if (password) {
+                await this.upgradeLoginKdfIterations(password, this.dataKey)
+            }
+            this.connectRouterIfConfigured()
+        }
+
         if (this.options.sessionStorage) {
             this.options.sessionStorage.saveSessionParameters(this.getSessionParameters())
+        }
+    }
+
+    private async upgradeLoginKdfIterations(password: KeyWrapper, dataKey: Uint8Array) {
+        const sessionToken = this._sessionToken
+        let authVerifier: Uint8Array
+        let response: Authentication.IChangeMasterPasswordResponse
+        try {
+            if (dataKey.length !== 32) {
+                throw new Error('Invalid data key length')
+            }
+            authVerifier = await createAuthVerifier(password, TARGET_LOGIN_KDF_ITERATIONS)
+            const encryptionParams = await createEncryptionParams(password, dataKey, TARGET_LOGIN_KDF_ITERATIONS)
+            if (this._sessionToken !== sessionToken || this.dataKey !== dataKey) {
+                logger.warn('Account PBKDF2 iteration upgrade canceled because the active session changed')
+                return
+            }
+            response = await this.executeRest(
+                changeMasterPasswordMessage({ authVerifier, encryptionParams, iterationsChange: true }),
+                { sensitive: true, skipRegionRedirect: true }
+            )
+        } catch {
+            logger.warn('Signed in, but the account PBKDF2 iteration upgrade could not be confirmed')
+            return
+        }
+
+        if (this._sessionToken !== sessionToken || this.dataKey !== dataKey) {
+            logger.warn('Account PBKDF2 iteration upgrade completed after the active session changed')
+            return
+        }
+        this.options.salt = authVerifier.slice(4, 20)
+        this.options.iterations = TARGET_LOGIN_KDF_ITERATIONS
+        if (response.encryptedSessionToken?.length) {
+            this.setSessionToken(webSafe64FromBytes(response.encryptedSessionToken))
+            if (this.socket?.getIsConnected()) {
+                this.socket.registerLogin(this._sessionToken)
+            }
         }
     }
 
@@ -1351,7 +1490,8 @@ export class Auth {
     setLoginParameters(
         sessionToken: string,
         sessionTokenType?: Authentication.SessionTokenType,
-        accountUid?: Uint8Array
+        accountUid?: Uint8Array,
+        connectRouter = true
     ) {
         this._sessionToken = sessionToken
         this._sessionTokenType = sessionTokenType
@@ -1365,6 +1505,12 @@ export class Auth {
         this.socket.onOpen(() => {
             this.socket?.registerLogin(this._sessionToken)
         })
+        if (connectRouter) {
+            this.connectRouterIfConfigured()
+        }
+    }
+
+    private connectRouterIfConfigured() {
         if (this.options.connectToRouter) {
             this.connectToRouter().catch((e) => logger.debug('Router socket connect failed', e))
         }

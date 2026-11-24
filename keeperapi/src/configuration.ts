@@ -24,6 +24,8 @@ export interface ClientConfiguration {
     sessionStorage?: SessionStorage
     kvs?: KeyValueStorage
     useSessionResumption?: boolean
+    /** Require user approval below 1,000,000 iterations and upgrade eligible accounts after sign-in. */
+    enableLowKdfIterationUpgrade?: boolean
     iterations?: number
     salt?: Uint8Array
     useHpkeForTransmissionKey?: boolean
@@ -119,6 +121,8 @@ export interface AuthUI3 {
     waitForDeviceApproval(channels: DeviceApprovalChannel[], isCloud: boolean): Promise<boolean>
     waitForTwoFactorCode(channels: TwoFactorChannelData[], cancel: Promise<void>): Promise<boolean>
     getPassword?(isAlternate: boolean): Promise<string | KeyWrapper>
+    /** For opted-in logins, return true only after explicit user approval. */
+    approveLowKdfIterations?(iterations: number): Promise<boolean>
     getSSOToken?(redirectUrl: string): Promise<Uint8Array>
     redirectCallback?(url: string): Promise<void>
     ssoLogin?(url: string): Promise<any>
